@@ -40,6 +40,8 @@ export default function AppProvider({
                     },
                     token: {
                         colorPrimary: themes.default.colors.primary,
+                        fontFamily:
+                            "'__Montserrat_4bc053', '__Montserrat_Fallback_4bc053'",
                     },
                 }}
             >

@@ -3,7 +3,6 @@ import './globals.css'
 import { Montserrat } from 'next/font/google'
 import AppProvider from './provider'
 import { cn } from '@/libs/utils'
-import { url } from 'inspector'
 
 export const metadata: Metadata = {
     title: 'TechRental',
