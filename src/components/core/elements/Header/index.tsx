@@ -147,10 +147,9 @@ export default function Header() {
             animate={{
                 boxShadow: '0 2px 10px rgba(0, 0, 0, 0.266)',
                 backgroundColor: atTop ? 'transparent' : '#ffffff',
-                // top: isVisible ? 0 : -80,
             }}
             transition={{
-                // duration: 0.3,
+                duration: 0.3,
                 ease: 'easeInOut',
             }}
         >
