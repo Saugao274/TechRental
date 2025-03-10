@@ -1,18 +1,21 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Montserrat } from 'next/font/google'
+import { Be_Vietnam_Pro } from 'next/font/google'
 import AppProvider from './provider'
 import { cn } from '@/libs/utils'
-import { url } from 'inspector'
 
 export const metadata: Metadata = {
     title: 'TechRental',
     icons: '/icons/logo.png',
 }
-const montserrat = Montserrat({
+
+const beVietnamPro = Be_Vietnam_Pro({
     subsets: ['latin'],
-    variable: '--font-montserrat',
+    weight: ['400', '500', '700'],
+    variable: '--font-be-vietnam-pro',
+    display: 'swap',
 })
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -20,7 +23,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={cn(montserrat.className)}>
+            <body className={cn(beVietnamPro.className)}>
                 <AppProvider>{children}</AppProvider>
             </body>
         </html>
