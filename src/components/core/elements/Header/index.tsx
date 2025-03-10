@@ -143,203 +143,152 @@ export default function Header() {
     return (
         <motion.header
             ref={headerRef}
-            className="sticky z-50 w-full shadow-sm"
-            initial={{ top: 0 }}
+            className="sticky top-0 z-50 w-full shadow-sm"
             animate={{
-                top: isVisible ? 0 : '-100%',
-                boxShadow: atTop ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.266)',
+                backgroundColor: atTop ? 'transparent' : '#ffffff',
+                // top: isVisible ? 0 : -80,
             }}
             transition={{
-                duration: 0.3,
+                // duration: 0.3,
                 ease: 'easeInOut',
             }}
         >
-            <div className="hidden bg-primary py-1 text-white md:block">
-                <div className="mx-auto flex max-w-[1440px] justify-between px-4 md:px-6 lg:px-[80px]">
-                    <div className="flex flex-row gap-[20px]">
-                        <Link href="/rental">
-                            <p className="text-[16px] text-white hover:underline">
-                                Kênh người cho thuê
-                            </p>
-                        </Link>
-                        <div>
-                            <p className="flex flex-row items-center gap-2 text-[16px] text-white">
-                                Kết nối
-                                <span className="flex flex-row gap-2">
-                                    <Link href={'#'}>
-                                        <Facebook size={18} />
-                                    </Link>
-                                    <Link href={'#'}>
-                                        <Instagram size={18} />
-                                    </Link>
-                                </span>
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row gap-5">
-                        <Link href={'#'}>
-                            <p className="text-[16px] text-white hover:underline">
-                                Tin tức
-                            </p>
-                        </Link>
-                        <Link href={'#'}>
-                            <p className="text-[16px] text-white hover:underline">
-                                Sản phẩm mới
-                            </p>
-                        </Link>
-                        <Link href={'#'}>
-                            <p className="text-[16px] text-white hover:underline">
-                                Thuê nhiều
-                            </p>
-                        </Link>
-                        <Link href={'#'}>
-                            <p className="text-[16px] text-white hover:underline">
-                                Hỗ trợ
-                            </p>
-                        </Link>
+            <div className="mx-auto flex max-w-[1440px] flex-row items-center justify-between px-4 py-3 md:px-6 md:py-5 lg:px-[80px]">
+                <div className="flex items-center">
+                    {/* Mobile menu button */}
+                    <button
+                        ref={buttonRef}
+                        className="mr-2 rounded p-2 text-primary md:hidden"
+                        onClick={toggleMobileMenu}
+                    >
+                        <AnimatePresence mode="wait" initial={false}>
+                            {mobileMenuOpen ? (
+                                <motion.div
+                                    key="close"
+                                    initial={{ rotate: -90, opacity: 0 }}
+                                    animate={{ rotate: 0, opacity: 1 }}
+                                    exit={{ rotate: 90, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <X size={24} />
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="menu"
+                                    initial={{ rotate: 90, opacity: 0 }}
+                                    animate={{ rotate: 0, opacity: 1 }}
+                                    exit={{ rotate: -90, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Menu size={24} />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </button>
+
+                    <div
+                        className="max-w-[100px] md:max-w-[140px]"
+                        onClick={() => router.push('/')}
+                    >
+                        <Image
+                            src={'/images/TechRentalLogo.png'}
+                            width={600}
+                            height={120}
+                            alt="techrental_logo"
+                            priority
+                        />
                     </div>
                 </div>
-            </div>
-            <div className="bg-white py-3 md:py-5">
-                <div className="mx-auto flex max-w-[1440px] flex-row items-center justify-between px-4 md:px-6 lg:px-[80px]">
-                    <div className="flex items-center">
-                        {/* Mobile menu button */}
-                        <button
-                            ref={buttonRef}
-                            className="mr-2 rounded p-2 text-primary md:hidden"
-                            onClick={toggleMobileMenu}
-                        >
-                            <AnimatePresence mode="wait" initial={false}>
-                                {mobileMenuOpen ? (
-                                    <motion.div
-                                        key="close"
-                                        initial={{ rotate: -90, opacity: 0 }}
-                                        animate={{ rotate: 0, opacity: 1 }}
-                                        exit={{ rotate: 90, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <X size={24} />
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        key="menu"
-                                        initial={{ rotate: 90, opacity: 0 }}
-                                        animate={{ rotate: 0, opacity: 1 }}
-                                        exit={{ rotate: -90, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <Menu size={24} />
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </button>
 
-                        <div
-                            className="max-w-[100px] md:max-w-[140px]"
-                            onClick={() => router.push('/')}
-                        >
-                            <Image
-                                src={'/images/TechRentalLogo.png'}
-                                width={600}
-                                height={120}
-                                alt="techrental_logo"
-                                priority
-                            />
+                {/* Search bar - hidden on smallest screens, visible on sm and up */}
+                <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[400px]">
+                    <Search size={16} className="text-primary" />
+                    <input
+                        className="w-full bg-transparent outline-none placeholder:text-primary placeholder:text-opacity-60"
+                        placeholder="Nhập nội dung cần tìm..."
+                    ></input>
+                    <div className="absolute right-[-1px] top-[-1px] h-full">
+                        <Button className="!rounded-none !rounded-br-[10px] !rounded-tr-[10px] !border-primary !bg-primary !p-[19px] !text-white">
+                            <Search />
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Desktop navigation */}
+                <div className="hidden md:flex md:flex-row md:items-center md:gap-5">
+                    <div className="flex flex-row gap-[10px]">
+                        <div>
+                            <Link href={'/'}>
+                                <p className="text-[16px] text-primary">
+                                    Trang chủ
+                                </p>
+                            </Link>
+                        </div>
+                        <div>
+                            <Dropdown menu={{ items }}>
+                                <a onClick={(e) => e.preventDefault()}>
+                                    <Space className="flex items-center text-[16px] text-primary">
+                                        <p>Hạng mục</p>
+                                        <ChevronDown
+                                            size={18}
+                                            className="mt-1"
+                                        />
+                                    </Space>
+                                </a>
+                            </Dropdown>
                         </div>
                     </div>
-
-                    {/* Search bar - hidden on smallest screens, visible on sm and up */}
-                    <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[400px]">
-                        <Search size={16} className="text-primary" />
-                        <input
-                            className="w-full outline-none placeholder:text-primary placeholder:text-opacity-60"
-                            placeholder="Nhập nội dung cần tìm..."
-                        ></input>
-                        <div className="absolute right-[-1px] top-[-1px] h-full">
-                            <Button className="!rounded-none !rounded-br-[10px] !rounded-tr-[10px] !border-primary !bg-primary !p-[19px] !text-white">
-                                <Search />
-                            </Button>
-                        </div>
-                    </div>
-
-                    {/* Desktop navigation */}
-                    <div className="hidden md:flex md:flex-row md:items-center md:gap-5">
-                        <div className="flex flex-row gap-[10px]">
-                            <div>
-                                <Link href={'/'}>
-                                    <p className="text-[16px] text-primary">
-                                        Trang chủ
-                                    </p>
-                                </Link>
-                            </div>
-                            <div>
-                                <Dropdown menu={{ items }}>
-                                    <a onClick={(e) => e.preventDefault()}>
-                                        <Space className="flex items-center text-[16px] text-primary">
-                                            <p>Hạng mục</p>
-                                            <ChevronDown
-                                                size={18}
-                                                className="mt-1"
-                                            />
-                                        </Space>
-                                    </a>
-                                </Dropdown>
-                            </div>
-                        </div>
-                        <div className="flex flex-row gap-4">
-                            <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
-                                <Bell />
-                                <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
-                                    <p className="text-[10px] text-white">2</p>
-                                </div>
-                            </div>
-                            <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
-                                <MessageCircle />
-                                <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
-                                    <p className="text-[10px] text-white">7</p>
-                                </div>
-                            </div>
-                            <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
-                                <ShoppingCart />
-                                <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
-                                    <p className="text-[10px] text-white">4</p>
-                                </div>
-                            </div>
-                        </div>
-                        {true ? (
-                            <DropdownProfile />
-                        ) : (
-                            <div className="flex flex-row gap-2">
-                                <ButtonCommon
-                                    type="text"
-                                    className="!text-[16px]"
-                                >
-                                    Đăng nhập
-                                </ButtonCommon>
-                                <ButtonCommon
-                                    type="primary"
-                                    className="!text-[16px]"
-                                >
-                                    Đăng ký
-                                </ButtonCommon>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Mobile icons */}
-                    <div className="flex items-center gap-2 md:hidden">
+                    <div className="flex flex-row gap-4">
                         <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
-                            <ShoppingCart size={20} />
-                            <div className="absolute right-[-5px] top-[-5px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                            <Bell />
+                            <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
+                                <p className="text-[10px] text-white">2</p>
+                            </div>
+                        </div>
+                        <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
+                            <MessageCircle />
+                            <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
+                                <p className="text-[10px] text-white">7</p>
+                            </div>
+                        </div>
+                        <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
+                            <ShoppingCart />
+                            <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                 <p className="text-[10px] text-white">4</p>
                             </div>
                         </div>
-                        <div
-                            className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
-                            onClick={() => handleClickSearchButton()}
-                        >
-                            <Search size={20} />
+                    </div>
+                    {true ? (
+                        <DropdownProfile />
+                    ) : (
+                        <div className="flex flex-row gap-2">
+                            <ButtonCommon type="text" className="!text-[16px]">
+                                Đăng nhập
+                            </ButtonCommon>
+                            <ButtonCommon
+                                type="primary"
+                                className="!text-[16px]"
+                            >
+                                Đăng ký
+                            </ButtonCommon>
                         </div>
+                    )}
+                </div>
+
+                {/* Mobile icons */}
+                <div className="flex items-center gap-2 md:hidden">
+                    <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
+                        <ShoppingCart size={20} />
+                        <div className="absolute right-[-5px] top-[-5px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                            <p className="text-[10px] text-white">4</p>
+                        </div>
+                    </div>
+                    <div
+                        className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
+                        onClick={() => handleClickSearchButton()}
+                    >
+                        <Search size={20} />
                     </div>
                 </div>
             </div>

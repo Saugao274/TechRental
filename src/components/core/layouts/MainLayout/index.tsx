@@ -10,9 +10,14 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
     return (
-        <Layout className='!bg-white'>
+        <Layout
+            style={{
+                backgroundImage: 'url(/images/Background.png)',
+                backgroundSize: 'cover',
+            }}
+        >
             <Header />
-            <Content className='min-w-full md:min-w-[1440px] mx-auto'>
+            <Content className="md:mx-w-[1440px] mx-auto min-w-full">
                 {children}
             </Content>
         </Layout>

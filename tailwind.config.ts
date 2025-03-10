@@ -10,7 +10,8 @@ const config: Config = {
     theme: {
         extend: {
             fontFamily: {
-                montserrat: 'var(--font-montserrat)',
+                Be_Vietnam_Pro: ['BeVietnamPro'],
+                Be_Vietnam_Pro_Fallback: ['BeVietnamProFallback'],
             },
             colors: {
                 background: 'var(--background)',

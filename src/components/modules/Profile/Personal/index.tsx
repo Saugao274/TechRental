@@ -22,7 +22,7 @@ export default function PersonalProfile() {
     }
 
     return (
-        <main className="mx-auto flex w-full flex-col gap-5 !bg-white">
+        <main className="mx-auto flex w-full flex-col gap-5">
             {/* Greeting Header */}
             <div className="">
                 <h1 className="text-2xl font-bold text-primary">
