@@ -1,16 +1,16 @@
 const themeColors = {
   primaryDarker: "#005D8D",
-  primaryDark: "#0284C7",
-  primary: "#0098ff",
+  primaryDark: "#162E66",
+  primary: "#1D3D85",
   primaryOpacity: "#0098ffbd",
-  primaryLight: "#1ca3ff",
-  primaryLighter: "#61bfff",
+  primaryLight: "#3A5DB0",
+  primaryLighter: "#577DDB",
 
   secondaryDarker: "#005D8D",
-  secondaryDark: "#0284C7",
+  secondaryDark: "#3B7ADB",
   secondary: "#CFE9FA",
-  secondaryLight: "#F7FCFE",
-  secondaryLighter: "#F6F8FB",
+  secondaryLight: "#78B1FA",
+  secondaryLighter: "#A3CBFB",
 
   backgroundPrimary: "#FFF9F6",
   backgroundSecondary: "#ffffff",
