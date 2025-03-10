@@ -10,9 +10,9 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
     return (
-        <Layout>
+        <Layout className='!bg-white'>
             <Header />
-            <Content>
+            <Content className='min-w-full md:min-w-[1440px] mx-auto'>
                 {children}
             </Content>
         </Layout>

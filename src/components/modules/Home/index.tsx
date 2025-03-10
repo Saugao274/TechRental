@@ -1,94 +1,12 @@
 'use client'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
+import SectionCommon from '@/components/core/common/SectionCommon'
 import React from 'react'
 
 const Home = () => {
-    return <div>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-       <p>Home</p>
-    </div>
+    return <SectionCommon>
+        <div>HOME</div>
+    </SectionCommon>
 }
 
 export default Home

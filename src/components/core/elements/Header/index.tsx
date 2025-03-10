@@ -25,6 +25,7 @@ import {
     useMotionValueEvent,
 } from 'framer-motion'
 import _ from 'lodash'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -37,6 +38,7 @@ export default function Header() {
     const headerRef = useRef<HTMLElement>(null)
     const searchInputRef = useRef<HTMLInputElement>(null)
 
+    const router = useRouter()
     const { scrollY } = useScroll()
 
     // Track scroll direction and position
@@ -155,7 +157,7 @@ export default function Header() {
             <div className="hidden bg-primary py-1 text-white md:block">
                 <div className="mx-auto flex max-w-[1440px] justify-between px-4 md:px-6 lg:px-[80px]">
                     <div className="flex flex-row gap-[20px]">
-                        <Link href="#">
+                        <Link href="/rental">
                             <p className="text-[16px] text-white hover:underline">
                                 Kênh người cho thuê
                             </p>
@@ -232,12 +234,16 @@ export default function Header() {
                             </AnimatePresence>
                         </button>
 
-                        <div className="max-w-[100px] md:max-w-[140px]">
+                        <div
+                            className="max-w-[100px] md:max-w-[140px]"
+                            onClick={() => router.push('/')}
+                        >
                             <Image
                                 src={'/images/TechRentalLogo.png'}
                                 width={600}
                                 height={120}
                                 alt="techrental_logo"
+                                priority
                             />
                         </div>
                     </div>
@@ -260,7 +266,7 @@ export default function Header() {
                     <div className="hidden md:flex md:flex-row md:items-center md:gap-5">
                         <div className="flex flex-row gap-[10px]">
                             <div>
-                                <Link href={'#'}>
+                                <Link href={'/'}>
                                     <p className="text-[16px] text-primary">
                                         Trang chủ
                                     </p>
@@ -367,12 +373,19 @@ export default function Header() {
                         >
                             <div className="flex h-full flex-col overflow-y-auto overflow-x-hidden">
                                 <div className="flex w-full flex-row items-center justify-between border-b px-4 py-4">
-                                    <div className="max-w-[100px]">
+                                    <div
+                                        className="max-w-[100px]"
+                                        onClick={() => {
+                                            router.push('/')
+                                            setMobileMenuOpen(false)
+                                        }}
+                                    >
                                         <Image
                                             src={'/images/TechRentalLogo.png'}
                                             width={600}
                                             height={120}
                                             alt="techrental_logo"
+                                            priority
                                         />
                                     </div>
                                     <button
@@ -408,6 +421,7 @@ export default function Header() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.1 }}
+                                    onClick={() => router.push(`/personal`)}
                                 >
                                     <CircleUserRound
                                         size={24}
@@ -593,10 +607,18 @@ export default function Header() {
 }
 
 const DropdownProfile = () => {
+    const router = useRouter()
     const items: MenuProps['items'] = [
         {
             key: '1',
-            label: <p className="text-[16px]">Trang cá nhân</p>,
+            label: (
+                <p
+                    onClick={() => router.push(`/personal`)}
+                    className="text-[16px]"
+                >
+                    Trang cá nhân
+                </p>
+            ),
         },
         {
             key: '2',
