@@ -1,6 +1,6 @@
 export const productsData = [
     {
-        Image: '',
+        Image: '/Products/PD1.png',
         Title: 'DJI Osmo Pocket 3 Combo',
         Details:
             'Máy quay cầm tay nhỏ gọn với khả năng quay video 4K, chống rung mạnh mẽ.',
@@ -13,7 +13,7 @@ export const productsData = [
         Category: 'Máy quay',
     },
     {
-        Image: '',
+        Image: '/Products/PD2.png',
         Title: 'iPhone 15 Pro Max',
         Details:
             'Siêu phẩm điện thoại với chip A17 Bionic và camera tiên tiến.',
@@ -26,7 +26,7 @@ export const productsData = [
         Category: 'Điện thoại',
     },
     {
-        Image: '',
+        Image: '/Products/PD3.png',
         Title: 'MacBook Air M2',
         Details:
             'Laptop siêu mỏng nhẹ với hiệu năng vượt trội nhờ chip Apple M2.',
@@ -39,7 +39,7 @@ export const productsData = [
         Category: 'Laptop',
     },
     {
-        Image: '',
+        Image: '/Products/PD4.png',
         Title: 'Samsung Galaxy S23 Ultra',
         Details:
             'Màn hình Dynamic AMOLED 120Hz, camera 200MP chụp ảnh sắc nét.',
@@ -52,7 +52,7 @@ export const productsData = [
         Category: 'Điện thoại',
     },
     {
-        Image: '',
+        Image: '/Products/PD5.png',
         Title: 'Asus ROG Strix G16',
         Details: 'Laptop gaming mạnh mẽ với RTX 4060 và màn hình 165Hz.',
         Price: 33990000,
@@ -64,7 +64,7 @@ export const productsData = [
         Category: 'Laptop',
     },
     {
-        Image: '',
+        Image: '/Products/PD6.png',
         Title: 'Apple Watch Ultra 2',
         Details:
             'Đồng hồ thông minh cao cấp dành cho người yêu thể thao và phiêu lưu.',
@@ -77,7 +77,7 @@ export const productsData = [
         Category: 'Đồng hồ thông minh',
     },
     {
-        Image: '',
+        Image: '/Products/PD7.png',
         Title: 'AirPods Pro 2',
         Details:
             'Tai nghe không dây với khả năng chống ồn chủ động và âm thanh tuyệt vời.',
