@@ -1,35 +1,46 @@
 import React from 'react'
-import { Carousel, Image } from 'antd'
 import SectionCommon from '../../common/SectionCommon'
+import { Carousel } from '../../common/ResponsiveCarousel'
+
+const carouselItems = [
+    {
+        id: 1,
+        title: 'adhkadlsjdla',
+        image: '/images/Slider/TEST.webp',
+        alt: 'adadhlajdla',
+    },
+    {
+        id: 2,
+        title: 'kjhflfjlsdfjlsdf',
+        image: '/images/Slider/Slider1.png',
+
+        alt: 'dsklfhslfjlsfs',
+    },
+    {
+        id: 3,
+        title: 'kjhflfjlsdfjlsdf',
+        image: '/images/Slider/Slider1.png',
+
+        alt: 'dsklfhslfjlsfs',
+    },
+    {
+        id: 4,
+        title: 'kjhflfjlsdfjlsdf',
+        image: '/images/Slider/Slider1.png',
+
+        alt: 'dsklfhslfjlsfs',
+    },
+]
 
 const Slider: React.FC = () => (
     <SectionCommon className="flex flex-col gap-12">
         <Carousel
-            className="grid grid-cols-1 gap-5 md:grid-cols-4"
-            autoplay={{ dotDuration: true }}
-            autoplaySpeed={5000}
-        >
-            <Image
-                className="h-auto w-full"
-                src="/images/Slider/slider1.png"
-                alt="slider1"
-            />
-            <Image
-                className="h-auto w-full"
-                src="/images/Slider/slider1.png"
-                alt="slider1"
-            />
-            <Image
-                className="h-auto w-full"
-                src="/images/Slider/slider1.png"
-                alt="slider1"
-            />
-            <Image
-                className="h-auto w-full"
-                src="/images/Slider/slider1.png"
-                alt="slider1"
-            />
-        </Carousel>
+            items={carouselItems}
+            autoPlay
+            autoPlayInterval={2000}
+            dotType="line"
+            // cornerRadius={10}
+        />
     </SectionCommon>
 )
 
