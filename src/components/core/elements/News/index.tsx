@@ -19,8 +19,9 @@ const News = () => {
             <div className="flex flex-col gap-14">
                 <div className="max-h-680px flex md:flex-row flex-col justify-between gap-12">
                     <div className="flex w-full md:w-3/4 flex-col justify-between gap-5">
-                        {isLasterNews.map((news) => (
+                        {isLasterNews.map((news, index) => (
                             <NewsCard
+                                key={index}
                                 id={news.keyID}
                                 type="horizontal"
                                 Image={news.Image}
@@ -38,8 +39,9 @@ const News = () => {
                             Xem nhiều
                         </ButtonCommon>
                         <div className="flex flex-col justify-between gap-2">
-                            {mostViewedNews.map((news) => (
+                            {mostViewedNews.map((news, index) => (
                                 <NewsCard
+                                    key={index}
                                     id={news.keyID}
                                     key={news.Title}
                                     type="mini"
