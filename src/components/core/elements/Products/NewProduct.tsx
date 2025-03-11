@@ -14,8 +14,9 @@ const NewProduct = () => {
                 <PageHader title="Sản phẩm mới" />
             </div>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-                {newProductsData.slice(0.4).map((product) => (
+                {newProductsData.slice(0.4).map((product, index) => (
                     <ProductCard
+                        key={index}
                         Image={product.Image}
                         Title={product.Title}
                         Details={product.Details}

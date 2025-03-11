@@ -146,7 +146,7 @@ export default function Header() {
             className="sticky top-0 z-50 w-full bg-white shadow-sm"
             animate={{
                 boxShadow: '0 2px 10px rgba(0, 0, 0, 0.266)',
-                backgroundColor: atTop ? 'transparent' : '#ffffff',
+                backgroundColor: atTop ? '#ffffff' : '#ffffff',
                 // top: isVisible ? 0 : -100,
             }}
             transition={{
@@ -320,7 +320,7 @@ export default function Header() {
                             }}
                             className="fixed inset-y-0 left-0 z-50 w-4/5 max-w-sm bg-white shadow-xl md:hidden"
                         >
-                            <div className="flex h-full flex-col overflow-y-auto overflow-x-hidden">
+                            <div className="flex h-fit flex-col overflow-y-auto overflow-x-hidden">
                                 <div className="flex w-full flex-row items-center justify-between border-b px-4 py-4">
                                     <div
                                         className="max-w-[100px]"
@@ -394,16 +394,16 @@ export default function Header() {
                                             label: 'Tin tức',
                                             delay: 0.25,
                                         },
-                                        {
-                                            href: '#',
-                                            label: 'Sản phẩm mới',
-                                            delay: 0.3,
-                                        },
-                                        {
-                                            href: '#',
-                                            label: 'Thuê nhiều',
-                                            delay: 0.35,
-                                        },
+                                        // {
+                                        //     href: '#',
+                                        //     label: 'Sản phẩm mới',
+                                        //     delay: 0.3,
+                                        // },
+                                        // {
+                                        //     href: '#',
+                                        //     label: 'Thuê nhiều',
+                                        //     delay: 0.35,
+                                        // },
                                         {
                                             href: '#',
                                             label: 'Hỗ trợ',

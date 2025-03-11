@@ -14,8 +14,9 @@ const HotProducts = () => {
             {/* <SectionCommon className="flex flex-col gap-12"> */}
             <PageHader title="Sản phẩm nổi bật" />
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5 ">
-                {hotProductssData.slice(0.4).map((product) => (
+                {hotProductssData.slice(0.4).map((product, index) => (
                     <ProductCard
+                        key={index}
                         Image={product.Image}
                         Title={product.Title}
                         Details={product.Details}
