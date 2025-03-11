@@ -46,7 +46,7 @@ export default function NewsCard({
                             <h3 className="line-clamp-2 text-lg font-semibold text-blue-900">
                                 {Title}
                             </h3>
-                            <p className="line-clamp-2 text-sm text-gray-500">
+                            <p className="line-clamp-3 text-sm text-gray-500">
                                 {Details}
                             </p>
                             <ButtonCommon

@@ -14,7 +14,7 @@ const News = () => {
     const isLasterNews = NewsData.filter((news) => news.isLaster).slice(0, 3)
 
     return (
-        <SectionCommon className="flex flex-col gap-5">
+        <SectionCommon className="flex flex-col gap-12">
             <PageHader title="Tin tức" />
             <div className="flex flex-col gap-14">
                 <div className="max-h-680px flex justify-between gap-12">

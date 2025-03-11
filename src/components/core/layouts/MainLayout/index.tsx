@@ -10,7 +10,8 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
     return (
-        <Layout className='!bg-white'
+        <Layout
+            className="!bg-white"
             // style={{
             //     backgroundImage: 'url(/images/Background.png)',
             //     backgroundSize: 'cover',
