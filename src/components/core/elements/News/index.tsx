@@ -43,7 +43,6 @@ const News = () => {
                                 <NewsCard
                                     key={index}
                                     id={news.keyID}
-                                    key={news.Title}
                                     type="mini"
                                     Image={news.Image}
                                     Title={news.Title}
