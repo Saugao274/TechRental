@@ -38,16 +38,15 @@ export default function ProductCard({
         <div onClick={handleClick} className="cursor-pointer">
             <div className="flex flex-col gap-3">
                 <img
-                    // src={`/images/${Image}`}
-                    src="/images/Default_Images.webp"
+                    src={`/images/${Image}`}
                     alt=""
-                    className="aspect-[4/3] h-56 md:h-44 scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100"
+                    className="aspect-[4/3] h-56 scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100 md:h-44"
                 />
-                <div className="flex w-full flex-col justify-center items-center gap-3">
+                <div className="flex w-full flex-col items-center justify-center gap-3">
                     <h3 className="line-clamp-1 text-xl font-semibold text-blue-900">
                         {Title}
                     </h3>
-                    <p className="text-center line-clamp-2 text-base text-gray-500">
+                    <p className="line-clamp-2 text-center text-base text-gray-500">
                         {Details}
                     </p>
                     <div className="flex flex-col items-center justify-between gap-3">
@@ -59,16 +58,18 @@ export default function ProductCard({
                         </ButtonCommon>
                     </div>
 
-                    <div className="flex items-center justify-around gap-5 font-semibold">
-                        <div className="mt-2 flex items-center gap-2">
-                            <span className="text-xs">
+                    <div className="flex w-full items-center justify-between font-semibold">
+                        <div className="flex items-center">
+                            <span className="line-clamp-1 text-xs">
                                 {bayesianRank.toFixed(1)} ★ ({totalReviews} đánh
                                 giá)
                             </span>
                         </div>
-                        <div className="mt-2 flex items-center gap-2">
+                        <div className="ju flex items-center gap-0.5">
                             <EyeOutlined />
-                            <span className="text-xs">{view} lượt xem</span>
+                            <span className="line-clamp-1 text-xs">
+                                {view} lượt xem
+                            </span>
                         </div>
                     </div>
                 </div>
