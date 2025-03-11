@@ -35,7 +35,7 @@ const AllNews: React.FC<AllNewsProps> = ({ newsList }: AllNewsProps) => {
             </div>
 
             <div className="flex flex-col items-center justify-center gap-14">
-                <div className="flex justify-between gap-5">
+                <div className="grid md:grid-cols-4 grid-cols-1 gap-5">
                     {currentNews.map((news) => (
                         <NewsCard
                             id={news.keyID}

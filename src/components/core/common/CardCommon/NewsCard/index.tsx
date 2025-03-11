@@ -29,11 +29,11 @@ export default function NewsCard({
         <div onClick={handleClick} className="cursor-pointer">
             {type === 'horizontal' ? (
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center md:flex-row flex-col gap-4">
                         <img
                             src={`/images/${Image}`}
                             alt=""
-                            className="aspect-[4/3] h-44 w-72 scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100"
+                            className="aspect-[4/3] h-44 w-full md:w-72 scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100"
                         />
 
                         <div className="flex h-44 w-full flex-col justify-between">
@@ -63,10 +63,10 @@ export default function NewsCard({
                     <img
                         src={`/images/${Image}`}
                         alt=""
-                        className="aspect-[4/3] h-44 w-72 scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100"
+                        className="aspect-[4/3] h-44 w-full scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100"
                     />
-                    <div className="mt-4 flex w-full flex-col items-center">
-                        <h3 className="line-clamp-1 text-lg font-semibold text-blue-900">
+                    <div className="mt-4 flex w-full flex-col">
+                        <h3 className="line-clamp-1 text-start text-lg font-semibold text-blue-900">
                             {Title}
                         </h3>
                         <p className="line-clamp-3 text-sm text-gray-500">

@@ -7,12 +7,12 @@ import React from 'react'
 
 const Home = () => {
     return (
-        <SectionCommon>
-            <div>HOME</div>
+        <div className='max-w-[1440px] mx-auto'>
+            <SectionCommon>HOME</SectionCommon>
             <HotProducts />
             <NewProduct />
             <News />
-        </SectionCommon>
+        </div>
     )
 }
 
