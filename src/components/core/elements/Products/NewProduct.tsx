@@ -1,20 +1,29 @@
 import React from 'react'
 import PageHader from '../../common/PageHeader'
 import ProductCard from '../../common/CardCommon/ProductCard'
+import SectionCommon from '../../common/SectionCommon'
+import { productsData } from '@/data/products'
 
 const NewProduct = () => {
+    const newProductsData = productsData.filter(
+        (product) => product.IsNewProduct,
+    )
     return (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-12">
             <PageHader title="Sản phẩm mới" />
-            <ProductCard
-                Image={''}
-                Title={'DJI Osmo Pocket 3 Combo'}
-                Details="DJI Osmo Pocket 3 Combo là sản phẩm mới nhất của DJI với nhiều cải tiến về chất lượng hình ảnh và chất lượng âm thanh."
-                Price={700000}
-                view={200}
-                id={''}
-                totalReviews={30}
-            />
+            <div className="flex justify-between">
+                {newProductsData.slice(0.4).map((product) => (
+                    <ProductCard
+                        Image={product.Image}
+                        Title={product.Title}
+                        Details={product.Details}
+                        Price={product.Price}
+                        view={product.View}
+                        id={product.Id}
+                        totalReviews={product.TotalReviews}
+                    />
+                ))}
+            </div>
         </div>
     )
 }
