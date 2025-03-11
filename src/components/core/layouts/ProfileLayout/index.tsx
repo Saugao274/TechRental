@@ -22,13 +22,7 @@ export default function ProfileRootLayout({
     children: React.ReactNode
 }) {
     return (
-        <Layout
-            // style={{
-            //     backgroundImage: 'url(/images/Background.png)',
-            //     backgroundSize: 'cover',
-            // }}
-            className="!bg-white max-w-[1440px] mx-auto"
-        >
+        <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
                 <div className="flex flex-row gap-[40px]">
                     <LeftSideBarElement />

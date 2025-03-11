@@ -22,7 +22,7 @@ export default function RentalRootLayout({
     children: React.ReactNode
 }) {
     return (
-        <Layout className="!bg-white">
+        <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
                 <div className="flex flex-row gap-[40px]">
                     <LeftSideBarElement />
