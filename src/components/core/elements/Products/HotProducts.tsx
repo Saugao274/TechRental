@@ -10,10 +10,10 @@ const HotProducts = () => {
         (product) => product.IsHotProduct,
     )
     return (
-        <div>
+        <SectionCommon className="flex flex-col gap-10">
             {/* <SectionCommon className="flex flex-col gap-12"> */}
             <PageHader title="Sản phẩm nổi bật" />
-            <div className="flex justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-5 ">
                 {hotProductssData.slice(0.4).map((product) => (
                     <ProductCard
                         Image={product.Image}
@@ -26,7 +26,7 @@ const HotProducts = () => {
                     />
                 ))}
             </div>
-        </div>
+        </SectionCommon>
     )
 }
 

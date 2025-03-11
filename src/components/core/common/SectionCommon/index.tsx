@@ -12,9 +12,7 @@ export default function SectionCommon({
 }) {
     return (
         <div
-            className={cn('w-full p-5 md:px-[80px] md:py-[40px]', {
-                className,
-            })}
+            className={cn('w-full p-5 md:px-[80px] md:py-[40px]', `${className}`)}
         >
             {children}
         </div>
