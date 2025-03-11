@@ -54,7 +54,7 @@ export default function Header() {
 
         // Determine scroll direction
         const direction = latest > lastScrollY ? 'down' : 'up'
-
+        console.log(direction)
         // Only hide header when scrolling down and not at the top
         // Show header when scrolling up
         if (direction === 'down' && latest > 100 && isVisible) {
@@ -143,7 +143,7 @@ export default function Header() {
     return (
         <motion.header
             ref={headerRef}
-            className="sticky top-0 z-50 w-full  md:translate-y-5"
+            className="sticky top-0 z-50 w-full md:translate-y-5"
             animate={{
                 top: isVisible ? 0 : -120,
             }}
@@ -152,7 +152,7 @@ export default function Header() {
                 ease: 'easeInOut',
             }}
         >
-            <div className="mx-auto flex max-w-[1280px] flex-row items-center justify-between rounded-[20px] bg-white bg-opacity-80 px-4 py-3 md:px-6 md:py-5 lg:px-[10px]">
+            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between rounded-[16px] bg-white bg-opacity-80 px-4 py-3 md:px-6 md:py-5 lg:px-[10px]">
                 <div className="flex items-center">
                     {/* Mobile menu button */}
                     <button
@@ -200,7 +200,7 @@ export default function Header() {
                 </div>
 
                 {/* Search bar - hidden on smallest screens, visible on sm and up */}
-                <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[400px]">
+                <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[308px]">
                     <Search size={16} className="text-primary" />
                     <input
                         className="w-full bg-transparent outline-none placeholder:text-primary placeholder:text-opacity-60"
