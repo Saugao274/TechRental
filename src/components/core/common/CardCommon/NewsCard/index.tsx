@@ -29,11 +29,11 @@ export default function NewsCard({
         <div onClick={handleClick} className="cursor-pointer">
             {type === 'horizontal' ? (
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center md:flex-row flex-col gap-4">
+                    <div className="flex flex-col items-center gap-4 md:flex-row">
                         <img
                             src={`/images/${Image}`}
                             alt=""
-                            className="aspect-[4/3] h-44 w-full md:w-72 scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100"
+                            className="aspect-[4/3] h-44 w-full scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100 md:w-72"
                         />
 
                         <div className="flex h-44 w-full flex-col justify-between">
