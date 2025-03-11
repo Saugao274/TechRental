@@ -4,7 +4,7 @@ export const NewsData = [
         Image: '/News/HNews1.png',
         Title: 'Sony A7C II và A6700 - Công nghệ mới cho nhiếp ảnh gia',
         Details:
-            'Hai mẫu máy ảnh Sony A7C II và A6700 mang đến nhiều cải tiến về thuật toán xử lý ảnh...',
+            'Sony A7C II và A6700 nặng khoảng 500 gram, ứng dụng công cụ xử lý mới kết hợp thuật toán phơi sáng tự động, phù hợp người dùng cá nhân, bán chuyên.',
         Date: '10/03/2025',
         Type: 'Máy ảnh Sony',
         isLaster: true,
@@ -15,7 +15,7 @@ export const NewsData = [
         Image: '/News/HNews2.png',
         Title: 'Canon EOS R50 - Lựa chọn tối ưu cho người mới',
         Details:
-            'Canon EOS R50 với cảm biến APS-C, hỗ trợ quay video 4K, phù hợp cho người dùng phổ thông...',
+            'Sony A7C II và A6700 nặng khoảng 500 gram, ứng dụng công cụ xử lý mới kết hợp thuật toán phơi sáng tự động, phù hợp người dùng cá nhân, bán chuyên.',
         Date: '05/06/2023',
         Type: 'Máy ảnh Canon',
         isLaster: false,
@@ -35,8 +35,9 @@ export const NewsData = [
     {
         keyID: 'fujifilm-x-t5',
         Image: '/News/MNews1.png',
-        Title: 'Fujifilm X-T5 - Camera mạnh mẽ dành cho dân chuyên',
-        Details: 'Fujifilm X-T5 với cảm biến 40MP, hệ thống xử lý ảnh mới...',
+        Title: 'Hai dòng máy ảnh Sony A7C II và A6700 nhỏ gọn, ứng dụng AI từ Sony',
+        Details:
+            'Sony A7C II và A6700 nặng khoảng 500 gram, ứng dụng công cụ xử lý mới kết hợp thuật toán phơi sáng tự động, phù hợp người dùng cá nhân, bán chuyên.',
         Date: '20/07/2024',
         Type: 'Máy ảnh Fujifilm',
         isLaster: true,
@@ -47,7 +48,7 @@ export const NewsData = [
         Image: '/News/MNews2.png',
         Title: 'Leica M11-P - Biểu tượng của phong cách và chất lượng',
         Details:
-            'Leica M11-P kết hợp thiết kế cổ điển với công nghệ hiện đại...',
+            'Leica M11-P kết hợp thiết kế cổ điển với công nghệ hiện đại, chất lượng hình ảnh sắc nét, màu sắc chân thực.',
         Date: '08/05/2024',
         Type: 'Máy ảnh Leica',
         isLaster: false,
@@ -69,7 +70,7 @@ export const NewsData = [
         Image: '/News/MNews4.png',
         Title: 'Panasonic GH6 - Máy quay chuyên nghiệp giá tốt',
         Details:
-            'Với khả năng quay video 5.7K, Panasonic GH6 mang lại chất lượng hình ảnh sắc nét...',
+            'Với khả năng quay video 5.7K, Panasonic GH6 mang lại chất lượng hình ảnh sắc nét, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
         Date: '25/09/2024',
         Type: 'Máy ảnh Panasonic',
         isLaster: false,
@@ -79,7 +80,8 @@ export const NewsData = [
         keyID: 'nikon-z9',
         Image: '/News/MNews5.png',
         Title: 'Nikon Z9 - Siêu phẩm flagship của Nikon',
-        Details: 'Nikon Z9 với tốc độ chụp siêu nhanh, quay video 8K...',
+        Details:
+            'Nikon Z9 với tốc độ chụp siêu nhanh, quay video 8K, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
         Date: '05/11/2024',
         Type: 'Máy ảnh Nikon',
         isLaster: true,
@@ -90,7 +92,7 @@ export const NewsData = [
         Image: '/News/MNews6.png',
         Title: 'Nikon Z8 - Phiên bản gọn nhẹ của Z9',
         Details:
-            'Nikon Z8 giữ nguyên sức mạnh từ Z9 nhưng có thiết kế nhỏ hơn...',
+            'Nikon Z8 giữ nguyên sức mạnh từ Z9 nhưng có thiết kế nhỏ hơn, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
         Date: '12/11/2024',
         Type: 'Máy ảnh Nikon',
         isLaster: true,
@@ -100,7 +102,8 @@ export const NewsData = [
         keyID: 'fujifilm-gfx-100-ii',
         Image: '/News/VNews4.png',
         Title: 'Fujifilm GFX 100 II - Trải nghiệm cảm biến Medium Format',
-        Details: 'Fujifilm GFX 100 II mang đến độ phân giải 100MP...',
+        Details:
+            'Fujifilm GFX 100 II mang đến độ phân giải 100MP, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
         Date: '18/11/2024',
         Type: 'Máy ảnh Fujifilm',
         isLaster: true,
@@ -111,7 +114,7 @@ export const NewsData = [
         Image: '/News/VNews1.png',
         Title: 'Canon R5 Mark II sắp ra mắt với nhiều nâng cấp',
         Details:
-            'Canon R5 Mark II được cho là sẽ có cảm biến mới, hỗ trợ quay video 8K tốt hơn...',
+            'Canon R5 Mark II được cho là sẽ có cảm biến mới, hỗ trợ quay video 8K tốt hơn, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
         Date: '25/11/2024',
         Type: 'Máy ảnh Canon',
         isLaster: true,
@@ -121,7 +124,8 @@ export const NewsData = [
         keyID: 'sony-a9-iii',
         Image: '/News/VNews2.png',
         Title: 'Sony A9 III - Chiếc máy ảnh không gương lật nhanh nhất',
-        Details: 'Sony A9 III mang lại tốc độ chụp liên tục cực cao...',
+        Details:
+            'Sony A9 III mang lại tốc độ chụp liên tục cực cao, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
         Date: '30/11/2024',
         Type: 'Máy ảnh Sony',
         isLaster: true,
@@ -131,7 +135,8 @@ export const NewsData = [
         keyID: 'leica-sl3',
         Image: '/News/VNews3.png',
         Title: 'Leica SL3 - Máy ảnh full-frame mirrorless mới từ Leica',
-        Details: 'Leica SL3 với thiết kế chắc chắn, cảm biến 60MP...',
+        Details:
+            'Leica SL3 với thiết kế chắc chắn, cảm biến 60MP, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
         Date: '05/12/2024',
         Type: 'Máy ảnh Leica',
         isLaster: true,

@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation'
 import { NewsData } from '@/data/news'
 import NotFound from '@/app/not-found'
 
-const NewsDetail = () => {
+const ProductsDetail = () => {
     const params = useParams()
     const { id } = params
     const article = NewsData.find((news) => news.keyID === id)
@@ -23,4 +23,4 @@ const NewsDetail = () => {
     )
 }
 
-export default NewsDetail
+export default ProductsDetail
