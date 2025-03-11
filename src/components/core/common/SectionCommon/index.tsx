@@ -8,7 +8,7 @@ export default function SectionCommon({
     className,
 }: {
     children: React.ReactNode
-    className?: ClassValue;
+    className?: ClassValue
 }) {
     return (
         <div

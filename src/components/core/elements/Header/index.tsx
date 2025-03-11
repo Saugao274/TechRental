@@ -143,10 +143,11 @@ export default function Header() {
     return (
         <motion.header
             ref={headerRef}
-            className="sticky top-0 z-50 w-full shadow-sm"
+            className="sticky top-0 z-50 w-full bg-white shadow-sm"
             animate={{
                 boxShadow: '0 2px 10px rgba(0, 0, 0, 0.266)',
                 backgroundColor: atTop ? 'transparent' : '#ffffff',
+                // top: isVisible ? 0 : -100,
             }}
             transition={{
                 duration: 0.3,
