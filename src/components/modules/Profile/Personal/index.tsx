@@ -1,7 +1,7 @@
 'use client'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import { Avatar, Badge, Button, Card, Divider, Modal } from 'antd'
-import { Clock, ShieldCheck, ShieldUser, Star, User } from 'lucide-react'
+import { CalendarClock, Clock, ShieldCheck, ShieldUser, Star, User } from 'lucide-react'
 import React, { useState } from 'react'
 
 export default function PersonalProfile() {
@@ -107,7 +107,7 @@ export default function PersonalProfile() {
                 {/* Owned Products */}
                 <Card className="shadow-sm">
                     <div className="mb-2 flex flex-row-reverse items-center justify-between">
-                        <Star className="mr-2 text-blue-500" />
+                        <Star className="text-primary" />
                         <h3 className="font-medium">Danh giá sản phẩm</h3>
                     </div>
                     <h2 className="text-xl font-bold text-blue-800">
@@ -125,7 +125,7 @@ export default function PersonalProfile() {
                 {/* Renting Products */}
                 <Card className="shadow-sm">
                     <div className="mb-2 flex flex-row-reverse items-center justify-between">
-                        <Clock className="mr-2 text-blue-500" />
+                        <Clock className="text-primary" />
                         <h3 className="font-medium">Thời gian thuê hàng</h3>
                     </div>
                     <h2 className="text-xl font-bold text-blue-800">
@@ -143,7 +143,7 @@ export default function PersonalProfile() {
                 {/* Rented Products */}
                 <Card className="shadow-sm">
                     <div className="mb-2 flex flex-row-reverse items-center justify-between">
-                        <Clock className="mr-2 text-blue-500" />
+                        <CalendarClock className="text-primary" />
                         <h3 className="font-medium">Lịch sử thuê</h3>
                     </div>
                     <h2 className="text-xl font-bold text-blue-800">
