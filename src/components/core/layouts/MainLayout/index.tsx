@@ -11,11 +11,7 @@ interface MainLayoutProps {
 function MainLayout({ children }: MainLayoutProps) {
     return (
         <Layout
-            className="!bg-white"
-            // style={{
-            //     backgroundImage: 'url(/images/Background.png)',
-            //     backgroundSize: 'cover',
-            // }}
+            className="!bg-transparent"
         >
             <Header />
             <Content className="md:mx-w-[1440px] mx-auto min-w-full">
