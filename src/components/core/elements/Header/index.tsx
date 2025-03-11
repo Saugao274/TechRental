@@ -143,18 +143,16 @@ export default function Header() {
     return (
         <motion.header
             ref={headerRef}
-            className="sticky top-0 z-50 w-full bg-white shadow-sm"
+            className="sticky top-0 z-50 w-full  md:translate-y-5"
             animate={{
-                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.266)',
-                backgroundColor: atTop ? '#ffffff' : '#ffffff',
-                // top: isVisible ? 0 : -100,
+                top: isVisible ? 0 : -120,
             }}
             transition={{
                 duration: 0.3,
                 ease: 'easeInOut',
             }}
         >
-            <div className="mx-auto flex max-w-[1440px] flex-row items-center justify-between px-4 py-3 md:px-6 md:py-5 lg:px-[80px]">
+            <div className="mx-auto flex max-w-[1280px] flex-row items-center justify-between rounded-[20px] bg-white bg-opacity-80 px-4 py-3 md:px-6 md:py-5 lg:px-[10px]">
                 <div className="flex items-center">
                     {/* Mobile menu button */}
                     <button
@@ -320,7 +318,7 @@ export default function Header() {
                             }}
                             className="fixed inset-y-0 left-0 z-50 w-4/5 max-w-sm bg-white shadow-xl md:hidden"
                         >
-                            <div className="flex h-fit flex-col overflow-y-auto overflow-x-hidden">
+                            <div className="flex h-fit flex-col overflow-y-auto overflow-x-hidden bg-white">
                                 <div className="flex w-full flex-row items-center justify-between border-b px-4 py-4">
                                     <div
                                         className="max-w-[100px]"
