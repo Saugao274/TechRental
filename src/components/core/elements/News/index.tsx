@@ -4,6 +4,7 @@ import NewsCard from '../../common/CardCommon/NewsCard'
 import ButtonCommon from '../../common/ButtonCommon'
 import AllNews from './AllNews'
 import { NewsData } from '@/data/news'
+import SectionCommon from '../../common/SectionCommon'
 
 const News = () => {
     const mostViewedNews = NewsData.filter((news) => news.isMostViewed).slice(
@@ -13,7 +14,7 @@ const News = () => {
     const isLasterNews = NewsData.filter((news) => news.isLaster).slice(0, 3)
 
     return (
-        <div className="flex flex-col gap-5">
+        <SectionCommon className="flex flex-col gap-5">
             <PageHader title="Tin tức" />
             <div className="flex flex-col gap-14">
                 <div className="max-h-680px flex justify-between gap-12">
@@ -52,7 +53,7 @@ const News = () => {
                 </div>
                 <AllNews newsList={NewsData.sort()} />
             </div>
-        </div>
+        </SectionCommon>
     )
 }
 

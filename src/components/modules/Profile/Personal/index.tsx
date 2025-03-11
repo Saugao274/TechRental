@@ -106,7 +106,7 @@ export default function PersonalProfile() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {/* Owned Products */}
                 <Card className="shadow-sm">
-                    <div className="mb-2 flex items-center">
+                    <div className="mb-2 flex flex-row-reverse items-center justify-between">
                         <Star className="mr-2 text-blue-500" />
                         <h3 className="font-medium">Danh giá sản phẩm</h3>
                     </div>
@@ -115,8 +115,8 @@ export default function PersonalProfile() {
                     </h2>
                     <p className="text-sm text-gray-500">đã đăng bán</p>
                     <ButtonCommon
-                        type="link"
-                        className="mt-2 p-0 text-blue-500"
+                        variant="outlined"
+                        className="mt-2 w-full p-0 text-primary"
                     >
                         Xem chi tiết
                     </ButtonCommon>
@@ -124,7 +124,7 @@ export default function PersonalProfile() {
 
                 {/* Renting Products */}
                 <Card className="shadow-sm">
-                    <div className="mb-2 flex items-center">
+                    <div className="mb-2 flex flex-row-reverse items-center justify-between">
                         <Clock className="mr-2 text-blue-500" />
                         <h3 className="font-medium">Thời gian thuê hàng</h3>
                     </div>
@@ -132,14 +132,17 @@ export default function PersonalProfile() {
                         {user.rentingProducts} sản phẩm
                     </h2>
                     <p className="text-sm text-gray-500">đang thuê</p>
-                    <Button type="link" className="mt-2 p-0 text-blue-500">
+                    <ButtonCommon
+                        variant="outlined"
+                        className="mt-2 w-full p-0 text-primary"
+                    >
                         Xem chi tiết
-                    </Button>
+                    </ButtonCommon>
                 </Card>
 
                 {/* Rented Products */}
                 <Card className="shadow-sm">
-                    <div className="mb-2 flex items-center">
+                    <div className="mb-2 flex flex-row-reverse items-center justify-between">
                         <Clock className="mr-2 text-blue-500" />
                         <h3 className="font-medium">Lịch sử thuê</h3>
                     </div>
@@ -147,43 +150,50 @@ export default function PersonalProfile() {
                         {user.rentedProducts} sản phẩm
                     </h2>
                     <p className="text-sm text-gray-500">đã thuê</p>
-                    <Button type="link" className="mt-2 p-0 text-blue-500">
+                    <ButtonCommon
+                        variant="outlined"
+                        className="mt-2 w-full p-0 text-primary"
+                    >
                         Xem chi tiết
-                    </Button>
+                    </ButtonCommon>
                 </Card>
             </div>
 
             {/* Landlord Information */}
-            <Card className="shadow-sm">
+            <div className="">
                 <h2 className="mb-4 text-lg font-bold">
                     Thông tin người cho thuê
                 </h2>
                 {!user.isLandlord ? (
-                    <div className="flex items-center">
-                        <Avatar
-                            size={48}
-                            icon={<User />}
-                            className="mr-4 bg-gray-300"
-                        />
-                        <div>
-                            <h3 className="font-medium">
-                                Bạn chưa đăng ký làm người cho thuê
-                            </h3>
-                            <p className="mb-2 text-sm text-gray-500">
-                                Đăng ký ngay để bắt đầu cho thuê sản phẩm của
-                                bạn
-                            </p>
-                            <Button type="primary" className="bg-blue-800">
-                                Đăng ký ngay
-                            </Button>
+                    <Card className="flex items-center">
+                        <div className="flex flex-row items-center gap-5">
+                            <Avatar
+                                size={48}
+                                icon={<User />}
+                                className="mr-4 bg-gray-300"
+                            />
+                            <div>
+                                <h3 className="font-medium">
+                                    Bạn chưa đăng ký làm người cho thuê
+                                </h3>
+                                <p className="mb-2 text-sm text-gray-500">
+                                    Đăng ký ngay để bắt đầu cho thuê sản phẩm
+                                    của bạn
+                                </p>
+                                <ButtonCommon
+                                    type="primary"
+                                >
+                                    Đăng ký ngay
+                                </ButtonCommon>
+                            </div>
                         </div>
-                    </div>
+                    </Card>
                 ) : (
-                    <div>
+                    <Card>
                         <p>Bạn đã đăng ký làm người cho thuê</p>
-                    </div>
+                    </Card>
                 )}
-            </Card>
+            </div>
         </main>
     )
 }

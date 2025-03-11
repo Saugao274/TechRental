@@ -6,10 +6,10 @@ import React from 'react'
 
 const Home = () => {
     return (
-        <SectionCommon>
-            <div>HOME</div>
+        <div className="mx-auto max-w-[1440px]">
+            <SectionCommon>HOME</SectionCommon>
             <News />
-        </SectionCommon>
+        </div>
     )
 }
 

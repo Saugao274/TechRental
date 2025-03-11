@@ -23,11 +23,11 @@ export default function ProfileRootLayout({
 }) {
     return (
         <Layout
-            style={{
-                backgroundImage: 'url(/images/Background.png)',
-                backgroundSize: 'cover',
-            }}
-            className="!bg-white"
+            // style={{
+            //     backgroundImage: 'url(/images/Background.png)',
+            //     backgroundSize: 'cover',
+            // }}
+            className="!bg-white max-w-[1440px] mx-auto"
         >
             <SectionCommon>
                 <div className="flex flex-row gap-[40px]">
