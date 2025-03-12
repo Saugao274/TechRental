@@ -17,8 +17,8 @@ const News = () => {
         <SectionCommon className="flex flex-col gap-12">
             <PageHader title="Tin tức" />
             <div className="flex flex-col gap-14">
-                <div className="max-h-680px flex md:flex-row flex-col justify-between gap-12">
-                    <div className="flex w-full md:w-3/4 flex-col justify-between gap-5">
+                <div className="max-h-680px flex flex-col justify-between gap-12 md:flex-row">
+                    <div className="flex w-full flex-col justify-between gap-5 md:w-3/4">
                         {isLasterNews.map((news, index) => (
                             <NewsCard
                                 key={index}
@@ -31,7 +31,7 @@ const News = () => {
                             />
                         ))}
                     </div>
-                    <div className="flex w-full md:w-1/4 flex-col gap-5">
+                    <div className="flex w-full flex-col gap-5 md:w-1/4">
                         <ButtonCommon
                             type="primary"
                             className="!pointer-events-none !m-0 !w-max !text-[16px] !text-white"
@@ -39,9 +39,9 @@ const News = () => {
                             Xem nhiều
                         </ButtonCommon>
                         <div className="flex flex-col justify-between gap-2">
-                            {mostViewedNews.map((news, index) => (
+                            {mostViewedNews.map((news) => (
                                 <NewsCard
-                                    key={index}
+                                    key={news.keyID}
                                     id={news.keyID}
                                     type="mini"
                                     Image={news.Image}

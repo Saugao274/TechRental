@@ -6,38 +6,50 @@ const carouselItems = [
     {
         id: 1,
         title: 'adhkadlsjdla',
-        image: '/images/Slider/TEST.webp',
+        alt: 'adadhlajdla',
+        video: '/videos/slider.mp4',
+        autoPlayInterval: 20000,
+    },
+    {
+        id: 0,
+        title: 'adhkadlsjdla',
+        image: '/images/Slider/Slider.png',
         alt: 'adadhlajdla',
     },
+
     {
         id: 2,
         title: 'kjhflfjlsdfjlsdf',
         image: '/images/Slider/Slider1.png',
-
         alt: 'dsklfhslfjlsfs',
     },
-    {
-        id: 3,
-        title: 'kjhflfjlsdfjlsdf',
-        image: '/images/Slider/Slider1.png',
 
+    {
+        id: 4,
+        title: 'kjhflfjlsdfjlsdf',
+        image: '/images/Slider/Slider3.png',
         alt: 'dsklfhslfjlsfs',
     },
     {
         id: 4,
         title: 'kjhflfjlsdfjlsdf',
-        image: '/images/Slider/Slider1.png',
-
+        image: '/images/Slider/Slider4.png',
+        alt: 'dsklfhslfjlsfs',
+    },
+    {
+        id: 4,
+        title: 'kjhflfjlsdfjlsdf',
+        image: '/images/Slider/Slider5.png',
         alt: 'dsklfhslfjlsfs',
     },
 ]
 
 const Slider: React.FC = () => (
-    <SectionCommon className="flex flex-col gap-12 h-full md:full xl:h-[40em]">
+    <SectionCommon className="md:full flex h-full flex-col gap-12 xl:h-[40em]">
         <Carousel
             items={carouselItems}
             autoPlay
-            autoPlayInterval={2000}
+            autoPlayInterval={10000}
             dotType="line"
             // cornerRadius={10}
         />

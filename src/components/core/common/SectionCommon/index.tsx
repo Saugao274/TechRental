@@ -1,5 +1,4 @@
 import { cn } from '@/libs/utils'
-import { Layout } from 'antd'
 import { ClassValue } from 'clsx'
 import React from 'react'
 
@@ -12,7 +11,10 @@ export default function SectionCommon({
 }) {
     return (
         <div
-            className={cn('w-full p-5 md:px-[80px] md:py-[40px]', `${className}`)}
+            className={cn(
+                'w-full p-5 md:px-[80px] md:py-[40px]',
+                `${className}`,
+            )}
         >
             {children}
         </div>
