@@ -143,7 +143,7 @@ export default function Header() {
     return (
         <motion.header
             ref={headerRef}
-            className="sticky top-0 z-50 mt-5 w-full bg-white"
+            className="sticky top-0 z-50 mt-5 w-full"
             animate={
                 {
                     // top: isVisible ? 0 : -120,
@@ -154,7 +154,7 @@ export default function Header() {
                 ease: 'easeInOut',
             }}
         >
-            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between rounded-[16px] bg-blue-50 bg-opacity-80 py-3 shadow-lg">
+            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between rounded-[16px] bg-blue-50 bg-opacity-95 py-3 shadow-lg">
                 <div className="flex items-center">
                     {/* Mobile menu button */}
                     <button
