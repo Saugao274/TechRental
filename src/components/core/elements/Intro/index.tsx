@@ -37,21 +37,21 @@ const Intro = () => {
                 <div className="relative h-auto w-full">
                     {/* Đánh giá bên trái */}
                     <motion.img
-                        initial={{ x: -50, opacity: 1 }} // Luôn hiển thị
+                        initial={{ x: -50, opacity: 1 }}
                         animate="floating1"
                         whileHover="hover"
                         variants={floatingVariants}
-                        className="absolute -left-28 top-36 w-1/4"
+                        className="absolute -left-20 top-36 w-1/4"
                         src="/images/Intro/Comment1.png"
                     />
 
                     {/* Đánh giá bên phải */}
                     <motion.img
-                        initial={{ x: 50, opacity: 1 }} // Luôn hiển thị
+                        initial={{ x: 50, opacity: 1 }}
                         animate="floating2"
                         whileHover="hover"
                         variants={floatingVariants}
-                        className="absolute -right-28 top-36 w-1/4"
+                        className="absolute -right-16 top-36 w-1/4"
                         src="/images/Intro/Comment2.png"
                     />
                 </div>
