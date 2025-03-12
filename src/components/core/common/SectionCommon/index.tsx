@@ -8,13 +8,11 @@ export default function SectionCommon({
     className,
 }: {
     children: React.ReactNode
-    className?: ClassValue;
+    className?: ClassValue
 }) {
     return (
         <div
-            className={cn('w-full p-5 md:px-[80px] md:py-[40px]', {
-                className,
-            })}
+            className={cn('w-full p-5 md:px-[80px] md:py-[40px]', `${className}`)}
         >
             {children}
         </div>

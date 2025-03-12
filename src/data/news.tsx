@@ -1,0 +1,145 @@
+export const NewsData = [
+    {
+        keyID: 'sony-a7c-ii-a6700',
+        Image: '/News/HNews1.png',
+        Title: 'Sony A7C II và A6700 - Công nghệ mới cho nhiếp ảnh gia',
+        Details:
+            'Sony A7C II và A6700 nặng khoảng 500 gram, ứng dụng công cụ xử lý mới kết hợp thuật toán phơi sáng tự động, phù hợp người dùng cá nhân, bán chuyên.',
+        Date: '10/03/2025',
+        Type: 'Máy ảnh Sony',
+        isLaster: true,
+        isMostViewed: false,
+    },
+    {
+        keyID: 'canon-eos-r50',
+        Image: '/News/HNews2.png',
+        Title: 'Canon EOS R50 - Lựa chọn tối ưu cho người mới',
+        Details:
+            'Sony A7C II và A6700 nặng khoảng 500 gram, ứng dụng công cụ xử lý mới kết hợp thuật toán phơi sáng tự động, phù hợp người dùng cá nhân, bán chuyên.',
+        Date: '05/06/2023',
+        Type: 'Máy ảnh Canon',
+        isLaster: false,
+        isMostViewed: true,
+    },
+    {
+        keyID: 'so-sanh-canon-eos-r50-sony-zv-e10',
+        Image: '/News/HNews3.png',
+        Title: 'So sánh Canon EOS R50 và Sony ZV-E10',
+        Details:
+            'Hai mẫu máy ảnh dành cho vlogger, nhưng đâu là lựa chọn tốt hơn giữa Canon EOS R50 và Sony ZV-E10?',
+        Date: '02/07/2023',
+        Type: 'So sánh máy ảnh',
+        isLaster: true,
+        isMostViewed: true,
+    },
+    {
+        keyID: 'fujifilm-x-t5',
+        Image: '/News/MNews1.png',
+        Title: 'Hai dòng máy ảnh Sony A7C II và A6700 nhỏ gọn, ứng dụng AI từ Sony',
+        Details:
+            'Sony A7C II và A6700 nặng khoảng 500 gram, ứng dụng công cụ xử lý mới kết hợp thuật toán phơi sáng tự động, phù hợp người dùng cá nhân, bán chuyên.',
+        Date: '20/07/2024',
+        Type: 'Máy ảnh Fujifilm',
+        isLaster: true,
+        isMostViewed: false,
+    },
+    {
+        keyID: 'leica-m11-p',
+        Image: '/News/MNews2.png',
+        Title: 'Leica M11-P - Biểu tượng của phong cách và chất lượng',
+        Details:
+            'Leica M11-P kết hợp thiết kế cổ điển với công nghệ hiện đại, chất lượng hình ảnh sắc nét, màu sắc chân thực.',
+        Date: '08/05/2024',
+        Type: 'Máy ảnh Leica',
+        isLaster: false,
+        isMostViewed: true,
+    },
+    {
+        keyID: 'sony-zv-e10',
+        Image: '/News/MNews3.png',
+        Title: 'Sony ZV-E10 - Máy ảnh hoàn hảo cho streamer',
+        Details:
+            'Sony ZV-E10 sở hữu thiết kế nhỏ gọn, màn hình xoay lật, phù hợp với các nhà sáng tạo nội dung.',
+        Date: '15/08/2024',
+        Type: 'Máy ảnh Sony',
+        isLaster: true,
+        isMostViewed: true,
+    },
+    {
+        keyID: 'panasonic-gh6',
+        Image: '/News/MNews4.png',
+        Title: 'Panasonic GH6 - Máy quay chuyên nghiệp giá tốt',
+        Details:
+            'Với khả năng quay video 5.7K, Panasonic GH6 mang lại chất lượng hình ảnh sắc nét, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
+        Date: '25/09/2024',
+        Type: 'Máy ảnh Panasonic',
+        isLaster: false,
+        isMostViewed: true,
+    },
+    {
+        keyID: 'nikon-z9',
+        Image: '/News/MNews5.png',
+        Title: 'Nikon Z9 - Siêu phẩm flagship của Nikon',
+        Details:
+            'Nikon Z9 với tốc độ chụp siêu nhanh, quay video 8K, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
+        Date: '05/11/2024',
+        Type: 'Máy ảnh Nikon',
+        isLaster: true,
+        isMostViewed: false,
+    },
+    {
+        keyID: 'nikon-z8',
+        Image: '/News/MNews6.png',
+        Title: 'Nikon Z8 - Phiên bản gọn nhẹ của Z9',
+        Details:
+            'Nikon Z8 giữ nguyên sức mạnh từ Z9 nhưng có thiết kế nhỏ hơn, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
+        Date: '12/11/2024',
+        Type: 'Máy ảnh Nikon',
+        isLaster: true,
+        isMostViewed: false,
+    },
+    {
+        keyID: 'fujifilm-gfx-100-ii',
+        Image: '/News/VNews4.png',
+        Title: 'Fujifilm GFX 100 II - Trải nghiệm cảm biến Medium Format',
+        Details:
+            'Fujifilm GFX 100 II mang đến độ phân giải 100MP, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
+        Date: '18/11/2024',
+        Type: 'Máy ảnh Fujifilm',
+        isLaster: true,
+        isMostViewed: false,
+    },
+    {
+        keyID: 'canon-r5-mark-ii',
+        Image: '/News/VNews1.png',
+        Title: 'Canon R5 Mark II sắp ra mắt với nhiều nâng cấp',
+        Details:
+            'Canon R5 Mark II được cho là sẽ có cảm biến mới, hỗ trợ quay video 8K tốt hơn, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
+        Date: '25/11/2024',
+        Type: 'Máy ảnh Canon',
+        isLaster: true,
+        isMostViewed: false,
+    },
+    {
+        keyID: 'sony-a9-iii',
+        Image: '/News/VNews2.png',
+        Title: 'Sony A9 III - Chiếc máy ảnh không gương lật nhanh nhất',
+        Details:
+            'Sony A9 III mang lại tốc độ chụp liên tục cực cao, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
+        Date: '30/11/2024',
+        Type: 'Máy ảnh Sony',
+        isLaster: true,
+        isMostViewed: false,
+    },
+    {
+        keyID: 'leica-sl3',
+        Image: '/News/VNews3.png',
+        Title: 'Leica SL3 - Máy ảnh full-frame mirrorless mới từ Leica',
+        Details:
+            'Leica SL3 với thiết kế chắc chắn, cảm biến 60MP, màu sắc chân thực, giá cả phải chăng, phù hợp với các nhà làm phim độc lập, nhà sáng tạo nội dung, vlogger, streamer...',
+        Date: '05/12/2024',
+        Type: 'Máy ảnh Leica',
+        isLaster: true,
+        isMostViewed: false,
+    },
+]

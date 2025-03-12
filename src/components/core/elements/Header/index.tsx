@@ -54,7 +54,7 @@ export default function Header() {
 
         // Determine scroll direction
         const direction = latest > lastScrollY ? 'down' : 'up'
-
+        console.log(direction)
         // Only hide header when scrolling down and not at the top
         // Show header when scrolling up
         if (direction === 'down' && latest > 100 && isVisible) {
@@ -143,18 +143,18 @@ export default function Header() {
     return (
         <motion.header
             ref={headerRef}
-            className="sticky top-0 z-50 w-full shadow-sm"
-            animate={{
-                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.266)',
-                backgroundColor: atTop ? 'transparent' : '#ffffff',
-                // top: isVisible ? 0 : -80,
-            }}
+            className="sticky top-0 z-50 mt-5 w-full"
+            animate={
+                {
+                    // top: isVisible ? 0 : -120,
+                }
+            }
             transition={{
-                // duration: 0.3,
+                duration: 0.3,
                 ease: 'easeInOut',
             }}
         >
-            <div className="mx-auto flex max-w-[1440px] flex-row items-center justify-between px-4 py-3 md:px-6 md:py-5 lg:px-[80px]">
+            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between rounded-[16px] bg-blue-50 bg-opacity-95 py-3 shadow-lg">
                 <div className="flex items-center">
                     {/* Mobile menu button */}
                     <button
@@ -202,7 +202,7 @@ export default function Header() {
                 </div>
 
                 {/* Search bar - hidden on smallest screens, visible on sm and up */}
-                <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[400px]">
+                <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[308px]">
                     <Search size={16} className="text-primary" />
                     <input
                         className="w-full bg-transparent outline-none placeholder:text-primary placeholder:text-opacity-60"
@@ -320,7 +320,7 @@ export default function Header() {
                             }}
                             className="fixed inset-y-0 left-0 z-50 w-4/5 max-w-sm bg-white shadow-xl md:hidden"
                         >
-                            <div className="flex h-full flex-col overflow-y-auto overflow-x-hidden">
+                            <div className="flex h-fit flex-col overflow-y-auto overflow-x-hidden bg-white">
                                 <div className="flex w-full flex-row items-center justify-between border-b px-4 py-4">
                                     <div
                                         className="max-w-[100px]"
@@ -394,16 +394,16 @@ export default function Header() {
                                             label: 'Tin tức',
                                             delay: 0.25,
                                         },
-                                        {
-                                            href: '#',
-                                            label: 'Sản phẩm mới',
-                                            delay: 0.3,
-                                        },
-                                        {
-                                            href: '#',
-                                            label: 'Thuê nhiều',
-                                            delay: 0.35,
-                                        },
+                                        // {
+                                        //     href: '#',
+                                        //     label: 'Sản phẩm mới',
+                                        //     delay: 0.3,
+                                        // },
+                                        // {
+                                        //     href: '#',
+                                        //     label: 'Thuê nhiều',
+                                        //     delay: 0.35,
+                                        // },
                                         {
                                             href: '#',
                                             label: 'Hỗ trợ',
