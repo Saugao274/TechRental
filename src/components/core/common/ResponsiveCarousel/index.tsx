@@ -116,26 +116,25 @@ export function Carousel({
             >
                 {items.map((item, index) =>
                     item.video !== undefined ? (
-                        // <div
-                        //     key={item.id}
-                        //     className="relative w-full flex-shrink-0"
-                        //     style={{ aspectRatio: '16/9' }}
-                        //     aria-roledescription="slide"
-                        //     aria-label={`${index + 1} of ${totalItems}`}
-                        // >
-                        //     <video
-                        //         ref={videoRef}
-                        //         className="absolute left-0 top-0 h-full w-full object-cover"
-                        //         autoPlay
-                        //         loop
-                        //         muted
-                        //         playsInline
-                        //     >
-                        //         <source src={item.video} type="video/mp4" />
-                        //         Your browser does not support the video tag.
-                        //     </video>
-                        // </div>
-                        <div></div>
+                        <div
+                            key={item.id}
+                            className="relative w-full flex-shrink-0"
+                            style={{ aspectRatio: '16/9' }}
+                            aria-roledescription="slide"
+                            aria-label={`${index + 1} of ${totalItems}`}
+                        >
+                            <video
+                                ref={videoRef}
+                                className="absolute left-0 top-0 h-full w-full object-cover"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                            >
+                                <source src={item.video} type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
                     ) : (
                         <div
                             key={item.id}
