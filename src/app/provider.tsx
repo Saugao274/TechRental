@@ -40,6 +40,7 @@ export default function AppProvider({
                     },
                     token: {
                         colorPrimary: themes.default.colors.primary,
+                        fontFamily: "'__Be_Vietnam_Pro_e90ede', '__Be_Vietnam_Pro_Fallback_e90ede'",
                     },
                 }}
             >

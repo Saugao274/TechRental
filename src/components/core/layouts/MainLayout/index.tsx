@@ -14,7 +14,7 @@ function MainLayout({ children }: MainLayoutProps) {
             className="!bg-transparent"
         >
             <Header />
-            <Content className="md:mx-w-[1440px] mx-auto min-w-full">
+            <Content className="md:mx-w-[1440px] mx-auto min-w-full mt-0 md:mt-5">
                 {children}
             </Content>
         </Layout>
