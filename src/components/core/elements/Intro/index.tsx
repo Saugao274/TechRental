@@ -1,29 +1,57 @@
 import React from 'react'
 import SectionCommon from '../../common/SectionCommon'
 import ButtonCommon from '../../common/ButtonCommon'
-import {
-    AntDesignOutlined,
-    StarFilled,
-    StarTwoTone,
-    UserAddOutlined,
-    UserOutlined,
-} from '@ant-design/icons'
-import { Avatar, Image, Tooltip } from 'antd'
-import { StarHalf } from 'lucide-react'
+import { StarFilled, UserAddOutlined } from '@ant-design/icons'
+import { motion } from 'framer-motion'
+import { Avatar } from 'antd'
+
 const Intro = () => {
+    const floatingVariants = {
+        floating1: {
+            y: [0, -10, 0],
+            transition: {
+                repeat: Infinity,
+                repeatType: 'mirror' as const,
+                duration: 2,
+                ease: 'easeInOut',
+            },
+        },
+        floating2: {
+            y: [0, 0, -10],
+            transition: {
+                repeat: Infinity,
+                repeatType: 'mirror' as const,
+                duration: 2,
+                ease: 'easeInOut',
+            },
+        },
+        hover: {
+            scale: 1.2,
+            transition: { duration: 0.3 },
+        },
+    }
+
     return (
-        <SectionCommon className="flex flex-col items-center gap-12">
+        <SectionCommon className="flex flex-col items-center gap-12 !pb-4">
             <div className="flex flex-col items-center gap-4">
                 <div className="relative h-auto w-full">
                     {/* Đánh giá bên trái */}
-                    <img
-                        className="absolute -left-28 top-36 w-1/4"
+                    <motion.img
+                        initial={{ x: -50, opacity: 1 }}
+                        animate="floating1"
+                        whileHover="hover"
+                        variants={floatingVariants}
+                        className="absolute -left-20 top-36 w-1/4"
                         src="/images/Intro/Comment1.png"
                     />
 
                     {/* Đánh giá bên phải */}
-                    <img
-                        className="absolute -right-28 top-36 w-1/4"
+                    <motion.img
+                        initial={{ x: 50, opacity: 1 }}
+                        animate="floating2"
+                        whileHover="hover"
+                        variants={floatingVariants}
+                        className="absolute -right-16 top-36 w-1/4"
                         src="/images/Intro/Comment2.png"
                     />
                 </div>
