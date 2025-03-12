@@ -84,7 +84,6 @@ const Intro = () => {
                 <p className="bg-gradient-to-b from-[#2D84BE] to-blue-500 bg-clip-text font-Be_Vietnam_Pro text-3xl font-bold text-transparent">
                     Nâng tầm trải nghiệm công nghệ, tối ưu mọi nhu cầu
                 </p>
-
                 <p className="w-2/3 text-center font-Be_Vietnam_Pro text-base">
                     Techrental cho thuê đa dạng thiết bị công nghệ, giúp khách
                     hàng tiếp cận công nghệ với chi phí hợp lý.
