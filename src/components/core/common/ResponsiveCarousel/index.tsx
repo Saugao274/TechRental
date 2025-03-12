@@ -114,7 +114,7 @@ export function Carousel({
                 className="flex h-full w-full transition-transform duration-500 ease-in-out"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-                {items.map((item, index) =>
+                {items.map((item: any, index) =>
                     item.video !== undefined ? (
                         <div
                             key={item.id}
