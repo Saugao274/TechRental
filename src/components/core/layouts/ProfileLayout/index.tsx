@@ -24,13 +24,13 @@ export default function ProfileRootLayout({
     return (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
-                <div className="flex flex-row gap-[40px]">
+                <div className="flex flex-row gap-[20px]">
                     <LeftSideBarElement />
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="w-full md:w-3/4"
+                        className="w-full md:w-4/5"
                     >
                         {children}
                     </motion.div>
@@ -46,7 +46,7 @@ export function LeftSideBarElement() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="hidden w-1/4 md:block"
+            className="hidden w-1/5 md:block"
         >
             <div className="flex flex-col">
                 <div>
