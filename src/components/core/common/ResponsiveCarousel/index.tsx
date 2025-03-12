@@ -9,8 +9,10 @@ interface CarouselProps {
     items: {
         id: number | string
         title?: string
-        image: string
+        image?: string
         alt?: string
+        video?: string
+        carouselItems?: number
     }[]
     autoPlay?: boolean
     autoPlayInterval?: number
@@ -35,7 +37,7 @@ export function Carousel({
     const [isHovering, setIsHovering] = useState(false)
     const autoPlayRef = useRef<NodeJS.Timeout | null>(null)
     const totalItems = items.length
-
+    const videoRef = useRef<HTMLVideoElement>(null)
     // Go to next slide
     const nextSlide = useCallback(() => {
         setCurrentIndex((prevIndex) =>
@@ -85,6 +87,11 @@ export function Carousel({
             window.removeEventListener('keydown', handleKeyDown)
         }
     }, [nextSlide, prevSlide])
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.play().catch((err) => console.log(err))
+        }
+    }, [])
 
     // Apply corner radius based on prop
     const borderRadiusStyle = cornerRadius
@@ -107,24 +114,50 @@ export function Carousel({
                 className="flex h-full w-full transition-transform duration-500 ease-in-out"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-                {items.map((item, index) => (
-                    <div
-                        key={item.id}
-                        className="relative w-full flex-shrink-0"
-                        style={{ aspectRatio: '16/9' }}
-                        aria-roledescription="slide"
-                        aria-label={`${index + 1} of ${totalItems}`}
-                    >
-                        <Image
-                            src={item.image || '/placeholder.svg'}
-                            alt={item.alt || item.title || `Slide ${index + 1}`}
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-                            className="object-cover"
-                            priority={index === 0}
-                        />
-                    </div>
-                ))}
+                {items.map((item, index) =>
+                    item.video !== undefined ? (
+                        <div
+                            key={item.id}
+                            className="relative w-full flex-shrink-0"
+                            style={{ aspectRatio: '16/9' }}
+                            aria-roledescription="slide"
+                            aria-label={`${index + 1} of ${totalItems}`}
+                        >
+                            <video
+                                ref={videoRef}
+                                className="absolute left-0 top-0 h-full w-full object-cover"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                            >
+                                <source src={item.video} type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    ) : (
+                        <div
+                            key={item.id}
+                            className="relative w-full flex-shrink-0"
+                            style={{ aspectRatio: '16/9' }}
+                            aria-roledescription="slide"
+                            aria-label={`${index + 1} of ${totalItems}`}
+                        >
+                            <Image
+                                src={item.image || '/placeholder.svg'}
+                                alt={
+                                    item.alt ||
+                                    item.title ||
+                                    `Slide ${index + 1}`
+                                }
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+                                className="object-cover"
+                                priority={index === 0}
+                            />
+                        </div>
+                    ),
+                )}
             </div>
 
             {/* Navigation Arrows */}
