@@ -6,6 +6,7 @@ import News from '@/components/core/elements/News'
 import HotProducts from '@/components/core/elements/Products/HotProducts'
 import NewProduct from '@/components/core/elements/Products/NewProduct'
 import Slider from '@/components/core/elements/Slider'
+import StaticHome from '@/components/core/elements/StaticHome'
 import React from 'react'
 
 const Home = () => {
@@ -19,6 +20,7 @@ const Home = () => {
             <HotProducts />
             <NewProduct />
             <News />
+            <StaticHome />
         </div>
     )
 }

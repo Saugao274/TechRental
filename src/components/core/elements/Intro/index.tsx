@@ -1,28 +1,56 @@
 import React from 'react'
 import SectionCommon from '../../common/SectionCommon'
 import ButtonCommon from '../../common/ButtonCommon'
-import {
-    AntDesignOutlined,
-    StarFilled,
-    StarTwoTone,
-    UserAddOutlined,
-    UserOutlined,
-} from '@ant-design/icons'
-import { Avatar, Image, Tooltip } from 'antd'
-import { StarHalf } from 'lucide-react'
+import { StarFilled, UserAddOutlined } from '@ant-design/icons'
+import { motion } from 'framer-motion'
+import { Avatar } from 'antd'
+
 const Intro = () => {
+    const floatingVariants = {
+        floating1: {
+            y: [0, -10, 0],
+            transition: {
+                repeat: Infinity,
+                repeatType: 'mirror' as const,
+                duration: 2,
+                ease: 'easeInOut',
+            },
+        },
+        floating2: {
+            y: [0, 0, -10],
+            transition: {
+                repeat: Infinity,
+                repeatType: 'mirror' as const,
+                duration: 2,
+                ease: 'easeInOut',
+            },
+        },
+        hover: {
+            scale: 1.2,
+            transition: { duration: 0.3 },
+        },
+    }
+
     return (
-        <SectionCommon className="flex flex-col items-center gap-12">
+        <SectionCommon className="flex flex-col items-center gap-12 !pb-4">
             <div className="flex flex-col items-center gap-4">
                 <div className="relative h-auto w-full">
                     {/* Đánh giá bên trái */}
-                    <img
+                    <motion.img
+                        initial={{ x: -50, opacity: 1 }} // Luôn hiển thị
+                        animate="floating1"
+                        whileHover="hover"
+                        variants={floatingVariants}
                         className="absolute -left-28 top-36 w-1/4"
                         src="/images/Intro/Comment1.png"
                     />
 
                     {/* Đánh giá bên phải */}
-                    <img
+                    <motion.img
+                        initial={{ x: 50, opacity: 1 }} // Luôn hiển thị
+                        animate="floating2"
+                        whileHover="hover"
+                        variants={floatingVariants}
                         className="absolute -right-28 top-36 w-1/4"
                         src="/images/Intro/Comment2.png"
                     />
@@ -56,6 +84,7 @@ const Intro = () => {
                 <p className="bg-gradient-to-b from-[#2D84BE] to-blue-500 bg-clip-text font-Be_Vietnam_Pro text-3xl font-bold text-transparent">
                     Nâng tầm trải nghiệm công nghệ, tối ưu mọi nhu cầu
                 </p>
+
                 <p className="w-2/3 text-center font-Be_Vietnam_Pro text-base">
                     Techrental cho thuê đa dạng thiết bị công nghệ, giúp khách
                     hàng tiếp cận công nghệ với chi phí hợp lý.
