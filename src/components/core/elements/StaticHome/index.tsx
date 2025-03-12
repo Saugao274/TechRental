@@ -47,7 +47,7 @@ const StaticHome = () => {
 
     return (
         <SectionCommon>
-            <div className="mx-20 flex items-center justify-center rounded-lg border-t border-solid border-cyan-800 bg-white p-2 shadow-xl">
+            <div className="mx-20 flex items-center justify-center rounded-lg border-t border-solid bg-white p-2 shadow-xl">
                 <Row
                     gutter={32}
                     justify="space-around"
