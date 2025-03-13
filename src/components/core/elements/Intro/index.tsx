@@ -56,7 +56,7 @@ const Intro = () => {
                     />
                 </div>
 
-                <p className="gap flex items-center gap-3 font-Be_Vietnam_Pro font-bold">
+                <p className="gap font-Be_Vietnam_Pro flex items-center gap-3 font-bold">
                     <span className="bg-gradient-to-b from-blue-700 to-blue-500 bg-clip-text text-4xl text-transparent">
                         Tech
                         <span className="bg-gradient-to-r from-blue-500 to-blue-900 bg-clip-text text-4xl text-transparent">
@@ -81,16 +81,16 @@ const Intro = () => {
                         </span>
                     </ButtonCommon>
                 </p>
-                <p className="bg-gradient-to-b from-[#2D84BE] to-blue-500 bg-clip-text font-Be_Vietnam_Pro text-3xl font-bold text-transparent">
+                <p className="font-Be_Vietnam_Pro bg-gradient-to-b from-[#2D84BE] to-blue-500 bg-clip-text text-3xl font-bold text-transparent">
                     Nâng tầm trải nghiệm công nghệ, tối ưu mọi nhu cầu
                 </p>
-                <p className="w-2/3 text-center font-Be_Vietnam_Pro text-base">
+                <p className="font-Be_Vietnam_Pro w-2/3 text-center text-base">
                     Techrental cho thuê đa dạng thiết bị công nghệ, giúp khách
                     hàng tiếp cận công nghệ với chi phí hợp lý.
                 </p>
                 <ButtonCommon
                     type="primary"
-                    className="flex items-center !gap-2 !rounded-lg !border-white !px-4 !py-4 !shadow-[-6px_-6px_12px_#fff]"
+                    className="flex items-center !gap-2 !rounded-lg !border-white !px-4 !py-4 !text-base !shadow-[-6px_-6px_12px_#fff]"
                 >
                     <span>Đăng ký để trải nghiệm</span>
                     <UserAddOutlined />
@@ -104,7 +104,7 @@ const Intro = () => {
                     <Avatar src="/images/Intro/avt1.png" />
                 </Avatar.Group>
 
-                <div className="flex items-center gap-1 font-bold">
+                <div className="flex items-center gap-1 text-xs font-bold">
                     <StarFilled style={{ color: 'yellow', fontSize: 18 }} />
                     <p className="text-xs"> 4,8/5</p>
                 </div>
