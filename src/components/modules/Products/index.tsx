@@ -1,4 +1,3 @@
-import SectionCommon from '@/components/core/common/SectionCommon'
 import HeaderProduct from '@/components/core/elements/Products/AllProduct/HeaderProduct'
 import NewArrivals from '@/components/core/elements/Products/AllProduct/NewArrivals'
 import RecommentProduct from '@/components/core/elements/Products/AllProduct/RecommentProduct'

@@ -1,3 +1,4 @@
+'use client'
 import SectionCommon from '@/components/core/common/SectionCommon'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import React, { useState } from 'react'

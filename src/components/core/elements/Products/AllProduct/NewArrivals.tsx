@@ -1,3 +1,4 @@
+'use client'
 import NewArrivalCard from '@/components/core/common/CardCommon/ProductCard/NewArrivalCard'
 import PageHader from '@/components/core/common/PageHeader'
 import SectionCommon from '@/components/core/common/SectionCommon'

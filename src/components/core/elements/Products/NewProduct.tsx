@@ -15,16 +15,7 @@ const NewProduct = () => {
             </div>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
                 {newProductsData.slice(0.4).map((product, index) => (
-                    <ProductCard
-                        key={index}
-                        Image={product.Image}
-                        Title={product.Title}
-                        Details={product.Details}
-                        Price={product.Price}
-                        view={product.View}
-                        id={product.Id}
-                        totalReviews={product.TotalReviews}
-                    />
+                    <ProductCard product={product} />
                 ))}
             </div>
         </SectionCommon>
