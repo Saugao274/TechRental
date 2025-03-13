@@ -12,12 +12,12 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
     return (
-        <Layout className="!bg-transparent">
+        <Layout className="!bg-transparent !font-vietnam">
             <Header />
             <Content className="md:mx-w-[1440px] mx-auto min-w-full">
                 {children}
             </Content>
-            <RobotChat />
+            {/* <RobotChat /> */}
             <ScrollButton />
         </Layout>
     )

@@ -33,7 +33,7 @@ export default function NewsCard({
                         <img
                             src={`/images/${Image}`}
                             alt=""
-                            className="aspect-[4/3] h-44 w-full scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100 md:w-72"
+                            className="aspect-[4/3] h-44 w-full scale-100 rounded-lg object-cover transition-all duration-300 hover:scale-105 md:w-72"
                         />
 
                         <div className="flex h-44 w-full flex-col justify-between">
@@ -63,7 +63,7 @@ export default function NewsCard({
                     <img
                         src={`/images/${Image}`}
                         alt=""
-                        className="aspect-[4/3] h-44 w-full scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100"
+                        className="aspect-[4/3] h-44 w-full scale-100 rounded-lg object-cover transition-all duration-300 hover:scale-105"
                     />
                     <div className="mt-4 flex w-full flex-col">
                         <h3 className="line-clamp-1 text-start text-lg font-semibold text-blue-900">
@@ -79,7 +79,7 @@ export default function NewsCard({
                     <img
                         src={`/images/${Image}`}
                         alt=""
-                        className="h-24 w-20 scale-100 rounded-lg object-cover brightness-50 transition-all duration-300 hover:scale-105 hover:brightness-100"
+                        className="h-24 w-20 scale-100 rounded-lg object-cover transition-all duration-300 hover:scale-105"
                     />
                     <div className="flex h-24 w-full flex-col">
                         <h3 className="line-clamp-2 text-lg font-semibold text-blue-900">

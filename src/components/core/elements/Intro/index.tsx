@@ -106,9 +106,9 @@ const Intro = () => {
 
                 <div className="flex items-center gap-1 font-bold">
                     <StarFilled style={{ color: 'yellow', fontSize: 18 }} />
-                    <p> 4,8/5</p>
+                    <p className="text-xs"> 4,8/5</p>
                 </div>
-                <p> Đánh giá từ khách hàng</p>
+                <p className="text-xs"> Đánh giá từ khách hàng</p>
             </div>
         </SectionCommon>
     )
