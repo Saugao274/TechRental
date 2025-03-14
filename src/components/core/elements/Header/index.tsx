@@ -254,7 +254,7 @@ export default function Header() {
                         </div>
                         <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
-                            onClick={() => router.push('/message')}
+                            onClick={() => router.push('/chat')}
                         >
                             <MessageCircle />
                             <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
@@ -582,7 +582,10 @@ const DropdownProfile = () => {
         {
             key: '3',
             label: (
-                <div className="flex flex-row items-center gap-2">
+                <div
+                    className="flex flex-row items-center gap-2"
+                    onClick={() => router.push('/signIn')}
+                >
                     <p className="text-[16px]">Đăng xuất</p>
                     <LogOut size={18} />
                 </div>

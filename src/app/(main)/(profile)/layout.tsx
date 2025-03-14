@@ -1,8 +1,6 @@
 import ProfileRootLayout from '@/components/core/layouts/ProfileLayout'
 import React from 'react'
 
-
-
 export default function ProfileLayout({
     children,
 }: {
