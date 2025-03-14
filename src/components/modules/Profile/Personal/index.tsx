@@ -1,7 +1,14 @@
 'use client'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import { Avatar, Badge, Button, Card, Divider, Modal } from 'antd'
-import { CalendarClock, Clock, ShieldCheck, ShieldUser, Star, User } from 'lucide-react'
+import {
+    CalendarClock,
+    Clock,
+    ShieldCheck,
+    ShieldUser,
+    Star,
+    User,
+} from 'lucide-react'
 import React, { useState } from 'react'
 
 export default function PersonalProfile() {
@@ -35,8 +42,8 @@ export default function PersonalProfile() {
 
             {/* Verification Status */}
             {user.isVerified && (
-                <div className="flex items-center rounded-md border border-green-100 bg-green-50 p-4">
-                    <ShieldCheck className="mr-2 text-xl text-green-500" />
+                <div className="flex items-center rounded-md border border-green-4  00 bg-green-50 p-4">
+                    <ShieldCheck className="mr-2 hidden text-xl text-green-500 md:block" />
                     <div>
                         <h3 className="font-bold text-green-800">
                             Đã xác minh
@@ -180,9 +187,7 @@ export default function PersonalProfile() {
                                     Đăng ký ngay để bắt đầu cho thuê sản phẩm
                                     của bạn
                                 </p>
-                                <ButtonCommon
-                                    type="primary"
-                                >
+                                <ButtonCommon type="primary">
                                     Đăng ký ngay
                                 </ButtonCommon>
                             </div>

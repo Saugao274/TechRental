@@ -31,13 +31,13 @@ const carouselItems = [
         alt: 'dsklfhslfjlsfs',
     },
     {
-        id: 4,
+        id: 5,
         title: 'kjhflfjlsdfjlsdf',
         image: '/images/Slider/Slider4.png',
         alt: 'dsklfhslfjlsfs',
     },
     {
-        id: 4,
+        id: 6,
         title: 'kjhflfjlsdfjlsdf',
         image: '/images/Slider/Slider5.png',
         alt: 'dsklfhslfjlsfs',

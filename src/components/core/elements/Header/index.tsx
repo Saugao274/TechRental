@@ -252,7 +252,10 @@ export default function Header() {
                                 <p className="text-[10px] text-white">2</p>
                             </div>
                         </div>
-                        <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
+                        <div
+                            className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
+                            onClick={() => router.push('/chat')}
+                        >
                             <MessageCircle />
                             <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                 <p className="text-[10px] text-white">7</p>
