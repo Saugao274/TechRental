@@ -1,22 +1,23 @@
-export const productsData = [
+export type ProductType = {
+    Image: string
+    Title: string
+    Details: string
+    Price: number
+    View: number
+    Id: string
+    TotalReviews: number
+    IsHotProduct: boolean
+    IsNewProduct: boolean
+    Category: string
+    Location: string
+}
+
+export const productsData: ProductType[] = [
+    // Điện thoại
     {
         Image: '/Products/PD1.png',
-        Title: 'DJI Osmo Pocket 3 Combo',
-        Details:
-            'Máy quay cầm tay nhỏ gọn với khả năng quay video 4K, chống rung mạnh mẽ.',
-        Price: 700000,
-        View: 200,
-        Id: 'dji-osmo-pocket-3',
-        TotalReviews: 30,
-        IsHotProduct: true,
-        IsNewProduct: false,
-        Category: 'Máy quay',
-    },
-    {
-        Image: '/Products/PD2.png',
         Title: 'iPhone 15 Pro Max',
-        Details:
-            'Siêu phẩm điện thoại với chip A17 Bionic và camera tiên tiến.',
+        Details: 'Chip A17 Bionic, màn hình ProMotion 120Hz, camera 48MP.',
         Price: 29990000,
         View: 1500,
         Id: 'iphone-15-pro-max',
@@ -24,12 +25,66 @@ export const productsData = [
         IsHotProduct: true,
         IsNewProduct: true,
         Category: 'Điện thoại',
+        Location: 'Hà Nội',
+    },
+    {
+        Image: '/Products/PD2.png',
+        Title: 'Samsung Galaxy S24 Ultra',
+        Details: 'Màn hình AMOLED 120Hz, Snapdragon 8 Gen 3, camera 200MP.',
+        Price: 28990000,
+        View: 1800,
+        Id: 'samsung-galaxy-s24-ultra',
+        TotalReviews: 620,
+        IsHotProduct: true,
+        IsNewProduct: true,
+        Category: 'Điện thoại',
+        Location: 'Đà Nẵng',
     },
     {
         Image: '/Products/PD3.png',
+        Title: 'Xiaomi 14 Ultra',
+        Details: 'Camera Leica, Snapdragon 8 Gen 3, pin 5000mAh.',
+        Price: 24990000,
+        View: 1400,
+        Id: 'xiaomi-14-ultra',
+        TotalReviews: 350,
+        IsHotProduct: true,
+        IsNewProduct: true,
+        Category: 'Điện thoại',
+        Location: 'Hồ Chí Minh',
+    },
+    {
+        Image: '/Products/PD4.png',
+        Title: 'Google Pixel 8 Pro',
+        Details: 'Chip Tensor G3, camera AI, màn hình LTPO OLED 120Hz.',
+        Price: 26990000,
+        View: 1250,
+        Id: 'google-pixel-8-pro',
+        TotalReviews: 410,
+        IsHotProduct: true,
+        IsNewProduct: true,
+        Category: 'Điện thoại',
+        Location: 'Hà Nội',
+    },
+    {
+        Image: '/Products/PD5.png',
+        Title: 'OnePlus 12',
+        Details: 'Snapdragon 8 Gen 3, màn hình 120Hz, pin 5000mAh.',
+        Price: 23990000,
+        View: 1100,
+        Id: 'oneplus-12',
+        TotalReviews: 300,
+        IsHotProduct: false,
+        IsNewProduct: true,
+        Category: 'Điện thoại',
+        Location: 'Đà Nẵng',
+    },
+
+    // Laptop
+    {
+        Image: '/Products/PD6.png',
         Title: 'MacBook Air M2',
-        Details:
-            'Laptop siêu mỏng nhẹ với hiệu năng vượt trội nhờ chip Apple M2.',
+        Details: 'Siêu mỏng nhẹ, hiệu năng mạnh mẽ với chip Apple M2.',
         Price: 25990000,
         View: 1200,
         Id: 'macbook-air-m2',
@@ -37,37 +92,27 @@ export const productsData = [
         IsHotProduct: false,
         IsNewProduct: true,
         Category: 'Laptop',
+        Location: 'Hồ Chí Minh',
     },
     {
-        Image: '/Products/PD4.png',
-        Title: 'Samsung Galaxy S23 Ultra',
-        Details:
-            'Màn hình Dynamic AMOLED 120Hz, camera 200MP chụp ảnh sắc nét.',
-        Price: 24990000,
-        View: 1800,
-        Id: 'samsung-galaxy-s23-ultra',
-        TotalReviews: 450,
-        IsHotProduct: true,
-        IsNewProduct: false,
-        Category: 'Điện thoại',
-    },
-    {
-        Image: '/Products/PD5.png',
-        Title: 'Asus ROG Strix G16',
-        Details: 'Laptop gaming mạnh mẽ với RTX 4060 và màn hình 165Hz.',
-        Price: 33990000,
+        Image: '/Products/PD7.png',
+        Title: 'Dell XPS 15 9530',
+        Details: 'Intel Core i9-13900H, màn hình OLED 4K, RTX 4060.',
+        Price: 45990000,
         View: 900,
-        Id: 'asus-rog-strix-g16',
-        TotalReviews: 200,
-        IsHotProduct: false,
-        IsNewProduct: false,
+        Id: 'dell-xps-15-9530',
+        TotalReviews: 250,
+        IsHotProduct: true,
+        IsNewProduct: true,
         Category: 'Laptop',
+        Location: 'Hà Nội',
     },
+
+    // Đồng hồ thông minh
     {
-        Image: '/Products/PD6.png',
+        Image: '/Products/PD1.png',
         Title: 'Apple Watch Ultra 2',
-        Details:
-            'Đồng hồ thông minh cao cấp dành cho người yêu thể thao và phiêu lưu.',
+        Details: 'Chống nước 100m, pin 36 giờ, thiết kế Titan siêu bền.',
         Price: 21990000,
         View: 600,
         Id: 'apple-watch-ultra-2',
@@ -75,12 +120,27 @@ export const productsData = [
         IsHotProduct: true,
         IsNewProduct: true,
         Category: 'Đồng hồ thông minh',
+        Location: 'Đà Nẵng',
     },
     {
-        Image: '/Products/PD7.png',
+        Image: '/Products/PD2.png',
+        Title: 'Samsung Galaxy Watch 6 Classic',
+        Details: 'Viền xoay, pin 40 giờ, theo dõi sức khỏe tiên tiến.',
+        Price: 12990000,
+        View: 700,
+        Id: 'samsung-galaxy-watch-6-classic',
+        TotalReviews: 180,
+        IsHotProduct: false,
+        IsNewProduct: true,
+        Category: 'Đồng hồ thông minh',
+        Location: 'Hồ Chí Minh',
+    },
+
+    // Tai nghe
+    {
+        Image: '/Products/PD3.png',
         Title: 'AirPods Pro 2',
-        Details:
-            'Tai nghe không dây với khả năng chống ồn chủ động và âm thanh tuyệt vời.',
+        Details: 'Chống ồn chủ động, Adaptive Transparency, pin 6 giờ.',
         Price: 5990000,
         View: 1100,
         Id: 'airpods-pro-2',
@@ -88,5 +148,75 @@ export const productsData = [
         IsHotProduct: false,
         IsNewProduct: true,
         Category: 'Phụ kiện',
+        Location: 'Hà Nội',
+    },
+    {
+        Image: '/Products/PD4.png',
+        Title: 'Sony WH-1000XM5',
+        Details: 'Chống ồn đỉnh cao, âm thanh Hi-Res, pin 30 giờ.',
+        Price: 8990000,
+        View: 800,
+        Id: 'sony-wh-1000xm5',
+        TotalReviews: 290,
+        IsHotProduct: true,
+        IsNewProduct: false,
+        Category: 'Tai nghe',
+        Location: 'Đà Nẵng',
+    },
+
+    // Máy ảnh
+    {
+        Image: '/Products/PD5.png',
+        Title: 'Sony A7 IV',
+        Details: 'Máy ảnh full-frame 33MP, quay video 4K 60fps.',
+        Price: 49990000,
+        View: 500,
+        Id: 'sony-a7-iv',
+        TotalReviews: 120,
+        IsHotProduct: true,
+        IsNewProduct: false,
+        Category: 'Máy ảnh',
+        Location: 'Hồ Chí Minh',
+    },
+    {
+        Image: '/Products/PD6.png',
+        Title: 'Canon EOS R6 Mark II',
+        Details: 'Chụp liên tục 40fps, Dual Pixel AF II, chống rung 8 stops.',
+        Price: 54990000,
+        View: 400,
+        Id: 'canon-eos-r6-mark-ii',
+        TotalReviews: 130,
+        IsHotProduct: false,
+        IsNewProduct: true,
+        Category: 'Máy ảnh',
+        Location: 'Hà Nội',
+    },
+
+    // Loa
+    {
+        Image: '/Products/PD7.png',
+        Title: 'Bose SoundLink Revolve+ II',
+        Details: 'Âm thanh 360°, chống nước IP55, pin 17 giờ.',
+        Price: 6990000,
+        View: 600,
+        Id: 'bose-soundlink-revolve-plus-ii',
+        TotalReviews: 220,
+        IsHotProduct: false,
+        IsNewProduct: true,
+        Category: 'Loa',
+        Location: 'Đà Nẵng',
+    },
+    {
+        Image: '/Products/PD1.png',
+        Title: 'JBL Charge 5',
+        Details: 'Công suất 40W, chống nước IP67, pin 20 giờ.',
+        Price: 3990000,
+        View: 500,
+        Id: 'jbl-charge-5',
+        TotalReviews: 210,
+        IsHotProduct: true,
+        IsNewProduct: false,
+        Category: 'Loa',
+        Location: 'Hồ Chí Minh',
     },
 ]

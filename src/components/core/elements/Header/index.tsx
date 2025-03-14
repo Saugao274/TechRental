@@ -91,6 +91,12 @@ export default function Header() {
             key: '6',
             label: 'Livesteam',
         },
+        {
+            key: '7',
+            label: (
+                <p onClick={() => router.push(`/products`)}>Tất cả sản phẩm</p>
+            ),
+        },
     ]
 
     const toggleMobileMenu = () => {
@@ -154,7 +160,7 @@ export default function Header() {
                 ease: 'easeInOut',
             }}
         >
-            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between rounded-[16px] bg-blue-50 bg-opacity-95 py-3 shadow-lg">
+            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between rounded-[16px] bg-blue-50 bg-opacity-95 !px-3 !py-3 shadow-lg">
                 <div className="flex items-center">
                     {/* Mobile menu button */}
                     <button
@@ -193,8 +199,8 @@ export default function Header() {
                     >
                         <Image
                             src={'/images/TechRentalLogo.png'}
-                            width={600}
-                            height={120}
+                            width={500}
+                            height={100}
                             alt="techrental_logo"
                             priority
                         />
@@ -421,12 +427,9 @@ export default function Header() {
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: item.delay }}
                                         >
-                                            <Link
-                                                href={item.href}
-                                                className="block border-b px-4 py-3 text-[16px] text-primary"
-                                            >
+                                            <p className="block border-b px-4 py-3 text-[16px] text-primary">
                                                 {item.label}
-                                            </Link>
+                                            </p>
                                         </motion.div>
                                     ))}
 

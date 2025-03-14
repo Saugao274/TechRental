@@ -129,7 +129,7 @@ export function ProfileOptionsNavigation({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={cn('flex flex-col space-y-2', className)}
+            className={cn('!font-vietnam flex flex-col space-y-2', className)}
             {...props}
         >
             {routes.map((route) =>

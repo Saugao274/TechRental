@@ -10,8 +10,7 @@ const config: Config = {
     theme: {
         extend: {
             fontFamily: {
-                Be_Vietnam_Pro: ['BeVietnamPro'],
-                Be_Vietnam_Pro_Fallback: ['BeVietnamProFallback'],
+                vietnam: ['var(--font-be-vietnam-pro)', 'sans-serif'],
             },
             colors: {
                 background: 'var(--background)',
