@@ -9,7 +9,7 @@ interface AuthLayoutProps {
 
 function AuthLayout({ children }: AuthLayoutProps) {
     return (
-        <Layout>
+        <Layout className="!font-vietnam">
             <Header />
             <Content>{children}</Content>
             <Footer />

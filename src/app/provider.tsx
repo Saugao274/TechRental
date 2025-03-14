@@ -45,7 +45,6 @@ export default function AppProvider({
             >
                 <App>
                     <Provider store={store}>{children}</Provider>
-                    
                 </App>
             </ConfigProvider>
         </AntdRegistry>

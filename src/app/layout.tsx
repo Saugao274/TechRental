@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 }
 
 const beVietnamPro = Be_Vietnam_Pro({
-    subsets: ['latin'],
+    subsets: ['vietnamese'],
     weight: ['400', '500', '700'],
     variable: '--font-be-vietnam-pro',
-    display: 'swap',
+    // display: 'swap',
 })
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={cn(beVietnamPro.className)}>
+            <body className={cn(beVietnamPro.variable)}>
                 <AppProvider>{children}</AppProvider>
             </body>
         </html>

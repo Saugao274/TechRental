@@ -11,20 +11,10 @@ const HotProducts = () => {
     )
     return (
         <SectionCommon className="flex flex-col gap-10">
-            {/* <SectionCommon className="flex flex-col gap-12"> */}
             <PageHader title="Sản phẩm nổi bật" />
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-5 ">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
                 {hotProductssData.slice(0.4).map((product, index) => (
-                    <ProductCard
-                        key={index}
-                        Image={product.Image}
-                        Title={product.Title}
-                        Details={product.Details}
-                        Price={product.Price}
-                        view={product.View}
-                        id={product.Id}
-                        totalReviews={product.TotalReviews}
-                    />
+                    <ProductCard product={product} />
                 ))}
             </div>
         </SectionCommon>
