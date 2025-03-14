@@ -579,7 +579,10 @@ const DropdownProfile = () => {
         {
             key: '3',
             label: (
-                <div className="flex flex-row items-center gap-2">
+                <div
+                    className="flex flex-row items-center gap-2"
+                    onClick={() => router.push('/signIn')}
+                >
                     <p className="text-[16px]">Đăng xuất</p>
                     <LogOut size={18} />
                 </div>
