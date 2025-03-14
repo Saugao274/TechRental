@@ -4,17 +4,17 @@ import { Carousel } from '../../common/ResponsiveCarousel'
 
 const carouselItems = [
     {
+        id: 1,
+        title: 'adhkadlsjdla',
+        image: '/images/Slider/Slider0.png',
+        alt: 'adadhlajdla',
+    },
+    {
         id: 0,
         title: 'adhkadlsjdla',
         alt: 'adadhlajdla',
         video: '/videos/slider.mp4',
         autoPlayInterval: 20000,
-    },
-    {
-        id: 1,
-        title: 'adhkadlsjdla',
-        image: '/images/Slider/Slider0.png',
-        alt: 'adadhlajdla',
     },
 
     {

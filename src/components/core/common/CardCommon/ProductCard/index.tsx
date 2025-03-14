@@ -24,11 +24,11 @@ export default function ProductCard({
 
     return (
         <div onClick={handleClick} className={`cursor-pointer ${style}`}>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 hover:scale-105 hover:border-2 hover:shadow-md hover:shadow-blue-300">
                 <img
                     src={`/images/${product.Image}`}
                     alt=""
-                    className="aspect-[4/3] h-56 scale-100 rounded-lg object-cover transition-all duration-300 hover:scale-105 md:h-44"
+                    className="aspect-[4/3] h-56 scale-100 rounded-lg object-cover transition-all duration-300 md:h-44"
                 />
                 <div className="flex w-full flex-col items-center justify-center gap-3">
                     <h3 className="line-clamp-1 text-xl font-semibold text-blue-900">

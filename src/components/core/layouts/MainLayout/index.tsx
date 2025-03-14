@@ -5,6 +5,7 @@ import Header from '@elements/Header'
 import { Content } from 'antd/es/layout/layout'
 import ScrollButton from '../../common/ScrollButton'
 import RobotChat from '../../common/RobotChat'
+import Footer from '../../elements/Footer'
 
 interface MainLayoutProps {
     readonly children: React.ReactNode
@@ -19,6 +20,7 @@ function MainLayout({ children }: MainLayoutProps) {
             </Content>
             {/* <RobotChat /> */}
             <ScrollButton />
+            <Footer />
         </Layout>
     )
 }
