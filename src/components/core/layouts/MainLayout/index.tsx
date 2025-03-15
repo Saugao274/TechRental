@@ -7,12 +7,16 @@ import ScrollButton from '../../common/ScrollButton'
 import RobotChat from '../../common/RobotChat'
 import Footer from '../../elements/Footer'
 import './style.css'
+import { usePathname } from 'next/navigation'
 
 interface MainLayoutProps {
     readonly children: React.ReactNode
 }
 
 function MainLayout({ children }: MainLayoutProps) {
+    const path = usePathname()
+    console.log('path', path)
+
     return (
         <Layout className="background !bg-transparent">
             <Header />
@@ -20,10 +24,10 @@ function MainLayout({ children }: MainLayoutProps) {
                 {children}
             </Content>
 
-            <RobotChat />
+            {/* <RobotChat /> */}
 
             <ScrollButton />
-            <Footer />
+            {path !== '/chat' && <Footer />}
         </Layout>
     )
 }
