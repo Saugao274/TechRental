@@ -14,13 +14,14 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
     return (
-        <Layout className="!bg-transparent background"
-        >
+        <Layout className="background !bg-transparent">
             <Header />
-            <Content className="md:mx-w-[1440px] mx-auto min-w-full mt-0 md:mt-5">
+            <Content className="md:mx-w-[1440px] mx-auto mt-0 min-w-full md:mt-5">
                 {children}
             </Content>
+
             <RobotChat />
+
             <ScrollButton />
             <Footer />
         </Layout>
