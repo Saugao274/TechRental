@@ -17,7 +17,7 @@ export default function MessageModule() {
 
 export const MessageStatus = () => {
     return (
-        <div className="flex flex-row items-center justify-between rounded-[10px] bg-white opacity-80 px-6 py-2">
+        <div className="flex flex-row items-center justify-between rounded-[10px] bg-white px-6 py-2 opacity-80">
             <div className="flex flex-row items-center gap-2">
                 <Avatar src="/images/Message/image5.png" size={50}></Avatar>
                 <div className="flex flex-col gap-1">
@@ -91,7 +91,10 @@ export const MessageBoxContent = () => {
                     return (
                         <>
                             {item.type === 'right' && (
-                                <div key={item.messageId} className="flex flex-row gap-5">
+                                <div
+                                    key={item.messageId}
+                                    className="flex flex-row gap-5"
+                                >
                                     <Avatar
                                         src="/images/Message/image5.png"
                                         size={50}
@@ -109,7 +112,10 @@ export const MessageBoxContent = () => {
                                 </div>
                             )}
                             {item.type === 'left' && (
-                                <div key={item.messageId} className="flex w-full flex-row items-end justify-end gap-5">
+                                <div
+                                    key={item.messageId}
+                                    className="flex w-full flex-row items-end justify-end gap-5"
+                                >
                                     <div className="relative flex max-w-[340px] flex-row-reverse items-center gap-2">
                                         <p className="rounded-lg bg-primary px-3 py-2 font-semibold text-white">
                                             {' '}
@@ -127,10 +133,10 @@ export const MessageBoxContent = () => {
                 })}
             </div>
             <div>
-                <div className="flex flex-row justify-between rounded-xl gap-5 bg-white px-5 py-2">
+                <div className="flex flex-row justify-between gap-5 rounded-xl bg-white px-5 py-2">
                     <input
                         type="text"
-                        className="outline-none w-full"
+                        className="w-full outline-none"
                         placeholder="Viết tin nhắn"
                     />
                     <div className="cursor-pointer rounded-md p-2 transition-all hover:bg-gray-200">

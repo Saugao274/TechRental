@@ -21,8 +21,7 @@ const Home = () => {
             <HotProducts />
             <NewProduct />
             <News />
-            <StaticHome />
-            <Footer />
+            <StaticHome />x{' '}
         </div>
     )
 }
