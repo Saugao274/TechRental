@@ -14,7 +14,7 @@ const HotProducts = () => {
             <PageHader title="Sản phẩm nổi bật" />
             <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
                 {hotProductssData.slice(0.4).map((product, index) => (
-                    <ProductCard product={product} />
+                    <ProductCard product={product} key={index} />
                 ))}
             </div>
         </SectionCommon>

@@ -1,7 +1,8 @@
+import OrderManagement from '@/components/modules/Profile/Personal/OrderManagement'
 import React from 'react'
 
 export default function PersonalOrdersPage() {
   return (
-    <div>PersonalOrders</div>
+    <OrderManagement/>
   )
 }

@@ -97,7 +97,14 @@ const FilterSidebar = ({
     }
     const [showMessage, setShowMessage] = useState(false)
     useEffect(() => {
-        setShowMessage(!showMessage)
+        const toggleMessage = () => {
+            setShowMessage((prev) => !prev)
+            setTimeout(toggleMessage, 7000)
+        }
+
+        const timeout = setTimeout(toggleMessage, 7000)
+
+        return () => clearTimeout(timeout)
     }, [])
 
     return (

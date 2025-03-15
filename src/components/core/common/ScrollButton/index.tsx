@@ -27,7 +27,7 @@ const ScrollButton = () => {
                 <motion.div
                     whileHover={{ scale: 1.2, opacity: 1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="fixed bottom-2 right-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-pink-500 text-white opacity-20 shadow-lg"
+                    className="fixed bottom-2 right-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-pink-500 text-white opacity-40 shadow-lg"
                     onClick={() =>
                         window.scrollTo({ top: 0, behavior: 'smooth' })
                     }
@@ -40,7 +40,7 @@ const ScrollButton = () => {
                 <motion.div
                     whileHover={{ scale: 1.2, opacity: 1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="fixed bottom-2 left-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-blue-500 text-white opacity-20 shadow-lg"
+                    className="fixed bottom-2 left-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-blue-500 text-white opacity-40 shadow-lg"
                     onClick={() =>
                         window.scrollTo({
                             top: document.body.scrollHeight,
