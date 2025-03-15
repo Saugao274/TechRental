@@ -22,6 +22,7 @@ const Home = () => {
             <NewProduct />
             <News />
             <StaticHome />
+            <Footer />
         </div>
     )
 }
