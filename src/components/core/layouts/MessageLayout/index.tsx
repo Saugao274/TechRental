@@ -42,7 +42,7 @@ export const PersonSideBar = () => {
             chatId: 3,
             avatar: '/images/Message/image3.png',
             name: 'Thế Anh',
-            title: 'Nhà thiết kế độ họa',
+            title: 'Nhà thiết kế đồ họa',
             time: 'Hoạt động 4 giờ trước',
         },
         {
