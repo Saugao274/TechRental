@@ -9,10 +9,8 @@ interface AuthLayoutProps {
 
 function AuthLayout({ children }: AuthLayoutProps) {
     return (
-        <Layout className="!font-vietnam">
-            <Header />
-            <Content>{children}</Content>
-            <Footer />
+        <Layout className="!bg-transparent">
+            {children}
         </Layout>
     )
 }
