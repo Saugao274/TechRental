@@ -1,60 +1,43 @@
 'use client'
 import React, { useState } from 'react'
+import {
+    Form,
+    Input,
+    Radio,
+    Select,
+    Checkbox,
+    Modal,
+    Button,
+    message,
+} from 'antd'
 import { ShieldCheck } from 'lucide-react'
-import { Modal, Button, Radio } from 'antd'
 
 export default function PersonalRentalRegistryPage() {
+    // Mock user
     const user = {
         name: 'Nguyễn Văn A',
-        joinDate: '01/01/2025',
-        email: 'example@example.com',
-        phone: '0123456789',
-        address: 'Hà Nội, Việt Nam',
         isVerified: true,
-        ownedProducts: 5,
-        rentingProducts: 2,
-        rentedProducts: 10,
-        isLandlord: false,
     }
 
-    const [showTerms, setShowTerms] = useState(false)
-    const [acceptedTerms, setAcceptedTerms] = useState(false) // đã đồng ý ?
+    // Quản lý hiển thị Modal Điều khoản
+    const [showTermsModal, setShowTermsModal] = useState(false)
 
-    const [scale, setScale] = useState<'1-5' | '5-20' | '20+' | ''>('1-5') // quy mô SP
-    const [operatingArea, setOperatingArea] = useState('') // khu vực hoạt động
-    const [shopName, setShopName] = useState('') // tên shop
-    const [businessType, setBusinessType] = useState<
-        'personal' | 'household' | 'company'
-    >('personal')
-    const [businessAddress, setBusinessAddress] = useState('')
-    const [invoiceEmail, setInvoiceEmail] = useState('')
-    const [taxCode, setTaxCode] = useState('')
+    // Hàm xử lý khi form submit thành công
+    const onFinish = (values: any) => {
+        console.log('Form values:', values)
+        message.success('Đã gửi thông tin đăng ký cho admin duyệt!')
+    }
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-
-        if (!acceptedTerms) {
-            alert('Vui lòng đồng ý điều khoản trước khi hoàn tất!')
-            return
-        }
-
-        const payload = {
-            scale,
-            operatingArea,
-            shopName,
-            businessType,
-            businessAddress,
-            invoiceEmail,
-            taxCode,
-        }
-        console.log('Đã gửi form:', payload)
-        alert('Đã gửi thông tin đăng ký cho admin duyệt!')
+    // Hàm xử lý khi form có lỗi
+    const onFinishFailed = (errorInfo: any) => {
+        console.log('Form error:', errorInfo)
+        // antd sẽ tự hiển thị cảnh báo màu đỏ dưới trường bị lỗi
     }
 
     return (
-        <main className="mx-auto flex w-full flex-col gap-5 p-4 md:p-5">
+        <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
             {/* Phần chào user */}
-            <div>
+            <div className="mb-4">
                 <h1 className="text-2xl font-bold text-primary">
                     Xin chào, {user.name}
                 </h1>
@@ -65,214 +48,232 @@ export default function PersonalRentalRegistryPage() {
 
             {/* Thông báo đã xác minh */}
             {user.isVerified && (
-                <div className="flex items-center rounded-md border border-green-400 bg-green-50 p-4">
+                <div className="mb-4 flex items-center rounded-md border border-green-400 bg-green-50 p-4">
                     <ShieldCheck className="mr-2 hidden text-xl text-green-500 md:block" />
                     <div>
                         <h3 className="font-bold text-green-800">
                             Đã xác minh
                         </h3>
                         <p className="text-sm text-green-700">
-                            Tài khoản của bạn đã được xác minh danh tính. Điều
-                            này giúp tăng độ tin cậy và cho phép bạn thuê/cho
-                            thuê sản phẩm.
+                            Tài khoản của bạn đã được xác minh danh tính. Hãy
+                            hoàn tất thông tin để đăng ký làm người cho thuê!
                         </p>
                     </div>
                 </div>
             )}
 
-            {/* Tiêu đề */}
-            <h2 className="text-xl font-bold">Đăng ký làm người cho thuê</h2>
-            <p className="text-sm text-gray-600">
-                Vui lòng điền các thông tin dưới đây để gửi yêu cầu đến quản trị
-                viên duyệt.
-            </p>
+            {/* Bọc Form trong khung trắng */}
+            <div className="rounded-md bg-white p-6 shadow-md">
+                <h2 className="mb-2 text-xl font-bold">
+                    Đăng ký làm người cho thuê
+                </h2>
+                <p className="mb-4 text-sm text-gray-600">
+                    Vui lòng điền các thông tin dưới đây để gửi yêu cầu đến quản
+                    trị viên.
+                </p>
 
-            {/* Form đăng ký */}
-            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-                {/* Quy mô sản phẩm */}
-                <div>
-                    <label className="mb-1 block font-medium text-gray-800">
-                        Quy mô sản phẩm
-                    </label>
-                    <select
-                        value={scale}
-                        onChange={(e) =>
-                            setScale(e.target.value as '1-5' | '5-20' | '20+')
-                        }
-                        className="w-full rounded border border-gray-300 p-2"
-                    >
-                        <option value="1-5">1-5 sản phẩm</option>
-                        <option value="5-20">5-20 sản phẩm</option>
-                        <option value="20+">Trên 20 sản phẩm</option>
-                    </select>
-                </div>
-
-                {/* Khu vực hoạt động */}
-                <div>
-                    <label className="mb-1 block font-medium text-gray-800">
-                        Khu vực hoạt động
-                    </label>
-                    <input
-                        type="text"
-                        value={operatingArea}
-                        onChange={(e) => setOperatingArea(e.target.value)}
-                        placeholder="VD: Hà Nội, TP.HCM..."
-                        className="w-full rounded border border-gray-300 p-2"
-                    />
-                </div>
-
-                {/* Tên shop */}
-                <div>
-                    <label className="mb-1 block font-medium text-gray-800">
-                        Tên shop
-                    </label>
-                    <input
-                        type="text"
-                        value={shopName}
-                        onChange={(e) => setShopName(e.target.value)}
-                        placeholder="Nhập tên shop/brand (nếu có)"
-                        className="w-full rounded border border-gray-300 p-2"
-                    />
-                </div>
-
-                {/* Loại hình kinh doanh */}
-                <div>
-                    <label className="mb-1 block font-medium text-gray-800">
-                        Loại hình kinh doanh
-                    </label>
-                    <Radio.Group
-                        value={businessType}
-                        onChange={(e) =>
-                            setBusinessType(
-                                e.target.value as
-                                    | 'personal'
-                                    | 'household'
-                                    | 'company',
-                            )
-                        }
-                    >
-                        <Radio value="personal">Cá nhân</Radio>
-                        <Radio value="household">Hộ kinh doanh</Radio>
-                        <Radio value="company">Công ty</Radio>
-                    </Radio.Group>
-                </div>
-
-                {/* Địa chỉ đăng ký kinh doanh */}
-                <div>
-                    <label className="mb-1 block font-medium text-gray-800">
-                        Địa chỉ đăng ký kinh doanh
-                    </label>
-                    <input
-                        type="text"
-                        value={businessAddress}
-                        onChange={(e) => setBusinessAddress(e.target.value)}
-                        placeholder="VD: Bình Thuận / Huyện Phú Quí / Xã Tam Thanh..."
-                        className="w-full rounded border border-gray-300 p-2"
-                    />
-                </div>
-
-                {/* Email nhận hóa đơn điện tử */}
-                <div>
-                    <label className="mb-1 block font-medium text-gray-800">
-                        Email nhận hóa đơn điện tử
-                    </label>
-                    <input
-                        type="email"
-                        value={invoiceEmail}
-                        onChange={(e) => setInvoiceEmail(e.target.value)}
-                        placeholder="Vui lòng nhập email hợp lệ"
-                        className="w-full rounded border border-gray-300 p-2"
-                    />
-                    <p className="mt-1 text-sm text-gray-500">
-                        Hóa đơn điện tử sẽ được gửi đến địa chỉ email này
-                    </p>
-                </div>
-
-                {/* Mã số thuế */}
-                <div>
-                    <label className="mb-1 block font-medium text-gray-800">
-                        Mã số thuế
-                    </label>
-                    <input
-                        type="text"
-                        value={taxCode}
-                        onChange={(e) => setTaxCode(e.target.value)}
-                        placeholder="Nhập MST (nếu có)"
-                        maxLength={14}
-                        className="w-full rounded border border-gray-300 p-2"
-                    />
-                    <p className="mt-1 text-sm text-gray-500">
-                        Theo Nghị định 52/2013/NĐ-CP, người bán có thể cần cung
-                        cấp MST.
-                    </p>
-                </div>
-
-                {/* Checkbox điều khoản dịch vụ */}
-                <div className="flex items-center space-x-2">
-                    <input
-                        type="checkbox"
-                        checked={acceptedTerms}
-                        onChange={() => setAcceptedTerms(!acceptedTerms)}
-                    />
-                    <span className="text-gray-800">
-                        Tôi đồng ý với{' '}
-                        <button
-                            type="button"
-                            onClick={() => setShowTerms(true)}
-                            className="font-semibold text-blue-600 hover:underline"
-                        >
-                            Điều khoản dịch vụ
-                        </button>
-                    </span>
-                </div>
-
-                {/* Nút hoàn tất */}
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="bg-blue-500 font-bold hover:bg-blue-600"
+                {/**
+                 * Dùng antd Form để validation.
+                 */}
+                <Form
+                    layout="vertical"
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
                 >
-                    Hoàn tất
-                </Button>
-            </form>
+                    {/* Quy mô sản phẩm */}
+                    <Form.Item
+                        label="Quy mô sản phẩm"
+                        name="scale"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng chọn quy mô sản phẩm!',
+                            },
+                        ]}
+                        className="max-w-xs"
+                    >
+                        <Select
+                            placeholder="Chọn số lượng sản phẩm"
+                            className="h-12" // Chiều cao tăng gấp đôi so với bình thường
+                        >
+                            <Select.Option value="1-5">
+                                1 - 5 sản phẩm
+                            </Select.Option>
+                            <Select.Option value="5-20">
+                                5 - 20 sản phẩm
+                            </Select.Option>
+                            <Select.Option value="20+">
+                                Trên 20 sản phẩm
+                            </Select.Option>
+                        </Select>
+                    </Form.Item>
+
+                    {/* Khu vực hoạt động */}
+                    <Form.Item
+                        label="Khu vực hoạt động"
+                        name="operatingArea"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập khu vực hoạt động!',
+                            },
+                        ]}
+                        className="max-w-xs"
+                    >
+                        <Input
+                            placeholder="VD: Hà Nội, TP.HCM..."
+                            className="h-12" // Tăng chiều cao
+                        />
+                    </Form.Item>
+
+                    {/* Tên shop */}
+                    <Form.Item
+                        label="Tên shop"
+                        name="shopName"
+                        className="max-w-xs"
+                    >
+                        <Input
+                            placeholder="Nhập tên shop (nếu có)"
+                            className="h-12"
+                        />
+                    </Form.Item>
+
+                    {/* Loại hình kinh doanh */}
+                    <Form.Item
+                        label="Loại hình kinh doanh"
+                        name="businessType"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng chọn loại hình kinh doanh!',
+                            },
+                        ]}
+                        initialValue="personal"
+                        className="max-w-xs"
+                    >
+                        <Radio.Group>
+                            <Radio value="personal">Cá nhân</Radio>
+                            <Radio value="household">Hộ kinh doanh</Radio>
+                            <Radio value="company">Công ty</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+
+                    {/* Địa chỉ đăng ký kinh doanh */}
+                    <Form.Item
+                        label="Địa chỉ đăng ký kinh doanh"
+                        name="businessAddress"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập địa chỉ kinh doanh!',
+                            },
+                        ]}
+                    >
+                        <Input
+                            placeholder="VD: Bình Thuận / Huyện Phú Quí / Xã Tam Thanh..."
+                            className="h-12"
+                        />
+                    </Form.Item>
+
+                    {/* Email nhận hóa đơn điện tử */}
+                    <Form.Item
+                        label="Email nhận hóa đơn điện tử"
+                        name="invoiceEmail"
+                        rules={[
+                            { required: true, message: 'Vui lòng nhập email!' },
+                            { type: 'email', message: 'Email không hợp lệ!' },
+                        ]}
+                        className="max-w-xs"
+                    >
+                        <Input
+                            placeholder="Nhập địa chỉ email"
+                            className="h-12"
+                        />
+                    </Form.Item>
+
+                    {/* Mã số thuế */}
+                    <Form.Item
+                        label="Mã số thuế"
+                        name="taxCode"
+                        rules={[
+                            {
+                                pattern: /^[0-9]{10,14}$/,
+                                message: 'MST phải là dãy số, 10-14 ký tự',
+                            },
+                        ]}
+                        className="max-w-xs"
+                    >
+                        <Input
+                            maxLength={14}
+                            placeholder="VD: 0123456789 (không bắt buộc)"
+                            className="h-12"
+                        />
+                    </Form.Item>
+
+                    {/* Điều khoản dịch vụ */}
+                    <Form.Item
+                        name="acceptTerms"
+                        valuePropName="checked"
+                        rules={[
+                            {
+                                validator: (_, value) =>
+                                    value
+                                        ? Promise.resolve()
+                                        : Promise.reject(
+                                              new Error(
+                                                  'Bạn cần đồng ý điều khoản!',
+                                              ),
+                                          ),
+                            },
+                        ]}
+                    >
+                        <Checkbox>
+                            Tôi đồng ý với{' '}
+                            <span
+                                className="cursor-pointer text-blue-600 hover:underline"
+                                onClick={() => setShowTermsModal(true)}
+                            >
+                                Điều khoản dịch vụ
+                            </span>
+                        </Checkbox>
+                    </Form.Item>
+
+                    {/* Nút submit */}
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Hoàn tất
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </div>
 
             {/* Modal điều khoản dịch vụ */}
             <Modal
                 title="Điều khoản dịch vụ"
-                open={showTerms}
-                onCancel={() => setShowTerms(false)}
+                open={showTermsModal}
+                onCancel={() => setShowTermsModal(false)}
                 footer={[
-                    <Button key="back" onClick={() => setShowTerms(false)}>
-                        Đóng
-                    </Button>,
                     <Button
-                        key="agree"
-                        type="primary"
-                        onClick={() => {
-                            setAcceptedTerms(true)
-                            setShowTerms(false)
-                        }}
+                        key="close"
+                        onClick={() => setShowTermsModal(false)}
                     >
-                        Tôi đồng ý
+                        Đóng
                     </Button>,
                 ]}
             >
-                {' '}
-                {/* viết thêm nhiều zo nè */}
                 <div className="max-h-96 overflow-y-auto text-sm text-gray-700">
                     <p>
-                        1. Người cho thuê phải tuân thủ mọi quy định pháp luật
-                        hiện hành.
-                        <br />
-                        2. Cung cấp thông tin trung thực, chính xác về sản phẩm.
+                        {/* Nội dung điều khoản */}
+                        1. Người cho thuê phải tuân thủ quy định pháp luật hiện
+                        hành. <br />
+                        2. Cung cấp thông tin trung thực, chính xác về sản phẩm.{' '}
                         <br />
                         3. Bảo đảm tính minh bạch về giá và chất lượng sản phẩm
-                        cho thuê.
-                        <br />
-                        4. ... (và các điều khoản khác).
+                        cho thuê. <br />
+                        4. ...
                     </p>
                 </div>
             </Modal>
-        </main>
+        </div>
     )
 }
