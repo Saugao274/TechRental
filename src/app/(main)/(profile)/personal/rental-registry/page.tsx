@@ -13,30 +13,24 @@ import {
 import { ShieldCheck } from 'lucide-react'
 
 export default function PersonalRentalRegistryPage() {
-    // Mock user
     const user = {
         name: 'Nguyễn Văn A',
         isVerified: true,
     }
 
-    // Quản lý hiển thị Modal Điều khoản
     const [showTermsModal, setShowTermsModal] = useState(false)
 
-    // Hàm xử lý khi form submit thành công
     const onFinish = (values: any) => {
         console.log('Form values:', values)
         message.success('Đã gửi thông tin đăng ký cho admin duyệt!')
     }
 
-    // Hàm xử lý khi form có lỗi
     const onFinishFailed = (errorInfo: any) => {
         console.log('Form error:', errorInfo)
-        // antd sẽ tự hiển thị cảnh báo màu đỏ dưới trường bị lỗi
     }
 
     return (
         <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
-            {/* Phần chào user */}
             <div className="mb-4">
                 <h1 className="text-2xl font-bold text-primary">
                     Xin chào, {user.name}
@@ -62,7 +56,6 @@ export default function PersonalRentalRegistryPage() {
                 </div>
             )}
 
-            {/* Bọc Form trong khung trắng */}
             <div className="rounded-md bg-white p-6 shadow-md">
                 <h2 className="mb-2 text-xl font-bold">
                     Đăng ký làm người cho thuê
@@ -72,15 +65,11 @@ export default function PersonalRentalRegistryPage() {
                     trị viên.
                 </p>
 
-                {/**
-                 * Dùng antd Form để validation.
-                 */}
                 <Form
                     layout="vertical"
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                 >
-                    {/* Quy mô sản phẩm */}
                     <Form.Item
                         label="Quy mô sản phẩm"
                         name="scale"
@@ -94,7 +83,7 @@ export default function PersonalRentalRegistryPage() {
                     >
                         <Select
                             placeholder="Chọn số lượng sản phẩm"
-                            className="h-12" // Chiều cao tăng gấp đôi so với bình thường
+                            className="h-12"
                         >
                             <Select.Option value="1-5">
                                 1 - 5 sản phẩm
@@ -108,7 +97,6 @@ export default function PersonalRentalRegistryPage() {
                         </Select>
                     </Form.Item>
 
-                    {/* Khu vực hoạt động */}
                     <Form.Item
                         label="Khu vực hoạt động"
                         name="operatingArea"
@@ -122,11 +110,10 @@ export default function PersonalRentalRegistryPage() {
                     >
                         <Input
                             placeholder="VD: Hà Nội, TP.HCM..."
-                            className="h-12" // Tăng chiều cao
+                            className="h-12"
                         />
                     </Form.Item>
 
-                    {/* Tên shop */}
                     <Form.Item
                         label="Tên shop"
                         name="shopName"
@@ -138,7 +125,6 @@ export default function PersonalRentalRegistryPage() {
                         />
                     </Form.Item>
 
-                    {/* Loại hình kinh doanh */}
                     <Form.Item
                         label="Loại hình kinh doanh"
                         name="businessType"
@@ -175,7 +161,6 @@ export default function PersonalRentalRegistryPage() {
                         />
                     </Form.Item>
 
-                    {/* Email nhận hóa đơn điện tử */}
                     <Form.Item
                         label="Email nhận hóa đơn điện tử"
                         name="invoiceEmail"
@@ -191,7 +176,6 @@ export default function PersonalRentalRegistryPage() {
                         />
                     </Form.Item>
 
-                    {/* Mã số thuế */}
                     <Form.Item
                         label="Mã số thuế"
                         name="taxCode"
@@ -210,7 +194,6 @@ export default function PersonalRentalRegistryPage() {
                         />
                     </Form.Item>
 
-                    {/* Điều khoản dịch vụ */}
                     <Form.Item
                         name="acceptTerms"
                         valuePropName="checked"
@@ -247,7 +230,6 @@ export default function PersonalRentalRegistryPage() {
                 </Form>
             </div>
 
-            {/* Modal điều khoản dịch vụ */}
             <Modal
                 title="Điều khoản dịch vụ"
                 open={showTermsModal}
@@ -263,7 +245,7 @@ export default function PersonalRentalRegistryPage() {
             >
                 <div className="max-h-96 overflow-y-auto text-sm text-gray-700">
                     <p>
-                        {/* Nội dung điều khoản */}
+                        {/* Điền thêm vào nhé  */}
                         1. Người cho thuê phải tuân thủ quy định pháp luật hiện
                         hành. <br />
                         2. Cung cấp thông tin trung thực, chính xác về sản phẩm.{' '}
