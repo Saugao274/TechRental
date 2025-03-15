@@ -4,12 +4,15 @@ import { Divider, Layout } from 'antd'
 import {
     CalendarDays,
     Clock,
+    Home,
     Contact,
     FileCog,
     HandCoins,
     IdCard,
     Info,
     Package,
+    UserPlus,
+    ShoppingCart,
 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
@@ -22,7 +25,7 @@ export default function RentalRootLayout({
     children: React.ReactNode
 }) {
     return (
-        <Layout className="!font-vietnam mx-auto max-w-[1440px] !bg-transparent">
+        <Layout className="mx-auto max-w-[1440px] !bg-transparent !font-vietnam">
             <SectionCommon>
                 <div className="flex flex-row gap-[20px]">
                     <LeftSideBarElement />
@@ -48,12 +51,14 @@ export function LeftSideBarElement() {
             transition={{ duration: 0.5 }}
             className="hidden w-1/5 md:block"
         >
-            <div className="flex flex-col">
+            <div className="flex flex-col p-5">
                 <div>
                     <h3 className="text-2xl font-bold text-primary">
                         Chế độ người cho thuê
                     </h3>
-                    <p className="">Quản lý sản phẩm và đơn hàng cho thuê</p>
+                    <p className="text-sm text-gray-600">
+                        Quản lý sản phẩm và đơn hàng cho thuê
+                    </p>
                 </div>
                 <Divider />
                 <RentalProfileOptionsNavigation />
@@ -73,57 +78,48 @@ export function RentalProfileOptionsNavigation({
 }: SidebarNavProps) {
     const pathname = usePathname()
     const router = useRouter()
+
     const routes = [
         {
             href: '/rental',
-            label: 'Đăng giá sản phẩm',
+            label: 'Quản Lý Sản Phẩm',
             icon: Package,
             active: pathname === '/rental',
         },
         {
-            href: '/rental/time-ordered',
-            label: 'Thời gian thuê/trả hàng',
-            icon: Clock,
-            active: pathname === '/personal/update-info',
+            href: '/rental/manage-orders',
+            label: 'Quản Lý Đơn Thuê',
+            icon: ShoppingCart,
+            active: pathname === '/rental/manage-orders',
         },
         {
-            href: '/rental/rental-history',
-            label: 'Lịch sử cho thuê',
-            icon: CalendarDays,
-            active: pathname === '/rental/rental-history',
-        },
-        {
-            href: '/rental/payment-history',
-            label: 'Lịch sử giao dịch',
+            href: '/rental/transactions',
+            label: 'Thống Kê Giao Dịch',
             icon: HandCoins,
-            active: pathname === '/rental/payment-history',
+            active: pathname === '/rental/transactions',
         },
         {
-            href: '/rental/order-person-info',
-            label: 'Thông tin người thuê sản phẩm',
+            href: '/rental/feedback',
+            label: 'Đánh Giá & Phản Hồi',
             icon: Contact,
-            active: pathname === '/rental/order-person-info',
+            active: pathname === '/rental/feedback',
         },
         {
             href: '/rental/policy',
-            label: 'Chính sách cho thuê',
+            label: 'Chính Sách Cho Thuê',
             icon: FileCog,
             active: pathname === '/rental/policy',
         },
+
         {
-            href: '/rental/info',
-            label: 'Thông tin thuê',
-            icon: Info,
-            active: pathname === '/rental/info',
-        },
-        {
-            href: '/rental/identification',
-            label: 'Thông tin định danh người cho thuê',
+            href: '/rental/information',
+            label: 'Xác Minh Định Danh',
             icon: IdCard,
-            active: pathname === '/rental/identification',
-            hidden: !isLessor,
+            active: pathname === '/rental/Information',
+            hidden: isLessor,
         },
     ]
+
     return (
         <motion.nav
             initial={{ opacity: 0 }}
@@ -134,21 +130,21 @@ export function RentalProfileOptionsNavigation({
         >
             {routes.map((route) =>
                 route.hidden ? null : (
-                    <motion.p
+                    <motion.div
                         key={route.href}
                         onClick={() => router.push(route.href)}
                         className={cn(
                             route.active
-                                ? 'bg-gray-100 hover:bg-gray-200'
-                                : 'hover:bg-transparent',
-                            'flex cursor-pointer items-center justify-start gap-2 rounded px-2 py-1 transition-all hover:bg-gray-200',
+                                ? 'bg-blue-100 font-semibold text-blue-600'
+                                : 'text-gray-800 hover:bg-gray-200',
+                            'flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-all',
                         )}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        <route.icon className="h-4 w-4" />
+                        <route.icon className="h-5 w-5" />
                         {route.label}
-                    </motion.p>
+                    </motion.div>
                 ),
             )}
         </motion.nav>
