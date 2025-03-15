@@ -85,7 +85,7 @@ export const MessageBoxContent = () => {
 
     return (
         <div className="flex h-full w-full flex-col rounded-lg bg-white bg-opacity-80 p-5">
-            <div className="flex h-full flex-col gap-6 p-5">
+            <div className="flex h-full flex-col gap-6">
                 {/* message */}
                 {messageUserData.map((item) => {
                     return (
@@ -127,10 +127,10 @@ export const MessageBoxContent = () => {
                 })}
             </div>
             <div>
-                <div className="flex flex-row justify-between rounded-xl bg-white px-5 py-2">
+                <div className="flex flex-row justify-between rounded-xl gap-5 bg-white px-5 py-2">
                     <input
                         type="text"
-                        className="outline-none"
+                        className="outline-none w-full"
                         placeholder="Viết tin nhắn"
                     />
                     <div className="cursor-pointer rounded-md p-2 transition-all hover:bg-gray-200">
