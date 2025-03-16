@@ -289,10 +289,10 @@ export default function ProductDetail() {
                     {/* Seller Info */}
                     <div className="flex items-center gap-4 rounded-lg bg-gray-50 p-4">
                         <Image
-                            src="/placeholder.svg?height=40&width=40"
+                            src="/images/Message/image1.png"
                             alt="Seller avatar"
-                            width={40}
-                            height={40}
+                            width={56}
+                            height={56}
                             className="rounded-full"
                         />
                         <div>
