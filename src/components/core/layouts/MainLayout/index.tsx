@@ -15,7 +15,6 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
     const path = usePathname()
-    console.log('path', path)
 
     return (
         <Layout className="background !bg-transparent">
@@ -27,7 +26,7 @@ function MainLayout({ children }: MainLayoutProps) {
             {/* <RobotChat /> */}
 
             <ScrollButton />
-            {path !== '/chat' && <Footer />}
+            {!path.includes('chat') && <Footer />}
         </Layout>
     )
 }
