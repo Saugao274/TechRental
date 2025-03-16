@@ -26,7 +26,9 @@ function MainLayout({ children }: MainLayoutProps) {
             {/* <RobotChat /> */}
 
             <ScrollButton />
-            {!path.includes('chat') && <Footer />}
+            {!(path.includes('chat') || path.includes('personal')) && (
+                <Footer />
+            )}
         </Layout>
     )
 }
