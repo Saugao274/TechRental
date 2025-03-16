@@ -41,7 +41,7 @@ const Intro = () => {
                         animate="floating1"
                         whileHover="hover"
                         variants={floatingVariants}
-                        className="absolute -left-20 top-36 w-1/4"
+                        className="hidden md:block absolute -left-20 top-36 w-1/4"
                         src="/images/Intro/Comment1.png"
                     />
 
@@ -51,12 +51,12 @@ const Intro = () => {
                         animate="floating2"
                         whileHover="hover"
                         variants={floatingVariants}
-                        className="absolute -right-16 top-36 w-1/4"
+                        className="md:block hidden absolute -right-16 top-36 w-1/4"
                         src="/images/Intro/Comment2.png"
                     />
                 </div>
 
-                <p className="gap font-Be_Vietnam_Pro flex items-center gap-3 font-bold">
+                <div className="gap font-Be_Vietnam_Pro flex md:flex-row flex-col items-center gap-3 font-bold">
                     <span className="bg-gradient-to-b from-blue-700 to-blue-500 bg-clip-text text-4xl text-transparent">
                         Tech
                         <span className="bg-gradient-to-r from-blue-500 to-blue-900 bg-clip-text text-4xl text-transparent">
@@ -80,11 +80,11 @@ const Intro = () => {
                             Giải pháp thuê đồ
                         </span>
                     </ButtonCommon>
-                </p>
-                <p className="font-Be_Vietnam_Pro bg-gradient-to-b from-[#2D84BE] to-blue-500 bg-clip-text text-3xl font-bold text-transparent">
+                </div>
+                <p className="font-Be_Vietnam_Pro bg-gradient-to-b from-[#2D84BE] to-blue-500 bg-clip-text text-3xl font-bold text-transparent w-full text-wrap">
                     Nâng tầm trải nghiệm công nghệ, tối ưu mọi nhu cầu
                 </p>
-                <p className="font-Be_Vietnam_Pro w-2/3 text-center text-base">
+                <p className="font-Be_Vietnam_Pro md:w-2/3 text-center text-base">
                     Techrental cho thuê đa dạng thiết bị công nghệ, giúp khách
                     hàng tiếp cận công nghệ với chi phí hợp lý.
                 </p>

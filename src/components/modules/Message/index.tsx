@@ -85,7 +85,7 @@ export const MessageBoxContent = () => {
 
     return (
         <div className="flex h-full w-full flex-col rounded-lg bg-white bg-opacity-80 p-5">
-            <div className="flex h-full flex-col gap-6">
+            <div className="flex h-full flex-col gap-6 md:gap-6">
                 {/* message */}
                 {messageUserData.map((item) => {
                     return (
@@ -93,18 +93,22 @@ export const MessageBoxContent = () => {
                             {item.type === 'right' && (
                                 <div
                                     key={item.messageId}
-                                    className="flex flex-row gap-5"
+                                    className="flex flex-row md:gap-2"
                                 >
-                                    <Avatar
-                                        src="/images/Message/image5.png"
-                                        size={50}
-                                    ></Avatar>
-                                    <div className="relative flex max-w-[340px] flex-row items-center gap-2">
+                                    <div>
+                                        <Avatar
+                                            src="/images/Message/image5.png"
+                                            size={50}
+                                        ></Avatar>
+                                    </div>
+                                    <div className="relative flex flex-row items-center gap-2 md:max-w-[360px]">
                                         <p className="rounded-lg bg-white px-3 py-2 font-semibold text-primary">
                                             {' '}
                                             {item?.message}
                                         </p>
-                                        <EllipsisVertical size={26} />
+                                        <div>
+                                            <EllipsisVertical size={20} />
+                                        </div>
                                         <p className="absolute bottom-[-20px] text-xs text-gray-500">
                                             {item?.time}
                                         </p>
@@ -121,7 +125,9 @@ export const MessageBoxContent = () => {
                                             {' '}
                                             {item?.message}
                                         </p>
-                                        <EllipsisVertical size={26} />
+                                        <div>
+                                            <EllipsisVertical size={20} />
+                                        </div>
                                         <p className="absolute bottom-[-20px] text-xs text-gray-500">
                                             {item.time}
                                         </p>
@@ -133,7 +139,7 @@ export const MessageBoxContent = () => {
                 })}
             </div>
             <div>
-                <div className="flex flex-row justify-between gap-5 rounded-xl bg-white px-5 py-2">
+                <div className="mt-5 flex flex-row justify-between gap-5 rounded-xl bg-white px-5 py-2">
                     <input
                         type="text"
                         className="w-full outline-none"
