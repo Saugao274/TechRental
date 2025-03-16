@@ -152,7 +152,7 @@ export default function Header() {
             className="sticky top-0 z-50 mt-5 w-full"
             animate={
                 {
-                    // top: isVisible ? 0 : -120,
+                    top: isVisible ? 0 : -120,
                 }
             }
             transition={{

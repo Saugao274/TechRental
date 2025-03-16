@@ -13,9 +13,9 @@ export default function MessageLayout({
     return (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
-                <div className="flex flex-row gap-5">
+                <div className="flex flex-col md:flex-row gap-5">
                     <PersonSideBar />
-                    <div className="w-3/4">{children}</div>
+                    <div className="w-full md:w-3/4">{children}</div>
                 </div>
             </SectionCommon>
         </Layout>
@@ -75,7 +75,7 @@ export const PersonSideBar = () => {
         },
     ]
     return (
-        <div className="flex w-1/4 flex-col gap-5 rounded-[10px] bg-white bg-opacity-80 p-5">
+        <div className="flex w-full md:w-1/4 flex-col gap-5 rounded-[10px] bg-white bg-opacity-80 p-5">
             <div>
                 <p className="!text-2xl font-bold text-primary">RentChat</p>
                 <p className="!text-[16px] font-bold">

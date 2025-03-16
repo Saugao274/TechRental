@@ -30,8 +30,10 @@ export default function AppProvider({
                         Table: {
                             headerBg: '#fff',
                             headerColor: '#000',
-                            headerBorderRadius: 8,
+                            headerBorderRadius: 10,
                             footerBg: '#fff',
+                            footerColor: '#000',
+                            borderRadius: 10,
                         },
                         Select: {
                             controlHeight: 40,
