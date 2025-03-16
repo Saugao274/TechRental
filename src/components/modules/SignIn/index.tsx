@@ -1,18 +1,28 @@
 'use client'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import { Lock, Phone } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
+
 const SignIn = () => {
+    const router = useRouter()
+    const [loading, setLoading] = useState(false)
+
     const onSubmit = async (value: any) => {
         try {
-            console.log(value)
-        } catch (error) {}
+            message.success('Đăng nhập thành công!')
+            setTimeout(() => {
+                router.push('/')
+            }, 1500)
+        } catch (error) {
+            message.error('Đăng nhập thất bại!')
+        } finally {
+            setLoading(false)
+        }
     }
-    const router = useRouter()
 
     return (
         <div className="w-full">
@@ -24,11 +34,11 @@ const SignIn = () => {
                             height={200}
                             width={300}
                             alt="logo"
-                        ></Image>
+                        />
                         <img
                             src="/images/auth.png"
                             className="w-2/3 md:w-full"
-                        ></img>
+                        />
                     </div>
                 </div>
                 <div className="w-full md:w-2/5">
@@ -54,14 +64,14 @@ const SignIn = () => {
                                         message: 'Vui lòng nhập số điện thoại',
                                     },
                                 ]}
-                                name={'phone'}
+                                name="phone"
                             >
                                 <div className="flex flex-row gap-5 rounded-lg border bg-white px-5 py-2">
                                     <Phone />
-                                    <input
+                                    <Input
                                         placeholder="Nhập số điện thoại"
                                         className="w-full !bg-transparent outline-none"
-                                    ></input>
+                                    />
                                 </div>
                             </Form.Item>
                             <Form.Item
@@ -69,17 +79,17 @@ const SignIn = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Vui lòng nhập mật khẩukhẩu',
+                                        message: 'Vui lòng nhập mật khẩu',
                                     },
                                 ]}
-                                name={'password'}
+                                name="password"
                             >
                                 <div className="flex flex-row gap-5 rounded-lg border bg-white px-5 py-2">
                                     <Lock />
-                                    <input
+                                    <Input.Password
                                         placeholder="Nhập mật khẩu"
                                         className="w-full !bg-transparent outline-none"
-                                    ></input>
+                                    />
                                 </div>
                             </Form.Item>
                             <Form.Item>
@@ -100,6 +110,7 @@ const SignIn = () => {
                                 htmlType="submit"
                                 type="primary"
                                 className="!w-full"
+                                loading={loading}
                             >
                                 Đăng nhập
                             </ButtonCommon>
