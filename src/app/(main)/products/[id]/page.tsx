@@ -20,7 +20,7 @@ import {
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { TabsProps } from 'antd'
-import type { CheckboxValueType } from 'antd/es/checkbox/Group'
+import type CheckboxValueType from 'antd/es/checkbox/Group'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import PageHader from '@/components/core/common/PageHeader'
 import SectionCommon from '@/components/core/common/SectionCommon'
@@ -43,13 +43,15 @@ interface ReviewType {
 export default function ProductDetail() {
     const [currentImage, setCurrentImage] = useState(0)
     const [quantity, setQuantity] = useState(1)
-    const [selectedDays, setSelectedDays] = useState<CheckboxValueType[]>([])
+    const [selectedDays, setSelectedDays] = useState<
+        (typeof CheckboxValueType)[]
+    >([])
 
     const images = [
-        '/placeholder.svg?height=500&width=500',
-        '/placeholder.svg?height=100&width=100',
-        '/placeholder.svg?height=100&width=100',
-        '/placeholder.svg?height=100&width=100',
+        '/images/Products/Detail/thumbnail2.png',
+        '/images/Products/Detail/thumbnail1.png',
+        '/images/Products/Detail/thumbnail3.png',
+        '/images/Products/Detail/thumbnail4.png',
     ]
 
     const rentalOptions = [
@@ -82,7 +84,7 @@ export default function ProductDetail() {
         {
             id: 1,
             author: 'Thanh Thúy',
-            avatar: '/placeholder.svg?height=40&width=40',
+            avatar: '/images/Message/image1.png',
             rating: 4.8,
             date: '1 tháng trước',
             content:
@@ -91,7 +93,7 @@ export default function ProductDetail() {
         {
             id: 2,
             author: 'Minh Tuấn',
-            avatar: '/placeholder.svg?height=40&width=40',
+            avatar: '/images/Message/image2.png',
             rating: 5,
             date: '2 tháng trước',
             content:
@@ -100,7 +102,7 @@ export default function ProductDetail() {
         {
             id: 3,
             author: 'Hồng Anh',
-            avatar: '/placeholder.svg?height=40&width=40',
+            avatar: '/images/Message/image6.png',
             rating: 4,
             date: '3 tháng trước',
             content: 'Thời lượng pin tốt, camera chụp đẹp. Giao hàng hơi lâu.',
@@ -108,7 +110,7 @@ export default function ProductDetail() {
         {
             id: 4,
             author: 'Văn Đức',
-            avatar: '/placeholder.svg?height=40&width=40',
+            avatar: '/images/Message/image4.png',
             rating: 4.5,
             date: '3 tháng trước',
             content:
@@ -117,7 +119,13 @@ export default function ProductDetail() {
     ]
 
     const columns: ColumnsType<SpecificationType> = [
-        { title: 'Thông số', dataIndex: 'label', key: 'label', width: '30%' },
+        {
+            title: 'Thông số',
+            dataIndex: 'label',
+            key: 'label',
+            width: '30%',
+            className: 'bg-[#E7E7E7]',
+        },
         { title: 'Chi tiết', dataIndex: 'value', key: 'value' },
     ]
 
@@ -126,30 +134,30 @@ export default function ProductDetail() {
             id: 1,
             name: 'Phantom DJI Mini 3',
             price: '4,990,000₫',
-            image: '/placeholder.svg?height=200&width=200',
+            image: '/images/Products/Detail/image1.png',
         },
         {
             id: 2,
             name: 'Phantom DJI Mini',
             price: '5,990,000₫',
-            image: '/placeholder.svg?height=200&width=200',
+            image: '/images/Products/Detail/image2.png',
         },
         {
             id: 3,
             name: 'DJI Air Power',
             price: '6,990,000₫',
-            image: '/placeholder.svg?height=200&width=200',
+            image: '/images/Products/Detail/image3.png',
         },
         {
             id: 4,
             name: 'Phantom DJI Power 3',
             price: '7,990,000₫',
-            image: '/placeholder.svg?height=200&width=200',
+            image: '/images/Products/Detail/image4.png',
         },
     ]
 
     return (
-        <SectionCommon className="flex flex-col gap-24 !pb-4">
+        <SectionCommon className="mx-auto flex flex-col gap-24 !pb-4 md:max-w-[1440px]">
             {/* Product Section */}
 
             <div className="mx-auto grid gap-8 rounded-lg md:grid-cols-2">
@@ -214,13 +222,18 @@ export default function ProductDetail() {
                                 Cập nhật 6 giờ trước
                             </p>
                         </div>
-                        <div className="mt-1 flex flex-col items-center justify-start gap-2">
+                        <div className="mt-1 flex w-full flex-col items-start justify-start gap-2">
                             <span className="text-gray-500">
-                                Thương hiệu: DJI
+                                <span className="font-bold">
+                                    Thương hiệu:
+                                </span>{' '}
+                                DJI
                             </span>
-                            <span className="text-gray-500">SKU: SP008035</span>
                             <span className="text-gray-500">
-                                Loại sản phẩm: Flycam
+                                <span className='font-bold'>SKU:</span> SP008035
+                            </span>
+                            <span className="text-gray-500">
+                                <span className='font-bold'>Loại sản phẩm:</span> Flycam
                             </span>
                         </div>
                         <div className="mt-2 flex items-center gap-3">
@@ -240,7 +253,7 @@ export default function ProductDetail() {
                             Số ngày thuê:
                         </p>
                         <Checkbox.Group
-                            options={rentalOptions}
+                            options={rentalOptions as any}
                             value={selectedDays}
                             onChange={setSelectedDays}
                             className="grid grid-cols-5 gap-2"
@@ -332,7 +345,10 @@ export default function ProductDetail() {
             <div className="mx-auto flex flex-col gap-8">
                 <PageHader title={'Mô tả chi tiết'} unDivider />
                 <div className="space-y-4 rounded-3xl bg-white p-8">
-                    <h6> Thông tin nổi bật:</h6>
+                    <h6 className="text-[16px] font-bold">
+                        {' '}
+                        Thông tin nổi bật:
+                    </h6>
                     <p>
                         DJI Air 3 là phiên bản mới nhất trong các dòng flycam
                         Air Series, sở hữu hệ thống camera kép cùng ống kính góc
@@ -349,50 +365,80 @@ export default function ProductDetail() {
             </div>
             <div className="rounded-3x flex flex-col gap-8">
                 <PageHader title={'Thông số chi tiết'} unDivider />
-                <Table
-                    className="!rounded-3x"
-                    columns={columns}
-                    dataSource={specifications}
-                    pagination={false}
-                    bordered
-                />
+                <Card bodyStyle={{ padding: 0 }}>
+                    <Table
+                        className="!rounded-3x overflow-hidden"
+                        columns={columns}
+                        dataSource={specifications}
+                        pagination={false}
+                        showHeader={false}
+                    />
+                </Card>
             </div>
             <div className="flex flex-col gap-8">
                 <PageHader title={'Đánh giá sản phẩm'} unDivider />
                 <div className="space-y-6 p-4">
-                    <div className="rounded-lg bg-gray-50 p-4">
-                        <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-5 rounded-lg bg-white p-4">
+                        <div className="flex items-center justify-center gap-4">
                             <span className="text-3xl font-bold">4.3</span>
                             <Rate disabled defaultValue={4.3} />
                             <span className="text-gray-500">(12 đánh giá)</span>
                         </div>
+                        <div className="flex flex-wrap justify-center gap-5">
+                            <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
+                                <p className="font-semibold text-primary">
+                                    Giao tiếp lịch sự thân thiện
+                                </p>
+                            </div>
+                            <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
+                                <p className="font-semibold text-primary">
+                                    Đáng tin cậy
+                                </p>
+                            </div>
+                            <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
+                                <p className="font-semibold text-primary">
+                                    Sản phẩm tốt
+                                </p>
+                            </div>
+                            <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
+                                <p className="font-semibold text-primary">
+                                    Mô tả đúng sản phẩm
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div className="space-y-4">
-                        {reviews.map((review) => (
-                            <Card key={review.id} className="border-gray-200">
-                                <div className="flex items-start gap-4">
-                                    <Avatar src={review.avatar} size={40} />
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-semibold">
-                                                {review.author}
-                                            </span>
-                                            <Rate
-                                                disabled
-                                                defaultValue={review.rating}
-                                                className="text-sm"
-                                            />
+                    <div className="rounded-lg bg-white p-5">
+                        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                            {reviews.map((review) => (
+                                <Card
+                                    key={review.id}
+                                    variant="borderless"
+                                    className='!overflow-hidden'
+                                >
+                                    <div className="flex items-start gap-4">
+                                        <Avatar src={review.avatar} size={40} />
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-semibold">
+                                                    {review.author}
+                                                </span>
+                                                <Rate
+                                                    disabled
+                                                    defaultValue={review.rating}
+                                                    className="text-sm"
+                                                />
+                                            </div>
+                                            <div className="mb-2 text-sm text-gray-500">
+                                                {review.date}
+                                            </div>
+                                            <p className="rounded-2xl bg-[#E3EDF7] px-4 py-2 text-primary shadow-md shadow-cyan-50">
+                                                {review.content}
+                                            </p>
                                         </div>
-                                        <div className="mb-2 text-sm text-gray-500">
-                                            {review.date}
-                                        </div>
-                                        <p className="text-gray-600">
-                                            {review.content}
-                                        </p>
                                     </div>
-                                </div>
-                            </Card>
-                        ))}
+                                </Card>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -423,9 +469,12 @@ export default function ProductDetail() {
                             <p className="mt-2 font-bold text-red-500">
                                 {product.price}
                             </p>
-                            <Button type="primary" className="mt-2 w-full">
+                            <ButtonCommon
+                                type="primary"
+                                className="mt-2 w-full"
+                            >
                                 Xem chi tiết
-                            </Button>
+                            </ButtonCommon>
                         </Card>
                     ))}
                 </div>
