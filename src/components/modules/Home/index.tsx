@@ -7,7 +7,6 @@ import HotProducts from '@/components/core/elements/Products/HotProducts'
 import NewProduct from '@/components/core/elements/Products/NewProduct'
 import Slider from '@/components/core/elements/Slider'
 import StaticHome from '@/components/core/elements/StaticHome'
-import Footer from '@/components/core/elements/Footer'
 import React from 'react'
 
 const Home = () => {

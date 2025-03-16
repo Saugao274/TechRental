@@ -18,7 +18,7 @@ function MainLayout({ children }: MainLayoutProps) {
     console.log('path', path)
 
     return (
-        <Layout className="background !bg-transparent">
+        <Layout className="!bg-gradient-to-b from-blue-100 to-blue-200">
             <Header />
             <Content className="md:mx-w-[1440px] mx-auto mt-0 min-w-full md:mt-5">
                 {children}

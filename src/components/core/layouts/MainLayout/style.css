@@ -1,5 +1,5 @@
 .background {
-    background: radial-gradient(ellipse 100% 80% at 70% 40%,
+    /* background: radial-gradient(ellipse 100% 80% at 70% 40%,
             rgba(140, 200, 238, 0.6) 40%,
             transparent 85%),
         radial-gradient(ellipse 80% 60% at 10% 20%,
@@ -10,8 +10,8 @@
             transparent 95%),
         linear-gradient(120deg,
             rgba(136, 209, 233, 0.192),
-            rgba(178, 230, 230, 0.3)) !important;
-    background-color: #e6f7ff !important;
+            rgba(178, 230, 230, 0.3)) !important; */
+    /* background-color: #e6f7ff !important; */
     background-size: 300% 300% !important;
     background-blend-mode: soft-light, overlay, multiply !important;
     background-attachment: fixed !important;
