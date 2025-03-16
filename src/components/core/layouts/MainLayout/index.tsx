@@ -15,19 +15,18 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
     const path = usePathname()
-    console.log('path', path)
 
     return (
         <Layout className="!bg-gradient-to-b from-blue-100 to-blue-200">
             <Header />
-            <Content className="md:mx-w-[1440px] mx-auto mt-0 min-w-full md:mt-5">
+            <Content className="!md:mx-w-[1440px] mx-auto mt-0 !min-w-full md:mt-5">
                 {children}
             </Content>
 
             {/* <RobotChat /> */}
 
             <ScrollButton />
-            {path !== '/chat' && <Footer />}
+            {!path.includes('chat') && <Footer />}
         </Layout>
     )
 }

@@ -11,7 +11,7 @@ import React from 'react'
 
 const Home = () => {
     return (
-        <div className="mx-auto max-w-[1440px]">
+        <div className="mx-auto md:max-w-[1440px] max-w-full">
             <Intro />
             <div>
                 <NavIcons />

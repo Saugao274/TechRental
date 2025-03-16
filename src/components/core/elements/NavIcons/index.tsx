@@ -60,7 +60,7 @@ const NavIcons = () => {
     ]
 
     return (
-        <SectionCommon className="flex flex-wrap justify-center !pb-0">
+        <SectionCommon className="grid grid-cols-2 md:grid-cols-9 justify-center !pb-0">
             {navIconsData.map((navIcon, index) => (
                 <div key={index} className="flex flex-col items-center gap-2">
                     <img
