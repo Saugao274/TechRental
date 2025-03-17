@@ -80,7 +80,7 @@ const SignIn = () => {
                                     ]}
                                     name="phone"
                                 >
-                                    <div className="flex flex-row gap-5 rounded-lg border bg-white px-5 py-2">
+                                    <div className="flex flex-row items-center gap-5 rounded-lg border bg-white px-5 py-2">
                                         <Phone />
                                         <Input
                                             placeholder="Nhập số điện thoại"
@@ -98,7 +98,7 @@ const SignIn = () => {
                                     ]}
                                     name="password"
                                 >
-                                    <div className="flex flex-row gap-5 rounded-lg border bg-white px-5 py-2">
+                                    <div className="flex flex-row items-center gap-5 rounded-lg border bg-white px-5 py-2">
                                         <Lock />
                                         <Input.Password
                                             placeholder="Nhập mật khẩu"

@@ -82,7 +82,7 @@ export default function SignUpModule() {
                                 <Input
                                     prefix={<Mail />}
                                     placeholder="Nhập email của bạn"
-                                    className="rounded-lg"
+                                    className="items-center rounded-lg"
                                 />
                             </Form.Item>
 
@@ -104,7 +104,7 @@ export default function SignUpModule() {
                                 <Input
                                     prefix={<Phone />}
                                     placeholder="Nhập số điện thoại"
-                                    className="rounded-lg"
+                                    className="items-center rounded-lg"
                                 />
                             </Form.Item>
 
@@ -126,7 +126,7 @@ export default function SignUpModule() {
                                 <Input.Password
                                     prefix={<Lock />}
                                     placeholder="Nhập mật khẩu"
-                                    className="rounded-lg"
+                                    className="items-center rounded-lg"
                                 />
                             </Form.Item>
 
@@ -159,7 +159,7 @@ export default function SignUpModule() {
                                 <Input.Password
                                     prefix={<Lock />}
                                     placeholder="Nhập lại mật khẩu của bạn"
-                                    className="rounded-lg"
+                                    className="items-center rounded-lg"
                                 />
                             </Form.Item>
 
