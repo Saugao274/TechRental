@@ -4,59 +4,29 @@ import { Button, Input } from 'antd'
 
 export default function Footer() {
     const supportLinks = [
-        'Chính sách thuê & cho thuê.',
-        'Hướng dẫn thanh toán.',
-        'Hướng dẫn sử dụng nền tảng.',
-        'Điều khoản sử dụng.',
-        'Quy trình thuê.',
-        'Câu hỏi thường gặp (FAQ).',
+        'Chính sách thuê & cho thuê',
+        'Thanh toán',
+        'Sử dụng nền tảng',
+        'Điều khoản sử dụng',
+        'Quy trình thuê',
+        'Câu hỏi thường gặp (FAQ)',
     ]
 
     return (
-        <footer className="w-full items-center justify-between border-t bg-white px-6 py-10">
+        <footer className="w-full bg-gradient-to-b from-blue-50 to-white px-6 py-10">
             <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 sm:grid-cols-4">
-                {/* Logo and Social Media */}
                 <div>
-                    <div className="mb-4 w-[180px]">
-                        <Image
-                            src="/images/TechRentalLogo.png"
-                            alt="TechRental Logo"
-                            width={200}
-                            height={60}
-                        />
-                    </div>
-                    <p className="mb-2 font-medium text-gray-700">
-                        Liên hệ với chúng tôi
-                    </p>
-                    <div className="flex gap-2 text-xl text-gray-800">
-                        <FacebookOutlined />
-                        <InstagramOutlined />
-                    </div>
-                    <p className="mt-4 font-medium text-gray-700">
-                        Phương thức thanh toán
-                    </p>
-                    <div className="mt-2 flex items-center gap-2">
-                        <Image
-                            src="/images/logo_pttt.jpg"
-                            alt="payment-method"
-                            width={234}
-                            height={176}
-                        />
-                    </div>
-                </div>
-
-                {/* Introduction */}
-                <div style={{ paddingTop: 50 }}>
-                    <h2 className="mb-3 text-lg font-bold">GIỚI THIỆU</h2>
+                    <h2 className="mb-3 text-lg font-bold text-gray-800">
+                        GIỚI THIỆU
+                    </h2>
                     <p className="text-sm text-gray-700">
                         Techrental cho thuê đa dạng thiết bị công nghệ, giúp
                         khách hàng tiếp cận công nghệ với chi phí hợp lý.
                     </p>
                 </div>
 
-                {/* Customer Support */}
-                <div style={{ paddingTop: 50 }}>
-                    <h2 className="mb-3 text-lg font-bold">
+                <div>
+                    <h2 className="mb-3 text-lg font-bold text-gray-800">
                         HỖ TRỢ KHÁCH HÀNG
                     </h2>
                     <ul className="space-y-2 text-sm text-gray-700">
@@ -65,38 +35,93 @@ export default function Footer() {
                                 key={index}
                                 className="cursor-pointer hover:text-blue-600"
                             >
-                                {link}
+                                {link}.
                             </li>
                         ))}
                     </ul>
                 </div>
 
-                {/* Newsletter Subscription */}
-                <div style={{ paddingTop: 50 }}>
-                    <h2 className="mb-3 text-lg font-bold">
-                        ĐĂNG KÝ NHẬN BẢN TIN KHUYẾN MÃI
+                <div>
+                    <h2 className="mb-3 text-lg font-bold text-gray-800">
+                        LIÊN HỆ VỚI CHÚNG TÔI
                     </h2>
-                    <div className="rounded-md bg-blue-100 p-2">
-                        <div className="flex w-full overflow-hidden rounded-md border border-blue-300">
-                            <Input
-                                className="h-12 w-2/3 border-none px-3 text-sm text-gray-700 outline-none"
-                                placeholder="Nhập email bạn tại đây..."
-                                style={{ height: 40, color: 'white' }}
-                            />
-                            <Button
-                                className="flex h-12 items-center justify-center !border-none !bg-blue-600 px-6 !text-white"
-                                style={{ height: 40 }}
-                            >
-                                Gửi
-                            </Button>
-                        </div>
+                    <div className="mb-4 flex gap-4 text-2xl text-gray-800">
+                        <InstagramOutlined className="cursor-pointer hover:text-pink-500" />
+                        <FacebookOutlined className="cursor-pointer hover:text-blue-600" />
+                    </div>
+                    <p className="mb-2 font-medium text-gray-700">THANH TOÁN</p>
+
+                    <div className="mb-2 flex items-center gap-2">
+                        <Image
+                            src="https://tse4.mm.bing.net/th?id=OIP.E-BinyEEwrLkG0pbmOup0AHaDE&pid=Api&P=0&h=220"
+                            alt=""
+                            width={40}
+                            height={24}
+                        />
+                        <Image
+                            src="https://tse3.mm.bing.net/th?id=OIP.H_XU-kpbbMS7kjHFtI9q1wHaEK&pid=Api&P=0&h=220"
+                            alt=""
+                            width={40}
+                            height={24}
+                        />
+                        <Image
+                            src="https://tse1.mm.bing.net/th?id=OIP.UIALrvxQUDLKhOUCebAsqAHaEF&pid=Api&P=0&h=220"
+                            alt=""
+                            width={40}
+                            height={24}
+                        />
+                        <Image
+                            src="https://tse1.mm.bing.net/th?id=OIP.jSBHg8o9mnpJR3MNcozHeAHaFl&pid=Api&P=0&h=220"
+                            alt=""
+                            width={40}
+                            height={24}
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <Image
+                            src="https://tse1.mm.bing.net/th?id=OIP.40hw2_fh4PnHV5pO1SGFxAAAAA&pid=Api&P=0&h=220"
+                            alt=""
+                            width={40}
+                            height={24}
+                        />
+                        <Image
+                            src="https://tse2.mm.bing.net/th?id=OIP.zsNbsbSltBBKRk7OqGPjaAHaHa&pid=Api&P=0&h=220"
+                            alt=""
+                            width={40}
+                            height={24}
+                        />
                     </div>
                 </div>
-            </div>
 
-            {/* Footer Bottom */}
-            <div className="mt-8 border-t pt-4 text-center text-sm text-gray-600">
-                <p>Copyright © 2018 • Lift Media Inc.</p>
+                <div className="flex flex-col items-center">
+                    <h2 className="mb-3 text-lg font-bold text-gray-800">
+                        ĐĂNG KÝ ĐỂ NHẬN ƯU ĐÃI
+                    </h2>
+                    <p className="mb-3 text-center text-sm text-gray-700">
+                        Đăng ký để nhận ngay ưu đãi từ TechRental
+                    </p>
+                    <div className="flex w-full overflow-hidden rounded-md border border-blue-300 bg-white">
+                        <Input
+                            className="h-10 flex-1 border-none px-3 text-sm text-gray-400 outline-none"
+                            placeholder="EMAIL"
+                        />
+                        <Button
+                            className="h-10 !border-none !bg-blue-600 px-4 !text-white"
+                            style={{ height: '40px' }}
+                        >
+                            Đăng ký
+                        </Button>
+                    </div>
+                    <div className="mt-4">
+                        <Image
+                            src="/images/TechRentalLogo.png"
+                            alt="TechRental Logo"
+                            width={120}
+                            height={40}
+                        />
+                    </div>
+                </div>
             </div>
         </footer>
     )
