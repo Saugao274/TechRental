@@ -34,7 +34,10 @@ const RecommentProduct = () => {
 
                 <div className="w-4/3 grid flex-1 grid-cols-1 grid-rows-3 gap-5 sm:grid-cols-2 md:grid-cols-3">
                     {currentProducts.map((product) => (
-                        <ProductCard key={product.Id} product={product} />
+                        <ProductCard
+                            key={product.idProduct}
+                            product={product}
+                        />
                     ))}
                 </div>
             </div>
