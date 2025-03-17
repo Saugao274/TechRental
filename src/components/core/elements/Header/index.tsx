@@ -26,6 +26,7 @@ import {
 } from 'framer-motion'
 import _ from 'lodash'
 import { useRouter } from 'next/navigation'
+import NotificationModal from '@/components/modules/NotificationModal'
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -40,7 +41,10 @@ export default function Header() {
 
     const router = useRouter()
     const { scrollY } = useScroll()
-
+    const [bellVisible, setBellVisible] = useState(false)
+    const handleBellClose = () => {
+        setBellVisible(false)
+    }
     // Track scroll direction and position
     useMotionValueEvent(scrollY, 'change', (latest) => {
         // Always show header at the top of the page
@@ -206,7 +210,10 @@ export default function Header() {
                         />
                     </div>
                 </div>
-
+                <NotificationModal
+                    visible={bellVisible}
+                    onClose={handleBellClose}
+                />
                 {/* Search bar - hidden on smallest screens, visible on sm and up */}
                 <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[308px]">
                     <Search size={16} className="text-primary" />
@@ -243,7 +250,10 @@ export default function Header() {
                             </a>
                         </div>
                     </div>
-                    <div className="flex flex-row gap-4">
+                    <div
+                        className="flex flex-row gap-4"
+                        onClick={() => setBellVisible(true)}
+                    >
                         <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
                             <Bell />
                             <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
@@ -590,6 +600,7 @@ const DropdownProfile = () => {
             ),
         },
     ]
+
     return (
         <div>
             <Dropdown menu={{ items }} trigger={['click']}>
