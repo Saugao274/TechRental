@@ -7,53 +7,40 @@ import {
     RightOutlined,
     ShoppingCartOutlined,
 } from '@ant-design/icons'
-import {
-    Button,
-    Radio,
-    Rate,
-    Card,
-    Table,
-    Tabs,
-    Avatar,
-    InputNumber,
-    Checkbox,
-} from 'antd'
+import { Button, Rate, Card, Table, Avatar, Checkbox, Radio } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import type { TabsProps } from 'antd'
-import type CheckboxValueType from 'antd/es/checkbox/Group'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import PageHader from '@/components/core/common/PageHeader'
 import SectionCommon from '@/components/core/common/SectionCommon'
-
-interface SpecificationType {
-    key: string
-    label: string
-    value: string
-}
-
-interface ReviewType {
-    id: number
-    author: string
-    avatar: string
-    rating: number
-    date: string
-    content: string
-}
+import { useParams } from 'next/navigation'
+import {
+    getRandomFallbackImageArray,
+    productsData,
+    shopDetails,
+    type SpecificationType,
+} from '@/data/products'
+import NotFound from '@/app/not-found'
+import ProductCard from '@/components/core/common/CardCommon/ProductCard'
+import { motion } from 'framer-motion'
 
 export default function ProductDetail() {
+    const params = useParams()
+    const { id } = params
+
     const [currentImage, setCurrentImage] = useState(0)
     const [quantity, setQuantity] = useState(1)
-    const [selectedDays, setSelectedDays] = useState<
-        (typeof CheckboxValueType)[]
-    >([])
-
-    const images = [
-        '/images/Products/Detail/thumbnail2.png',
-        '/images/Products/Detail/thumbnail1.png',
-        '/images/Products/Detail/thumbnail3.png',
-        '/images/Products/Detail/thumbnail4.png',
-    ]
-
+    const [productDetail, setProductDetail] = useState(
+        productsData.filter((item) => id === item.idProduct)[0],
+    )
+    if (!productDetail) {
+        return <NotFound />
+    }
+    const relatedProducts = productsData.filter(
+        (item) => item.category == productDetail.category,
+    )
+    const shopInfor = shopDetails.filter(
+        (item) => productDetail.idShop === item.idShop,
+    )[0]
     const rentalOptions = [
         { label: '1 ngày', value: '1' },
         { label: '2 ngày', value: '2' },
@@ -67,57 +54,6 @@ export default function ProductDetail() {
         { label: '30 ngày', value: '30' },
     ]
 
-    const specifications: SpecificationType[] = [
-        { key: '1', label: 'Trọng lượng', value: 'Dưới 10 kg (DJI 3)' },
-        { key: '2', label: 'Thuộc về', value: 'Trong nước' },
-        { key: '3', label: 'Xuất xứ', value: 'Trung Quốc' },
-        { key: '4', label: 'Dung lượng pin', value: '4/5 mAh' },
-        { key: '5', label: 'Độ cao tối đa', value: '120m' },
-        { key: '6', label: 'Phụ kiện đi kèm', value: 'Pin, 2|3" x4' },
-        { key: '7', label: 'Thời gian bay', value: '34 phút' },
-        { key: '8', label: 'Khoảng cách điều khiển', value: '15km' },
-        { key: '9', label: 'Camera', value: '4K Ultra HD' },
-        { key: '10', label: 'Cảm biến', value: 'Tránh vật cản đa hướng' },
-    ]
-
-    const reviews: ReviewType[] = [
-        {
-            id: 1,
-            author: 'Thanh Thúy',
-            avatar: '/images/Message/image1.png',
-            rating: 4.8,
-            date: '1 tháng trước',
-            content:
-                'Sản phẩm tốt, đóng gói cẩn thận, giao hàng nhanh. Chất lượng camera rất tốt, pin trâu.',
-        },
-        {
-            id: 2,
-            author: 'Minh Tuấn',
-            avatar: '/images/Message/image2.png',
-            rating: 5,
-            date: '2 tháng trước',
-            content:
-                'Rất hài lòng với sản phẩm. Bay ổn định, dễ điều khiển, chụp ảnh đẹp.',
-        },
-        {
-            id: 3,
-            author: 'Hồng Anh',
-            avatar: '/images/Message/image6.png',
-            rating: 4,
-            date: '3 tháng trước',
-            content: 'Thời lượng pin tốt, camera chụp đẹp. Giao hàng hơi lâu.',
-        },
-        {
-            id: 4,
-            author: 'Văn Đức',
-            avatar: '/images/Message/image4.png',
-            rating: 4.5,
-            date: '3 tháng trước',
-            content:
-                'Chất lượng sản phẩm tương xứng với giá tiền. Rất hài lòng.',
-        },
-    ]
-
     const columns: ColumnsType<SpecificationType> = [
         {
             title: 'Thông số',
@@ -129,52 +65,89 @@ export default function ProductDetail() {
         { title: 'Chi tiết', dataIndex: 'value', key: 'value' },
     ]
 
-    const relatedProducts = [
-        {
-            id: 1,
-            name: 'Phantom DJI Mini 3',
-            price: '4,990,000₫',
-            image: '/images/Products/Detail/image1.png',
-        },
-        {
-            id: 2,
-            name: 'Phantom DJI Mini',
-            price: '5,990,000₫',
-            image: '/images/Products/Detail/image2.png',
-        },
-        {
-            id: 3,
-            name: 'DJI Air Power',
-            price: '6,990,000₫',
-            image: '/images/Products/Detail/image3.png',
-        },
-        {
-            id: 4,
-            name: 'Phantom DJI Power 3',
-            price: '7,990,000₫',
-            image: '/images/Products/Detail/image4.png',
-        },
+    const discountRates = [
+        { days: '1', value: 5 },
+        { days: '2', value: 10 },
+        { days: '3', value: 25 },
+        { days: '4', value: 30 },
+        { days: '5', value: 35 },
+        { days: '6', value: 35 },
+        { days: '7', value: 40 },
+        { days: '10', value: 65 },
+        { days: '14', value: 80 },
+        { days: '30', value: 80 },
     ]
+    const [selectedDays, setSelectedDays] = useState<string>('1')
+    const [basePrice] = useState<number>(productDetail.price)
+    const [discountNumber, setDiscountNumber] = useState<number>(5)
 
+    const calculateDiscountedPrice = (selectedDays: number) => {
+        const discount = discountRates.find(
+            (item) => item.days === selectedDays.toString(),
+        )
+        if (!discount) return basePrice * selectedDays
+
+        const discountValue = discount.value
+        const discountedPrice =
+            (basePrice * selectedDays * (100 - discountValue)) / 100
+        return discountedPrice
+    }
+
+    const onChange = (e: any) => {
+        const selectedValue = e.target.value
+        console.log('Ngày đã chọn:', selectedValue)
+
+        const discount = discountRates.find(
+            (item) => item.days === selectedValue,
+        )
+        if (discount) {
+            setDiscountNumber(discount.value)
+        }
+        setSelectedDays(selectedValue)
+    }
+
+    const totalPrice =
+        calculateDiscountedPrice(parseInt(selectedDays)) * quantity
+
+    const buttonData = [
+        'Sản phẩm này còn không?',
+        'Tình trạng thiết bị như thế nào?',
+        'Có phụ kiện gì đi kèm?',
+        'Chế độ bảo hành ra sao?',
+        'Có thể thuê ngắn hạn không?',
+        'Giá thuê đã bao gồm phí vận chuyển chưa?',
+        'Có hỗ trợ đổi trả không?',
+        'Sản phẩm có bị trầy xước không?',
+        'Có thể đến xem trực tiếp không?',
+        'Có thể giảm giá khi thuê dài hạn không?',
+        'Có cần đặt cọc không?',
+        'Thời gian giao hàng là bao lâu?',
+        'Có hỗ trợ kỹ thuật trong quá trình thuê không?',
+        'Có hướng dẫn sử dụng đi kèm không?',
+        'Sản phẩm có tương thích với thiết bị của tôi không?',
+    ]
+    const currentImageTemp = productDetail.images
+        ? productDetail.images
+        : getRandomFallbackImageArray(5)
     return (
         <SectionCommon className="mx-auto flex flex-col gap-24 !pb-4 md:max-w-[1440px]">
-            {/* Product Section */}
-
-            <div className="mx-auto grid gap-8 rounded-lg md:grid-cols-2">
+            <div className="mx-auto grid grid-cols-1 gap-8 rounded-lg md:grid-cols-2">
                 {/* Image Gallery */}
                 <div className="space-y-4">
                     <div className="relative aspect-square rounded-lg bg-white">
                         <Image
-                            src={images[currentImage] || '/placeholder.svg'}
-                            alt="DJI Air 3"
+                            src={currentImageTemp[currentImage]}
+                            alt={productDetail.title}
                             fill
-                            className="object-contain"
+                            className="object-cover"
                         />
                         <button
                             className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow"
                             onClick={() =>
                                 setCurrentImage((prev) =>
-                                    prev > 0 ? prev - 1 : images.length - 1,
+                                    prev > 0
+                                        ? prev - 1
+                                        : currentImageTemp.length - 1,
                                 )
                             }
                         >
@@ -184,15 +157,17 @@ export default function ProductDetail() {
                             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow"
                             onClick={() =>
                                 setCurrentImage((prev) =>
-                                    prev < images.length - 1 ? prev + 1 : 0,
+                                    prev < currentImageTemp.length - 1
+                                        ? prev + 1
+                                        : 0,
                                 )
                             }
                         >
                             <RightOutlined />
                         </button>
                     </div>
-                    <div className="flex gap-2 overflow-x-auto">
-                        {images.map((src, index) => (
+                    <div className="hidden gap-2 overflow-x-auto md:flex">
+                        {currentImageTemp.map((src, index) => (
                             <button
                                 key={index}
                                 className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 ${currentImage === index ? 'border-blue-500' : 'border-transparent'}`}
@@ -213,38 +188,38 @@ export default function ProductDetail() {
                 <div className="space-y-4">
                     {/* Breadcrumb */}
                     <div className="mb-4 text-sm text-gray-500">
-                        Trang chủ / Flycam
+                        Trang chủ / {productDetail.category}
                     </div>
                     <div>
                         <div className="flex items-center gap-5">
-                            <h1 className="text-2xl font-bold">DJI Air 3</h1>
-                            <p className="text-[#717276]">
-                                Cập nhật 6 giờ trước
-                            </p>
+                            <h1 className="text-2xl font-bold">
+                                {productDetail.title}
+                            </h1>
                         </div>
                         <div className="mt-1 flex w-full flex-col items-start justify-start gap-2">
                             <span className="text-gray-500">
+                                <span className="font-bold">Thương hiệu:</span>{' '}
+                                {productDetail.brand}
+                            </span>
+
+                            <span className="text-gray-500">
                                 <span className="font-bold">
-                                    Thương hiệu:
+                                    Loại sản phẩm:
                                 </span>{' '}
-                                DJI
-                            </span>
-                            <span className="text-gray-500">
-                                <span className='font-bold'>SKU:</span> SP008035
-                            </span>
-                            <span className="text-gray-500">
-                                <span className='font-bold'>Loại sản phẩm:</span> Flycam
+                                {productDetail.category}
                             </span>
                         </div>
                         <div className="mt-2 flex items-center gap-3">
                             <span className="rounded bg-white px-2 py-1 text-sm font-bold text-red-500">
-                                -5%
+                                {discountNumber}%
                             </span>
                             <span className="text-xl font-bold text-red-500">
-                                500.000đ
+                                {totalPrice.toLocaleString('vi-VN')}
                             </span>
                             <span className="ml-2 text-gray-500 line-through">
-                                526.000đ
+                                {(
+                                    basePrice * parseInt(selectedDays)
+                                ).toLocaleString('vi-VN')}
                             </span>
                         </div>
                     </div>
@@ -252,10 +227,10 @@ export default function ProductDetail() {
                         <p className="mb-2 text-base font-bold">
                             Số ngày thuê:
                         </p>
-                        <Checkbox.Group
-                            options={rentalOptions as any}
+                        <Radio.Group
+                            options={rentalOptions}
                             value={selectedDays}
-                            onChange={setSelectedDays}
+                            onChange={onChange}
                             className="grid grid-cols-5 gap-2"
                         />
                     </div>
@@ -287,57 +262,71 @@ export default function ProductDetail() {
                         </Button>
                     </div>
                     {/* Seller Info */}
-                    <div className="flex items-center gap-4 rounded-lg bg-gray-50 p-4">
-                        <Image
-                            src="/images/Message/image1.png"
-                            alt="Seller avatar"
-                            width={56}
-                            height={56}
-                            className="rounded-full"
-                        />
-                        <div>
-                            <div className="text-xl font-semibold text-[#1D3D85]">
-                                Thanh Thủy
-                            </div>
-                            <div className="mb-4 flex gap-3 text-sm text-gray-500">
-                                <span className="text-[#1D3D85]">
-                                    Phản hồi: 87%
-                                </span>
-                                <span className="text-[#1D3D85]">
-                                    17 đã thuê
-                                </span>
-                            </div>
-                            <div className="text-sm text-gray-500">
-                                Hoạt động 3 giờ trước
+                    <div className="flex flex-col items-center justify-between gap-4 rounded-lg bg-gray-50 p-4 md:flex-row">
+                        <div className="flex min-w-0 items-center justify-center gap-3">
+                            <Image
+                                src={shopInfor.avatar || ''}
+                                alt="Seller avatar"
+                                width={56}
+                                height={56}
+                                className="h-14 w-14 flex-shrink-0 rounded-full object-cover"
+                            />
+                            <div className="flex min-w-0 flex-col">
+                                <div className="truncate text-lg font-semibold text-[#1D3D85]">
+                                    {shopInfor.nameShop}
+                                </div>
+                                <div className="flex flex-wrap gap-3 text-sm text-gray-500">
+                                    <span className="text-[#1D3D85]">
+                                        Phản hồi {shopInfor.response}%
+                                    </span>
+                                    <span className="text-[#1D3D85]">
+                                        {shopInfor.rentered} đã thuê
+                                    </span>
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                    Hoạt động 3 giờ trước
+                                </div>
                             </div>
                         </div>
-                        <div className="ml-auto flex flex-col items-center gap-1">
+
+                        {/* Đánh giá */}
+                        <div className="flex flex-col items-center gap-1 text-center">
                             <span className="text-xl font-semibold text-yellow-400">
-                                ★<span className="text-black">4.8/5</span>
+                                ★{' '}
+                                <span className="text-black">
+                                    {shopInfor.rate}/5
+                                </span>
                             </span>
                             <span className="text-base text-[#1D3D85]">
-                                4 đánh giá
+                                {shopInfor.totalReviews} đánh giá
                             </span>
                         </div>
                     </div>
-                    {/* Additional Info */}
 
-                    <div className="flex items-center gap-4 text-sm">
-                        <ButtonCommon className="!h-11 !rounded-3xl !bg-[#E7E7E7]">
-                            <span className="text-[#1D3D85]">
-                                Sản phẩm này còn không?
-                            </span>
-                        </ButtonCommon>
-                        <ButtonCommon className="!h-11 !rounded-3xl !bg-[#E7E7E7]">
-                            <span className="text-[#1D3D85]">
-                                Tình trạng thiết bị như thế nào?
-                            </span>
-                        </ButtonCommon>
-                        <ButtonCommon className="!h-11 !rounded-3xl !bg-[#E7E7E7]">
-                            <span className="text-[#1D3D85]">
-                                Có phụ kiện gì đi kèm?
-                            </span>
-                        </ButtonCommon>
+                    {/* Additional Info */}
+                    <div className="w-full overflow-hidden">
+                        <motion.div
+                            className="flex gap-4"
+                            animate={{ x: ['0%', '-100%'] }}
+                            transition={{
+                                repeat: Infinity,
+                                duration: 10,
+                                ease: 'linear',
+                            }}
+                        >
+                            {buttonData
+                                .concat(buttonData)
+                                .map((text, index) => (
+                                    <ButtonCommon
+                                        key={index}
+                                        className="!h-11 min-w-[250px] !rounded-3xl !bg-[#E7E7E7]"
+                                    >
+                                        <span className="text-[#1D3D85]">
+                                            {text}
+                                        </span>
+                                    </ButtonCommon>
+                                ))}
+                        </motion.div>
                     </div>
                 </div>
             </div>
@@ -369,7 +358,7 @@ export default function ProductDetail() {
                     <Table
                         className="!rounded-3x overflow-hidden"
                         columns={columns}
-                        dataSource={specifications}
+                        dataSource={productDetail.parameter}
                         pagination={false}
                         showHeader={false}
                     />
@@ -409,32 +398,40 @@ export default function ProductDetail() {
                     </div>
                     <div className="rounded-lg bg-white p-5">
                         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                            {reviews.map((review) => (
+                            {productDetail.reviews.map((review) => (
                                 <Card
                                     key={review.id}
                                     variant="borderless"
-                                    className='!overflow-hidden'
+                                    className="!overflow-hidden"
                                 >
-                                    <div className="flex items-start gap-4">
-                                        <Avatar src={review.avatar} size={40} />
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold">
-                                                    {review.author}
-                                                </span>
-                                                <Rate
-                                                    disabled
-                                                    defaultValue={review.rating}
-                                                    className="text-sm"
-                                                />
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex min-w-0 items-center gap-4">
+                                            <Avatar
+                                                src={review.avatar}
+                                                size={40}
+                                            />
+                                            <div className="flex min-w-0 flex-col">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <span className="truncate font-semibold">
+                                                        {review.author}
+                                                    </span>
+                                                    <Rate
+                                                        disabled
+                                                        defaultValue={
+                                                            review.rating
+                                                        }
+                                                        className="text-sm"
+                                                    />
+                                                </div>
+                                                <div className="text-sm text-gray-500">
+                                                    {review.date}
+                                                </div>
                                             </div>
-                                            <div className="mb-2 text-sm text-gray-500">
-                                                {review.date}
-                                            </div>
-                                            <p className="rounded-2xl bg-[#E3EDF7] px-4 py-2 text-primary shadow-md shadow-cyan-50">
-                                                {review.content}
-                                            </p>
                                         </div>
+
+                                        <p className="rounded-2xl bg-[#E3EDF7] px-4 py-2 text-primary shadow-md shadow-cyan-50">
+                                            {review.content}
+                                        </p>
                                     </div>
                                 </Card>
                             ))}
@@ -446,40 +443,16 @@ export default function ProductDetail() {
             {/* Related Products */}
             <div className="border-t p-6">
                 <h2 className="mb-4 text-lg font-bold">SẢN PHẨM LIÊN QUAN</h2>
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    {relatedProducts.map((product) => (
-                        <Card
-                            key={product.id}
-                            hoverable
-                            cover={
-                                <div className="relative h-48">
-                                    <Image
-                                        src={
-                                            product.image || '/placeholder.svg'
-                                        }
-                                        alt={product.name}
-                                        fill
-                                        className="object-contain"
-                                    />
-                                </div>
-                            }
-                            className="text-center"
-                        >
-                            <h3 className="font-semibold">{product.name}</h3>
-                            <p className="mt-2 font-bold text-red-500">
-                                {product.price}
-                            </p>
-                            <ButtonCommon
-                                type="primary"
-                                className="mt-2 w-full"
-                            >
-                                Xem chi tiết
-                            </ButtonCommon>
-                        </Card>
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
+                    {relatedProducts.slice(0, 4).map((product, index) => (
+                        <ProductCard
+                            product={product}
+                            key={index}
+                            hiddenShortDetails={true}
+                        />
                     ))}
                 </div>
             </div>
-            {/* Review Products */}
         </SectionCommon>
     )
 }
