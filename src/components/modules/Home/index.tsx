@@ -7,11 +7,24 @@ import HotProducts from '@/components/core/elements/Products/HotProducts'
 import NewProduct from '@/components/core/elements/Products/NewProduct'
 import Slider from '@/components/core/elements/Slider'
 import StaticHome from '@/components/core/elements/StaticHome'
-import React from 'react'
+import { Skeleton } from 'antd'
+import React, { useEffect, useState } from 'react'
 
 const Home = () => {
-    return (
-        <div className="mx-auto md:max-w-[1440px] max-w-full">
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false)
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [])
+
+    return loading ? (
+        <Loading />
+    ) : (
+        <div className="mx-auto max-w-full md:max-w-[1440px]">
             <Intro />
             <div>
                 <NavIcons />
@@ -21,6 +34,16 @@ const Home = () => {
             <NewProduct />
             <News />
             <StaticHome />
+        </div>
+    )
+}
+
+const Loading = () => {
+    return (
+        <div className="flex flex-col gap-5 p-5">
+            <Skeleton active />
+            <Skeleton active />
+            <Skeleton active />
         </div>
     )
 }
