@@ -250,11 +250,11 @@ export default function Header() {
                             </a>
                         </div>
                     </div>
-                    <div
-                        className="flex flex-row gap-4"
-                        onClick={() => setBellVisible(true)}
-                    >
-                        <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
+                    <div className="flex flex-row gap-4">
+                        <div
+                            className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
+                            onClick={() => setBellVisible(true)}
+                        >
                             <Bell />
                             <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                 <p className="text-[10px] text-white">2</p>
