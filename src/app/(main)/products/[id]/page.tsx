@@ -147,7 +147,7 @@ export default function ProductDetail() {
                                 setCurrentImage((prev) =>
                                     prev > 0
                                         ? prev - 1
-                                        : productDetail.images.length - 1,
+                                        : currentImageTemp.length - 1,
                                 )
                             }
                         >
