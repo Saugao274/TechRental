@@ -232,17 +232,15 @@ export default function Header() {
                             </Link>
                         </div>
                         <div>
-                            <Dropdown menu={{ items }}>
-                                <a onClick={(e) => e.preventDefault()}>
-                                    <Space className="flex items-center text-[16px] text-primary">
-                                        <p>Hạng mục</p>
-                                        <ChevronDown
+                            <a onClick={() => router.push(`/products`)}>
+                                <Space className="flex items-center text-[16px] text-primary">
+                                    <p>Sản phẩm</p>
+                                    {/* <ChevronDown
                                             size={18}
                                             className="mt-1"
-                                        />
-                                    </Space>
-                                </a>
-                            </Dropdown>
+                                        /> */}
+                                </Space>
+                            </a>
                         </div>
                     </div>
                     <div className="flex flex-row gap-4">
