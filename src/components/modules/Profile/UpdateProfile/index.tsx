@@ -18,6 +18,7 @@ import {
     LinkedinOutlined,
 } from '@ant-design/icons'
 import { useAuth } from '@/context/AuthContext'
+import type { User } from '@/data/authData'
 
 const { Text } = Typography
 
@@ -31,11 +32,13 @@ const UpdateProfile = () => {
     }, [form])
 
     const handleSubmit = (values: any) => {
-        console.log('Success:', values)
+        if (!user) return
         message.success('Cập nhật thông tin thành công!')
-
-        updateUser(values)
-        form.setFieldsValue(values)
+        const newUser: User = {
+            ...user,
+            ...values,
+        }
+        updateUser(newUser)
     }
 
     const handleAvatarChange = (info: any) => {
@@ -83,12 +86,21 @@ const UpdateProfile = () => {
                 </motion.div>
                 {/* Avatar & Thông tin chính */}
                 <div className="relative grid grid-cols-[auto_1fr] items-center gap-6 border-b pb-6 md:flex md:items-start md:justify-start">
-                    <Avatar
-                        src={avatar}
-                        size={100}
-                        className="!mx-auto shrink-0 border-4 !border-indigo-500 shadow-xl shadow-indigo-300 md:!mx-0"
-                        onClick={handleAvatarChange}
-                    />
+                    <Upload
+                        showUploadList={false}
+                        beforeUpload={(file) => {
+                            const newAvatarUrl = URL.createObjectURL(file)
+                            setAvatar(newAvatarUrl)
+                            return false
+                        }}
+                    >
+                        <Avatar
+                            src={avatar}
+                            size={100}
+                            className="!mx-auto shrink-0 border-4 !border-indigo-500 shadow-xl shadow-indigo-300 md:!mx-0"
+                        />
+                    </Upload>
+
                     <div className="flex w-[200px] flex-col gap-2 overflow-hidden">
                         <h2 className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold text-[#1D3D85]">
                             {user?.name}
