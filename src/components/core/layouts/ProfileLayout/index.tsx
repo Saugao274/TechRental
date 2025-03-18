@@ -15,13 +15,17 @@ import {
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/libs/utils'
 import { HTMLMotionProps, motion } from 'framer-motion'
+import { useAuth } from '@/context/AuthContext'
+import SignIn from '@/components/modules/SignIn'
 
 export default function ProfileRootLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
-    return (
+    const { user } = useAuth()
+
+    return user ? (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
                 <div className="flex flex-row gap-[20px]">
@@ -37,6 +41,8 @@ export default function ProfileRootLayout({
                 </div>
             </SectionCommon>
         </Layout>
+    ) : (
+        <SignIn />
     )
 }
 
@@ -129,7 +135,7 @@ export function ProfileOptionsNavigation({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={cn('!font-vietnam flex flex-col space-y-2', className)}
+            className={cn('flex flex-col space-y-2 !font-vietnam', className)}
             {...props}
         >
             {routes.map((route) =>
