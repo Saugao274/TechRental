@@ -225,11 +225,9 @@ export default function Header() {
         <motion.header
             ref={headerRef}
             className="sticky top-0 z-50 mt-5 w-full"
-            animate={
-                {
-                    // top: isVisible ? 0 : -120,
-                }
-            }
+            animate={{
+                top: isVisible ? 0 : -120,
+            }}
             transition={{
                 duration: 0.3,
                 ease: 'easeInOut',
