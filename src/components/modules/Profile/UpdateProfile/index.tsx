@@ -24,7 +24,7 @@ const { Text } = Typography
 const UpdateProfile = () => {
     const [form] = Form.useForm()
     const [avatar, setAvatar] = useState('/images/Intro/avt1.png')
-    const { user, updateIdentifier } = useAuth()
+    const { user, updateUser } = useAuth()
 
     useEffect(() => {
         form.setFieldsValue(user)
@@ -34,7 +34,7 @@ const UpdateProfile = () => {
         console.log('Success:', values)
         message.success('Cập nhật thông tin thành công!')
 
-        updateIdentifier()
+        updateUser()
     }
 
     const handleAvatarChange = (info: any) => {
@@ -166,7 +166,6 @@ const UpdateProfile = () => {
                             htmlType="submit"
                             type="primary"
                             className="rounded-lg bg-indigo-600 px-6 py-2 text-lg font-semibold shadow-md transition hover:bg-indigo-700"
-                            onClick={updateIdentifier}
                         >
                             Lưu thay đổi
                         </Button>

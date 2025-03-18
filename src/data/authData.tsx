@@ -38,3 +38,8 @@ export const newUser = {
     rentedProducts: 10,
     isLandlord: false,
 }
+export const userUpdate = {
+    ...user,
+    name: 'Nguyễn Thị Thanh Thủy',
+    email: 'ntthanhthuy274@gmail.com',
+}
