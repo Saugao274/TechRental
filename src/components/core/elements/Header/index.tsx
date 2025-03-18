@@ -47,9 +47,7 @@ export default function Header() {
     const handleBellClose = () => {
         setBellVisible(false)
     }
-    // Track scroll direction and position
     useMotionValueEvent(scrollY, 'change', (latest) => {
-        // Always show header at the top of the page
         if (latest < 10) {
             setIsVisible(true)
             setAtTop(true)
@@ -58,11 +56,7 @@ export default function Header() {
             setAtTop(false)
         }
 
-        // Determine scroll direction
         const direction = latest > lastScrollY ? 'down' : 'up'
-        console.log(direction)
-        // Only hide header when scrolling down and not at the top
-        // Show header when scrolling up
         if (direction === 'down' && latest > 100 && isVisible) {
             setIsVisible(false)
         } else if (direction === 'up' && !isVisible) {

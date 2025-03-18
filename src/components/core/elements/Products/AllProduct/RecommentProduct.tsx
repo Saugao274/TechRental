@@ -29,14 +29,14 @@ const RecommentProduct = () => {
 
     return (
         <SectionCommon className="container mx-auto h-full p-4">
-            <div className="flex flex-col gap-6 md:flex-row md:items-start">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                 {/* Sidebar */}
-                <div className="md:w-1/3 lg:w-1/4">
+                <div className="w-full lg:w-1/4">
                     <FilterSidebar onFilter={handleFilter} />
                 </div>
 
                 {/* Danh sách sản phẩm */}
-                <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-3">
+                <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-3">
                     {currentProducts.map((product) => (
                         <ProductCard
                             key={product.idProduct}

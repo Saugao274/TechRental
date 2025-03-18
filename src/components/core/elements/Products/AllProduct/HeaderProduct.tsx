@@ -21,7 +21,7 @@ const HeaderProducts = () => {
 
     return (
         <SectionCommon className="relative flex h-80 items-center justify-center">
-            <div className="block md:hidden">
+            <div className="block lg:hidden">
                 <img
                     src={images[current]}
                     className="h-72 w-auto rounded-2xl object-cover"
@@ -44,7 +44,7 @@ const HeaderProducts = () => {
                 </button>
             </div>
 
-            <div className="relative hidden w-[800px] items-center justify-center md:flex">
+            <div className="relative hidden w-[800px] items-center justify-center lg:flex">
                 <img
                     src={images[(current + totalImages - 2) % totalImages]}
                     className="z-[2] h-48 w-auto rounded-2xl object-cover opacity-80 transition-all duration-500 ease-in-out"

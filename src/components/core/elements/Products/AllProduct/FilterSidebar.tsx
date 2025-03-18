@@ -98,17 +98,15 @@ const FilterSidebar = ({
     useEffect(() => {
         const toggleMessage = () => {
             setShowMessage((prev) => !prev)
-            setTimeout(toggleMessage, 7000)
+            setTimeout(toggleMessage, 5000)
         }
 
-        const timeout = setTimeout(toggleMessage, 7000)
-
-        return () => clearTimeout(timeout)
+        return () => clearTimeout(setTimeout(toggleMessage, 5000))
     }, [])
 
     return (
         <div className="relative h-full w-full rounded-lg bg-white p-4 shadow-2xl shadow-white">
-            <div className="md:hidden">
+            <div className="lg:hidden">
                 <div className="mb-4 flex items-center gap-2">
                     <img
                         src="/images/Products/Recomment/robotNoti.png"
@@ -120,7 +118,7 @@ const FilterSidebar = ({
                         Bạn cần chọn sản phẩm phù hợp không?
                     </p>
                 </div>
-                <div className="flex flex-col gap-3 md:hidden">
+                <div className="flex flex-col gap-3 lg:hidden">
                     <Select
                         placeholder="Chọn mức giá"
                         className="w-full"
@@ -162,7 +160,7 @@ const FilterSidebar = ({
                     </Select>
                 </div>
             </div>
-            <div className="hidden md:flex">
+            <div className="hidden lg:flex">
                 <>
                     <img
                         src="/images/Products/Recomment/robotNoti.png"
@@ -178,9 +176,9 @@ const FilterSidebar = ({
                             <span className="absolute -bottom-1 left-8 -z-10 h-3 w-3 rotate-45 bg-[#A7C7E7]"></span>
                         </div>
                     ) : (
-                        <div className="absolute -left-5 bottom-12 w-1/5 rounded-xl bg-[#A7C7E7] px-3 py-1 text-sm font-bold text-blue-900 shadow-md">
+                        <div className="absolute -left-2 -top-16 w-1/4 rounded-xl bg-[#A7C7E7] px-2 py-1 text-xs text-blue-900 shadow-md">
                             <p>....</p>
-                            <span className="absolute -bottom-1 left-3 h-3 w-3 rotate-45 bg-[#A7C7E7]"></span>
+                            <span className="absolute -bottom-1 left-8 -z-10 h-3 w-3 rotate-45 bg-[#A7C7E7]"></span>
                         </div>
                     )}
                 </>
