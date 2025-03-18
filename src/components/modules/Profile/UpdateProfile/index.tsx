@@ -17,31 +17,29 @@ import {
     TwitterOutlined,
     LinkedinOutlined,
 } from '@ant-design/icons'
+import { useAuth } from '@/context/AuthContext'
 
 const { Text } = Typography
 
 const UpdateProfile = () => {
     const [form] = Form.useForm()
-    const [isVerified, setIsVerified] = useState(true)
     const [avatar, setAvatar] = useState('/images/Intro/avt1.png')
+    const { user, updateUser } = useAuth()
 
     useEffect(() => {
-        form.setFieldsValue({
-            phone: '0912345678',
-            fullname: 'Nguyễn Văn A',
-            email: 'nguyenvana@email.com',
-            address: 'Hà Nội, Việt Nam',
-        })
+        form.setFieldsValue(user)
     }, [form])
 
     const handleSubmit = (values: any) => {
         console.log('Success:', values)
         message.success('Cập nhật thông tin thành công!')
+
+        updateUser(values)
+        form.setFieldsValue(values)
     }
 
     const handleAvatarChange = (info: any) => {
         if (info.file.status === 'done') {
-            // Giả lập cập nhật avatar
             const newAvatarUrl = URL.createObjectURL(info.file.originFileObj)
             setAvatar(newAvatarUrl)
             message.success('Đổi ảnh đại diện thành công!')
@@ -52,7 +50,7 @@ const UpdateProfile = () => {
         <main className="flex w-full justify-center bg-transparent">
             <Card className="relative w-full max-w-3xl overflow-hidden rounded-2xl p-8 shadow-xl">
                 <motion.div
-                    className="absolute right-10 top-0 z-50 opacity-40"
+                    className="absolute right-3 z-30 opacity-40 md:right-10 md:top-0"
                     initial={{ x: 50, opacity: 0.5 }}
                     animate={{ x: [40, 60, 40], opacity: [0.4, 0.6, 0.4] }}
                     transition={{
@@ -67,35 +65,39 @@ const UpdateProfile = () => {
                         className="w-36 opacity-60"
                     />
                 </motion.div>
-
+                <motion.div
+                    className="absolute -left-16 z-30 opacity-40 md:hidden"
+                    initial={{ x: 50, opacity: 0.5 }}
+                    animate={{ x: [40, 60, 40], opacity: [0.4, 0.6, 0.4] }}
+                    transition={{
+                        duration: 6,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                    }}
+                >
+                    <img
+                        src="/images/clound.png"
+                        alt="Cloud"
+                        className="w-36 opacity-60"
+                    />
+                </motion.div>
                 {/* Avatar & Thông tin chính */}
-                <div className="relative flex items-center gap-6 border-b pb-6">
-                    <div className="relative">
-                        <Avatar
-                            src={avatar}
-                            size={100}
-                            className="border-4 !border-indigo-500 shadow-xl shadow-indigo-300"
-                        />
-                        <Upload
-                            showUploadList={false}
-                            beforeUpload={() => false}
-                            onChange={handleAvatarChange}
-                        >
-                            <Button
-                                className="absolute -bottom-2 -right-2 rounded-full bg-white p-1 shadow-md"
-                                icon={<UploadOutlined />}
-                            />
-                        </Upload>
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-bold text-[#1D3D85]">
-                            Nguyễn Văn A
+                <div className="relative grid grid-cols-[auto_1fr] items-center gap-6 border-b pb-6 md:flex md:items-start md:justify-start">
+                    <Avatar
+                        src={avatar}
+                        size={100}
+                        className="!mx-auto shrink-0 border-4 !border-indigo-500 shadow-xl shadow-indigo-300 md:!mx-0"
+                        onClick={handleAvatarChange}
+                    />
+                    <div className="flex w-[200px] flex-col gap-2 overflow-hidden">
+                        <h2 className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold text-[#1D3D85]">
+                            {user?.name}
                         </h2>
-                        <Text className="text-gray-500">
+                        <Text className="mx-auto text-gray-500 md:mx-0">
                             Thành viên từ 2024
                         </Text>
-                        <div className="mt-2 flex items-center gap-2">
-                            {isVerified ? (
+                        <div className="mx-auto flex items-center md:mx-0">
+                            {user?.isVerified ? (
                                 <Text type="success">✅ Đã xác thực</Text>
                             ) : (
                                 <Text type="danger">⚠️ Chưa xác thực</Text>
@@ -113,7 +115,7 @@ const UpdateProfile = () => {
                 >
                     <Form.Item
                         label="Họ và tên"
-                        name="fullname"
+                        name="name"
                         rules={[
                             {
                                 required: true,
