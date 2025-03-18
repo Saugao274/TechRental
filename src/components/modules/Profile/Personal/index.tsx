@@ -1,6 +1,17 @@
 'use client'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
-import { Avatar, Badge, Button, Card, Divider, Modal } from 'antd'
+import {
+    Avatar,
+    Badge,
+    Card,
+    Divider,
+    Modal,
+    Input,
+    Select,
+    DatePicker,
+    Upload,
+    Button,
+} from 'antd'
 import {
     CalendarClock,
     Clock,
@@ -10,13 +21,28 @@ import {
     User,
 } from 'lucide-react'
 import React, { useState } from 'react'
+import { UploadOutlined } from '@ant-design/icons'
+
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 
 export default function PersonalProfile() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const { user } = useAuth()
+    const [gender, setGender] = useState('')
     const router = useRouter()
+
+    const handleVerificationClick = () => {
+        setIsModalOpen(true)
+    }
+
+    const handleOk = () => {
+        setIsModalOpen(false)
+    }
+
+    const handleCancel = () => {
+        setIsModalOpen(false)
+    }
     return (
         <main className="mx-auto flex w-full flex-col gap-5">
             {/* Greeting Header */}
@@ -57,11 +83,156 @@ export default function PersonalProfile() {
                             đến định danh tài khoản để xác minh ngay!
                         </p>
                     </div>
-                    <ButtonCommon type="dashed">
+                    <ButtonCommon
+                        type="dashed"
+                        onClick={handleVerificationClick}
+                    >
                         Định danh tài khoản
                     </ButtonCommon>
                 </div>
             )}
+            <Modal
+                title={
+                    <h2 className="text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-center text-2xl font-bold text-transparent">
+                        Đăng Ký Định Danh
+                    </h2>
+                }
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                footer={null}
+                width={600}
+                className="rounded-xl"
+                centered
+            >
+                <form className="space-y-5 p-4">
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Họ và Tên
+                        </label>
+                        <Input
+                            placeholder="Họ và Tên"
+                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Địa chỉ
+                        </label>
+                        <Input
+                            placeholder="Địa chỉ"
+                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Quốc tịch
+                        </label>
+                        <Input
+                            placeholder="Quốc tịch"
+                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Nơi cấp chứng từ
+                        </label>
+                        <Input
+                            placeholder="Nơi cấp chứng từ"
+                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Giới Tính
+                        </label>
+                        <Select
+                            value={gender}
+                            onChange={(value) => setGender(value)}
+                            placeholder="Chọn giới tính"
+                            className="w-full"
+                            popupClassName="rounded-md"
+                        >
+                            <Select.Option value="Nam">Nam</Select.Option>
+                            <Select.Option value="Nữ">Nữ</Select.Option>
+                            <Select.Option value="Khác">Khác</Select.Option>
+                        </Select>
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Ngày, tháng, năm sinh
+                        </label>
+                        <DatePicker
+                            placeholder="Chọn ngày"
+                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                            format="DD/MM/YYYY"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            CCCD/CMND
+                        </label>
+                        <Input
+                            placeholder="CCCD/CMND"
+                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label className="mb-2 block text-center text-sm font-medium text-gray-700">
+                                Mặt trước CCCD/CMND
+                            </label>
+                            <Upload
+                                listType="picture"
+                                maxCount={1}
+                                className="w-full"
+                            >
+                                <Button
+                                    icon={<UploadOutlined />}
+                                    className="w-full bg-blue-100 text-blue-700 transition-all duration-200 hover:bg-blue-200"
+                                >
+                                    Tải lên
+                                </Button>
+                            </Upload>
+                        </div>
+                        <div>
+                            <label className="mb-2 block text-center text-sm font-medium text-gray-700">
+                                Mặt sau CCCD/CMND
+                            </label>
+                            <Upload
+                                listType="picture"
+                                maxCount={1}
+                                className="w-full"
+                            >
+                                <Button
+                                    icon={<UploadOutlined />}
+                                    className="w-full bg-blue-100 text-blue-700 transition-all duration-200 hover:bg-blue-200"
+                                >
+                                    Tải lên
+                                </Button>
+                            </Upload>
+                        </div>
+                    </div>
+
+                    <div className="mt-6">
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            className="h-10 w-full rounded-md border-none bg-gradient-to-r from-green-500 to-teal-500 text-white transition-all duration-300 hover:from-green-600 hover:to-teal-600"
+                            onClick={handleOk}
+                        >
+                            Hoàn tất
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
 
             {/* User? Profile Card */}
             <Card className="shadow-sm">
