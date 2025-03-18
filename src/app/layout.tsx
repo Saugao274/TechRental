@@ -3,6 +3,7 @@ import './globals.css'
 import { Be_Vietnam_Pro } from 'next/font/google'
 import AppProvider from './provider'
 import { cn } from '@/libs/utils'
+import { AuthProvider } from '@/context/AuthContext'
 
 export const metadata: Metadata = {
     title: 'TechRental',
@@ -24,7 +25,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={cn(beVietnamPro.variable)}>
-                <AppProvider>{children}</AppProvider>
+                <AppProvider>
+                    <AuthProvider>{children}</AuthProvider>
+                </AppProvider>
             </body>
         </html>
     )

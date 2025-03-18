@@ -27,8 +27,10 @@ import {
 import _ from 'lodash'
 import { useRouter } from 'next/navigation'
 import NotificationModal from '@/components/modules/NotificationModal'
+import { useAuth } from '@/context/AuthContext'
 
 export default function Header() {
+    const { user, logout } = useAuth()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [isVisible, setIsVisible] = useState(true)
     const [lastScrollY, setLastScrollY] = useState(0)
@@ -253,42 +255,53 @@ export default function Header() {
                     <div className="flex flex-row gap-4">
                         <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
-                            onClick={() => setBellVisible(true)}
+                            onClick={() => user && setBellVisible(true)}
                         >
                             <Bell />
-                            <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
-                                <p className="text-[10px] text-white">2</p>
-                            </div>
+                            {user && (
+                                <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
+                                    <p className="text-[10px] text-white">2</p>
+                                </div>
+                            )}
                         </div>
                         <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
                             onClick={() => router.push('/chat')}
                         >
                             <MessageCircle />
-                            <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
-                                <p className="text-[10px] text-white">7</p>
-                            </div>
+                            {user && (
+                                <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
+                                    <p className="text-[10px] text-white">7</p>
+                                </div>
+                            )}
                         </div>
                         <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
                             onClick={() => router.push('/shopcart')}
                         >
                             <ShoppingCart />
-                            <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
-                                <p className="text-[10px] text-white">4</p>
-                            </div>
+                            {user && (
+                                <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
+                                    <p className="text-[10px] text-white">4</p>
+                                </div>
+                            )}
                         </div>
                     </div>
-                    {true ? (
+                    {user ? (
                         <DropdownProfile />
                     ) : (
                         <div className="flex flex-row gap-2">
-                            <ButtonCommon type="text" className="!text-[16px]">
+                            <ButtonCommon
+                                type="text"
+                                className="!text-[16px]"
+                                onClick={() => router.push('/signIn')}
+                            >
                                 Đăng nhập
                             </ButtonCommon>
                             <ButtonCommon
                                 type="primary"
                                 className="!text-[16px]"
+                                onClick={() => router.push('/signUp')}
                             >
                                 Đăng ký
                             </ButtonCommon>
@@ -390,7 +403,10 @@ export default function Header() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.1 }}
-                                    onClick={() => router.push(`/personal`)}
+                                    onClick={() => {
+                                        router.push(`/personal`)
+                                        setMobileMenuOpen(false)
+                                    }}
                                 >
                                     <CircleUserRound
                                         size={24}
@@ -494,7 +510,8 @@ export default function Header() {
                                         <div
                                             className="flex items-center gap-2"
                                             onClick={() => {
-                                                setBellVisible(true)
+                                                user && setBellVisible(true)
+                                                setMobileMenuOpen(false)
                                             }}
                                         >
                                             <Bell
@@ -521,6 +538,7 @@ export default function Header() {
                                             className="flex items-center gap-2"
                                             onClick={() => {
                                                 router.push('/chat')
+                                                setMobileMenuOpen(false)
                                             }}
                                         >
                                             <MessageCircle
@@ -544,6 +562,7 @@ export default function Header() {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.6 }}
+                                        onClick={logout}
                                     >
                                         <div className="flex items-center gap-2 text-primary">
                                             <LogOut size={18} />
@@ -584,6 +603,7 @@ export default function Header() {
 
 const DropdownProfile = () => {
     const router = useRouter()
+    const { user, logout } = useAuth()
     const items: MenuProps['items'] = [
         {
             key: '1',
@@ -605,7 +625,7 @@ const DropdownProfile = () => {
             label: (
                 <div
                     className="flex flex-row items-center gap-2"
-                    onClick={() => router.push('/signIn')}
+                    onClick={logout}
                 >
                     <p className="text-[16px]">Đăng xuất</p>
                     <LogOut size={18} />
@@ -621,8 +641,8 @@ const DropdownProfile = () => {
                     <Space>
                         <div className="flex cursor-pointer flex-row items-center gap-2 rounded p-2 text-primary">
                             <CircleUserRound />
-                            <p className="text-[16px] font-semibold">
-                                Nguyen Van A
+                            <p className="line-clamp-1 text-[16px] font-semibold">
+                                {user?.name}
                             </p>
                         </div>
                     </Space>

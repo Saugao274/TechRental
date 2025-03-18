@@ -4,21 +4,27 @@ import React from 'react'
 import SectionCommon from '../../common/SectionCommon'
 import { Contact, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
+import SignIn from '@/components/modules/SignIn'
 
 export default function MessageLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
-    return (
+    const { user } = useAuth()
+
+    return user ? (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
-                <div className="flex flex-col md:flex-row gap-5">
+                <div className="flex flex-col gap-5 md:flex-row">
                     <PersonSideBar />
                     <div className="w-full md:w-3/4">{children}</div>
                 </div>
             </SectionCommon>
         </Layout>
+    ) : (
+        <SignIn />
     )
 }
 
@@ -75,7 +81,7 @@ export const PersonSideBar = () => {
         },
     ]
     return (
-        <div className="flex w-full md:w-1/4 flex-col gap-5 rounded-[10px] bg-white bg-opacity-80 p-5">
+        <div className="flex w-full flex-col gap-5 rounded-[10px] bg-white bg-opacity-80 p-5 md:w-1/4">
             <div>
                 <p className="!text-2xl font-bold text-primary">RentChat</p>
                 <p className="!text-[16px] font-bold">

@@ -1,5 +1,7 @@
 'use client'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
+import { useAuth } from '@/context/AuthContext'
+import { user } from '@/data/authData'
 import { Form, Input, message, Skeleton } from 'antd'
 import { Lock, Phone } from 'lucide-react'
 import Image from 'next/image'
@@ -9,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 
 const SignIn = () => {
     const router = useRouter()
+    const { login } = useAuth()
     const [loading, setLoading] = useState(true)
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -22,6 +25,7 @@ const SignIn = () => {
         try {
             message.success('Đăng nhập thành công!')
 
+            login(user)
             setTimeout(() => {
                 router.push('/')
             }, 1000)

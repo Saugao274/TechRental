@@ -17,31 +17,28 @@ import {
     TwitterOutlined,
     LinkedinOutlined,
 } from '@ant-design/icons'
+import { useAuth } from '@/context/AuthContext'
 
 const { Text } = Typography
 
 const UpdateProfile = () => {
     const [form] = Form.useForm()
-    const [isVerified, setIsVerified] = useState(true)
     const [avatar, setAvatar] = useState('/images/Intro/avt1.png')
+    const { user, updateIdentifier } = useAuth()
 
     useEffect(() => {
-        form.setFieldsValue({
-            phone: '0912345678',
-            fullname: 'Nguyễn Văn A',
-            email: 'nguyenvana@email.com',
-            address: 'Hà Nội, Việt Nam',
-        })
+        form.setFieldsValue(user)
     }, [form])
 
     const handleSubmit = (values: any) => {
         console.log('Success:', values)
         message.success('Cập nhật thông tin thành công!')
+
+        updateIdentifier()
     }
 
     const handleAvatarChange = (info: any) => {
         if (info.file.status === 'done') {
-            // Giả lập cập nhật avatar
             const newAvatarUrl = URL.createObjectURL(info.file.originFileObj)
             setAvatar(newAvatarUrl)
             message.success('Đổi ảnh đại diện thành công!')
@@ -89,13 +86,13 @@ const UpdateProfile = () => {
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-[#1D3D85]">
-                            Nguyễn Văn A
+                            {user?.name}
                         </h2>
                         <Text className="text-gray-500">
                             Thành viên từ 2024
                         </Text>
                         <div className="mt-2 flex items-center gap-2">
-                            {isVerified ? (
+                            {user?.isVerified ? (
                                 <Text type="success">✅ Đã xác thực</Text>
                             ) : (
                                 <Text type="danger">⚠️ Chưa xác thực</Text>
@@ -113,7 +110,7 @@ const UpdateProfile = () => {
                 >
                     <Form.Item
                         label="Họ và tên"
-                        name="fullname"
+                        name="name"
                         rules={[
                             {
                                 required: true,
@@ -165,6 +162,7 @@ const UpdateProfile = () => {
                             htmlType="submit"
                             type="primary"
                             className="rounded-lg bg-indigo-600 px-6 py-2 text-lg font-semibold shadow-md transition hover:bg-indigo-700"
+                            onClick={updateIdentifier}
                         >
                             Lưu thay đổi
                         </Button>
