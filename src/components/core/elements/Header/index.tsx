@@ -77,6 +77,7 @@ export default function Header() {
             key: '1',
             label: (
                 <p
+                    className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
                         router.push(`/personal/update-info`)
                         setMobileMenuOpen(false)
@@ -90,6 +91,7 @@ export default function Header() {
             key: '2',
             label: (
                 <p
+                    className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
                         router.push(`/personal/payment`)
                         setMobileMenuOpen(false)
@@ -103,6 +105,7 @@ export default function Header() {
             key: '3',
             label: (
                 <p
+                    className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
                         router.push(`/personal/rented-history`)
                         setMobileMenuOpen(false)
@@ -117,6 +120,7 @@ export default function Header() {
 
             label: (
                 <p
+                    className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
                         router.push(`/personal/rental-registry`)
                         setMobileMenuOpen(false)
@@ -130,6 +134,7 @@ export default function Header() {
             key: '5',
             label: (
                 <p
+                    className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
                         router.push(`/personal/orders`)
                         setMobileMenuOpen(false)
@@ -143,6 +148,7 @@ export default function Header() {
             key: '6',
             label: (
                 <p
+                    className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
                         router.push(`/personal/password`)
                         setMobileMenuOpen(false)
@@ -156,6 +162,7 @@ export default function Header() {
             key: '7',
             label: (
                 <p
+                    className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
                         router.push(`/rental`)
                         setMobileMenuOpen(false)
@@ -297,13 +304,19 @@ export default function Header() {
                     <div className="flex flex-row gap-[10px]">
                         <div>
                             <Link href={'/'}>
-                                <p className="text-[16px] text-primary">
+                                <p className="cursor-pointer text-[16px] text-primary">
                                     Trang chủ
                                 </p>
                             </Link>
                         </div>
                         <div>
-                            <a onClick={() => router.push(`/products`)}>
+                            <a
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    router.push('/products')
+                                    setMobileMenuOpen(false)
+                                }}
+                            >
                                 <Space className="flex items-center text-[16px] text-primary">
                                     <p>Sản phẩm</p>
                                     {/* <ChevronDown
@@ -467,17 +480,19 @@ export default function Header() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.1 }}
-                                        onClick={() => {
-                                            router.push(`/personal`)
-                                            setMobileMenuOpen(false)
-                                        }}
                                     >
                                         <CircleUserRound
                                             size={24}
                                             className="text-primary"
                                         />
-                                        <p className="text-[16px] font-semibold text-primary">
-                                            Nguyen Van A
+                                        <p
+                                            onClick={() => {
+                                                router.push(`/personal`)
+                                                setMobileMenuOpen(false)
+                                            }}
+                                            className="cursor-pointer text-[16px] font-semibold text-primary"
+                                        >
+                                            {user.name}
                                         </p>
                                     </motion.div>
                                 ) : (
@@ -510,7 +525,7 @@ export default function Header() {
                                     </motion.div>
                                 )}
                                 {/* Navigation links for mobile */}
-                                <div className="flex flex-col">
+                                <div className="flex cursor-pointer flex-col">
                                     {[
                                         {
                                             href: '#',
@@ -534,7 +549,13 @@ export default function Header() {
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: item.delay }}
                                         >
-                                            <p className="block border-b px-4 py-3 text-[16px] text-primary">
+                                            <p
+                                                onClick={() => {
+                                                    router.push(item.href)
+                                                    setMobileMenuOpen(false)
+                                                }}
+                                                className="block border-b px-4 py-3 text-[16px] text-primary"
+                                            >
                                                 {item.label}
                                             </p>
                                         </motion.div>
@@ -566,12 +587,7 @@ export default function Header() {
                                                             0.2 + index * 0.05,
                                                     }}
                                                 >
-                                                    <Link
-                                                        href="#"
-                                                        className="block text-[14px] text-primary"
-                                                    >
-                                                        {item?.label}
-                                                    </Link>
+                                                    {item?.label}
                                                 </motion.div>
                                             ))}
                                         </div>
