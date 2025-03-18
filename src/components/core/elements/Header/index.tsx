@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import {
     Bell,
-    ChevronDown,
     CircleUserRound,
     Facebook,
     Instagram,
@@ -732,9 +731,11 @@ const DropdownProfile = () => {
                     <Space>
                         <div className="flex cursor-pointer flex-row items-center gap-2 rounded p-2 text-primary">
                             <CircleUserRound />
-                            <p className="line-clamp-1 text-[16px] font-semibold">
-                                {user?.name}
-                            </p>
+                            <div className="w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                <p className="text-[16px] font-semibold">
+                                    {user?.name}
+                                </p>
+                            </div>
                         </div>
                     </Space>
                 </a>

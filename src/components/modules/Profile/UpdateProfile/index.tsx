@@ -34,7 +34,8 @@ const UpdateProfile = () => {
         console.log('Success:', values)
         message.success('Cập nhật thông tin thành công!')
 
-        updateUser()
+        updateUser(values)
+        form.setFieldsValue(values)
     }
 
     const handleAvatarChange = (info: any) => {
@@ -81,15 +82,15 @@ const UpdateProfile = () => {
                     />
                 </motion.div>
                 {/* Avatar & Thông tin chính */}
-                <div className="relative grid justify-center gap-6 border-b pb-6 md:flex md:items-start md:justify-start">
+                <div className="relative grid grid-cols-[auto_1fr] items-center gap-6 border-b pb-6 md:flex md:items-start md:justify-start">
                     <Avatar
                         src={avatar}
                         size={100}
-                        className="!mx-auto border-4 !border-indigo-500 shadow-xl shadow-indigo-300 md:!mx-0"
+                        className="!mx-auto shrink-0 border-4 !border-indigo-500 shadow-xl shadow-indigo-300 md:!mx-0"
                         onClick={handleAvatarChange}
                     />
-                    <div className="flex flex-col gap-2">
-                        <h2 className="text-2xl font-bold text-[#1D3D85]">
+                    <div className="flex w-[200px] flex-col gap-2 overflow-hidden">
+                        <h2 className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold text-[#1D3D85]">
                             {user?.name}
                         </h2>
                         <Text className="mx-auto text-gray-500 md:mx-0">

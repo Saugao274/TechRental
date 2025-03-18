@@ -1,5 +1,5 @@
 'use client'
-import { newUser, User, userUpdate } from '@/data/authData'
+import { newUser, User } from '@/data/authData'
 import { useRouter } from 'next/navigation'
 import React, { createContext, useContext, useState, useEffect } from 'react'
 
@@ -8,7 +8,7 @@ interface AuthContextType {
     login: (userData: User) => void
     logout: () => void
     updateIdentifier: () => void
-    updateUser: () => void
+    updateUser: (userData: User) => void
 }
 
 // Tạo context mặc định
@@ -42,8 +42,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(newUser)
         localStorage.setItem('user', JSON.stringify(newUser))
     }
-    const updateUser = () => {
-        setUser(userUpdate)
+    const updateUser = (newUser: User) => {
+        setUser(newUser)
         localStorage.setItem('user', JSON.stringify(newUser))
     }
 

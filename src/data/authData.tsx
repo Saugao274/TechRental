@@ -26,20 +26,6 @@ export const user = {
     isLandlord: false,
 }
 export const newUser = {
-    id: 'abc',
-    name: 'Nguyễn ABC',
-    joinDate: '01/01/2025',
-    email: 'example@example.com',
-    phone: '0123456789',
-    address: 'Hà Nội, Việt Nam',
-    isVerified: true,
-    ownedProducts: 5,
-    rentingProducts: 2,
-    rentedProducts: 10,
-    isLandlord: false,
-}
-export const userUpdate = {
     ...user,
-    name: 'Nguyễn Thị Thanh Thủy',
-    email: 'ntthanhthuy274@gmail.com',
+    isVerified: true,
 }
