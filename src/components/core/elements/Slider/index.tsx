@@ -45,7 +45,7 @@ const carouselItems = [
 ]
 
 const Slider: React.FC = () => (
-    <SectionCommon className="md:full mb-9 flex h-full flex-col gap-12 md:mb-3 xl:h-[40em]">
+    <SectionCommon className="md:full flex h-full flex-col gap-12 md:mb-3 xl:h-[40em]">
         <Carousel
             items={carouselItems}
             autoPlay
