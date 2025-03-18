@@ -410,8 +410,8 @@ export default function Header() {
                                             delay: 0.15,
                                         },
                                         {
-                                            href: '#',
-                                            label: 'Tin tức',
+                                            href: '/products',
+                                            label: 'Sản phẩm',
                                             delay: 0.25,
                                         },
                                         // {
@@ -424,13 +424,13 @@ export default function Header() {
                                         //     label: 'Thuê nhiều',
                                         //     delay: 0.35,
                                         // },
+                                        // {
+                                        //     href: '#',
+                                        //     label: 'Hỗ trợ',
+                                        //     delay: 0.4,
+                                        // },
                                         {
-                                            href: '#',
-                                            label: 'Hỗ trợ',
-                                            delay: 0.4,
-                                        },
-                                        {
-                                            href: '#',
+                                            href: '/rental',
                                             label: 'Kênh người cho thuê',
                                             delay: 0.45,
                                         },
@@ -447,7 +447,7 @@ export default function Header() {
                                         </motion.div>
                                     ))}
 
-                                    <motion.div
+                                    {/* <motion.div
                                         className="border-b px-4 py-3"
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
@@ -482,7 +482,7 @@ export default function Header() {
                                                 </motion.div>
                                             ))}
                                         </div>
-                                    </motion.div>
+                                    </motion.div> */}
 
                                     {/* Notification links */}
                                     <motion.div
@@ -491,7 +491,12 @@ export default function Header() {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.5 }}
                                     >
-                                        <div className="flex items-center gap-2">
+                                        <div
+                                            className="flex items-center gap-2"
+                                            onClick={() => {
+                                                setBellVisible(true)
+                                            }}
+                                        >
                                             <Bell
                                                 size={18}
                                                 className="text-primary"
@@ -512,7 +517,12 @@ export default function Header() {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.55 }}
                                     >
-                                        <div className="flex items-center gap-2">
+                                        <div
+                                            className="flex items-center gap-2"
+                                            onClick={() => {
+                                                router.push('/chat')
+                                            }}
+                                        >
                                             <MessageCircle
                                                 size={18}
                                                 className="text-primary"

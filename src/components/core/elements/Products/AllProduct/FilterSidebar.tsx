@@ -16,15 +16,13 @@ const priceOptions = [
 ]
 
 const productOptions = [
-    'Osmo Pocket',
     'Chân Máy',
     'FPV',
     'DJI Goggles',
     'Máy Quay',
     'Flycam',
     'Mic Thu Âm',
-    'Gimbal',
-    'Máy ảnh',
+    'Camera',
     'Đèn quay phim',
     'Đèn Flash',
     'Macbook',
@@ -78,17 +76,17 @@ const FilterSidebar = ({
                             parseInt(p.trim().replace(' triệu', '000000')),
                         )
                     return max
-                        ? product.Price >= min && product.Price <= max
-                        : product.Price >= min
+                        ? product.price >= min && product.price <= max
+                        : product.price >= min
                 })
 
             const matchesCategory =
                 selectedCategories.length === 0 ||
-                selectedCategories.includes(product.Category)
+                selectedCategories.includes(product.category)
 
             const matchesLocation =
                 selectedLocations.length === 0 ||
-                selectedLocations.includes(product.Location)
+                selectedLocations.includes(product.location)
 
             return matchesPrice && matchesCategory && matchesLocation
         })
