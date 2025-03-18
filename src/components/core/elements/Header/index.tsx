@@ -76,7 +76,12 @@ export default function Header() {
         {
             key: '1',
             label: (
-                <p onClick={() => router.push(`/personal/update-info`)}>
+                <p
+                    onClick={() => {
+                        router.push(`/personal/update-info`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Cập nhật thông tin cá nhân
                 </p>
             ),
@@ -84,7 +89,12 @@ export default function Header() {
         {
             key: '2',
             label: (
-                <p onClick={() => router.push(`/personal/payment`)}>
+                <p
+                    onClick={() => {
+                        router.push(`/personal/payment`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Thanh toán
                 </p>
             ),
@@ -92,7 +102,12 @@ export default function Header() {
         {
             key: '3',
             label: (
-                <p onClick={() => router.push(`/personal/rented-history`)}>
+                <p
+                    onClick={() => {
+                        router.push(`/personal/rented-history`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Lịch sử thuê
                 </p>
             ),
@@ -101,7 +116,12 @@ export default function Header() {
             key: '4',
 
             label: (
-                <p onClick={() => router.push(`/personal/rental-registry`)}>
+                <p
+                    onClick={() => {
+                        router.push(`/personal/rental-registry`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Đăng ký làm người cho thuê
                 </p>
             ),
@@ -109,7 +129,12 @@ export default function Header() {
         {
             key: '5',
             label: (
-                <p onClick={() => router.push(`/personal/orders`)}>
+                <p
+                    onClick={() => {
+                        router.push(`/personal/orders`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Đơn hàng của tôi
                 </p>
             ),
@@ -117,7 +142,12 @@ export default function Header() {
         {
             key: '6',
             label: (
-                <p onClick={() => router.push(`/personal/password`)}>
+                <p
+                    onClick={() => {
+                        router.push(`/personal/password`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Thay đổi mật khẩu
                 </p>
             ),
@@ -125,7 +155,12 @@ export default function Header() {
         {
             key: '7',
             label: (
-                <p onClick={() => router.push(`/rental`)}>
+                <p
+                    onClick={() => {
+                        router.push(`/rental`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Chế độ người cho thuê
                 </p>
             ),
@@ -340,9 +375,11 @@ export default function Header() {
                 <div className="flex items-center gap-2 md:hidden">
                     <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
                         <ShoppingCart size={20} />
-                        <div className="absolute right-[-5px] top-[-5px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
-                            <p className="text-[10px] text-white">4</p>
-                        </div>
+                        {user && (
+                            <div className="absolute right-[-5px] top-[-5px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                <p className="text-[10px] text-white">4</p>
+                            </div>
+                        )}
                     </div>
                     <div
                         className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
@@ -364,7 +401,6 @@ export default function Header() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
                             className="fixed inset-0 z-40 bg-black md:hidden"
-                            onClick={() => setMobileMenuOpen(false)}
                         />
 
                         {/* Menu panel */}
@@ -425,30 +461,56 @@ export default function Header() {
                                 </div>
 
                                 {/* User profile for mobile */}
-                                <motion.div
-                                    className="mx-4 mb-4 flex items-center gap-2 border-b pb-4"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.1 }}
-                                    onClick={() => {
-                                        router.push(`/personal`)
-                                        setMobileMenuOpen(false)
-                                    }}
-                                >
-                                    <CircleUserRound
-                                        size={24}
-                                        className="text-primary"
-                                    />
-                                    <p className="text-[16px] font-semibold text-primary">
-                                        Nguyen Van A
-                                    </p>
-                                </motion.div>
-
+                                {user ? (
+                                    <motion.div
+                                        className="mx-4 mb-4 flex items-center gap-2 border-b pb-4"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.1 }}
+                                        onClick={() => {
+                                            router.push(`/personal`)
+                                            setMobileMenuOpen(false)
+                                        }}
+                                    >
+                                        <CircleUserRound
+                                            size={24}
+                                            className="text-primary"
+                                        />
+                                        <p className="text-[16px] font-semibold text-primary">
+                                            Nguyen Van A
+                                        </p>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        className="mx-4 mb-4 flex items-center gap-2 border-b pb-4"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.1 }}
+                                    >
+                                        <ButtonCommon
+                                            type="text"
+                                            className="!text-[16px]"
+                                            onClick={() => (
+                                                router.push('/signIn'),
+                                                setMobileMenuOpen(false)
+                                            )}
+                                        >
+                                            Đăng nhập
+                                        </ButtonCommon>
+                                        <ButtonCommon
+                                            type="primary"
+                                            className="!text-[16px]"
+                                            onClick={() => (
+                                                router.push('/signUp'),
+                                                setMobileMenuOpen(false)
+                                            )}
+                                        >
+                                            Đăng ký
+                                        </ButtonCommon>
+                                    </motion.div>
+                                )}
                                 {/* Navigation links for mobile */}
-                                <div
-                                    className="flex flex-col"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
+                                <div className="flex flex-col">
                                     {[
                                         {
                                             href: '#',
@@ -536,11 +598,13 @@ export default function Header() {
                                             <p className="text-[16px] text-primary">
                                                 Thông báo
                                             </p>
-                                            <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
-                                                <p className="text-[10px] text-white">
-                                                    2
-                                                </p>
-                                            </div>
+                                            {user && (
+                                                <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                                    <p className="text-[10px] text-white">
+                                                        2
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     </motion.div>
                                     <motion.div
@@ -563,29 +627,33 @@ export default function Header() {
                                             <p className="text-[16px] text-primary">
                                                 Tin nhắn
                                             </p>
-                                            <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
-                                                <p className="text-[10px] text-white">
-                                                    7
-                                                </p>
-                                            </div>
+                                            {user && (
+                                                <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                                    <p className="text-[10px] text-white">
+                                                        7
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     </motion.div>
 
                                     {/* Logout for mobile */}
-                                    <motion.div
-                                        className="border-b px-4 py-3"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.6 }}
-                                        onClick={logout}
-                                    >
-                                        <div className="flex items-center gap-2 text-primary">
-                                            <LogOut size={18} />
-                                            <p className="text-[16px]">
-                                                Đăng xuất
-                                            </p>
-                                        </div>
-                                    </motion.div>
+                                    {user && (
+                                        <motion.div
+                                            className="border-b px-4 py-3"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.6 }}
+                                            onClick={logout}
+                                        >
+                                            <div className="flex items-center gap-2 text-primary">
+                                                <LogOut size={18} />
+                                                <p className="text-[16px]">
+                                                    Đăng xuất
+                                                </p>
+                                            </div>
+                                        </motion.div>
+                                    )}
                                 </div>
 
                                 {/* Social links for mobile */}
