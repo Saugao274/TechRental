@@ -1,4 +1,3 @@
-import { FacebookOutlined, InstagramOutlined } from '@ant-design/icons'
 import Image from 'next/image'
 import { Button, Input } from 'antd'
 
@@ -13,23 +12,32 @@ export default function Footer() {
     ]
 
     return (
-        <footer className="w-full bg-gradient-to-b from-blue-50 to-white px-6 py-10">
-            <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 sm:grid-cols-4">
-                <div>
-                    <h2 className="mb-3 text-lg font-bold text-gray-800">
+        <footer className="w-full bg-gradient-to-b from-blue-50 to-white px-4 py-10">
+            <div className="mx-auto grid max-w-[calc(100%-100px)] grid-cols-1 gap-6 sm:grid-cols-4">
+                <div style={{ maxWidth: '250px' }}>
+                    <h2
+                        className="mb-3 text-lg font-bold"
+                        style={{ color: '#22448F' }}
+                    >
                         GIỚI THIỆU
                     </h2>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm" style={{ color: '#22448F' }}>
                         Techrental cho thuê đa dạng thiết bị công nghệ, giúp
                         khách hàng tiếp cận công nghệ với chi phí hợp lý.
                     </p>
                 </div>
 
                 <div>
-                    <h2 className="mb-3 text-lg font-bold text-gray-800">
+                    <h2
+                        className="mb-3 text-lg font-bold"
+                        style={{ color: '#22448F' }}
+                    >
                         HỖ TRỢ KHÁCH HÀNG
                     </h2>
-                    <ul className="space-y-2 text-sm text-gray-700">
+                    <ul
+                        className="space-y-2 text-sm"
+                        style={{ color: '#22448F' }}
+                    >
                         {supportLinks.map((link, index) => (
                             <li
                                 key={index}
@@ -42,14 +50,49 @@ export default function Footer() {
                 </div>
 
                 <div>
-                    <h2 className="mb-3 text-lg font-bold text-gray-800">
+                    <h2
+                        className="mb-3 text-lg font-bold"
+                        style={{ color: '#22448F' }}
+                    >
                         LIÊN HỆ VỚI CHÚNG TÔI
                     </h2>
-                    <div className="mb-4 flex gap-4 text-2xl text-gray-800">
-                        <InstagramOutlined className="cursor-pointer hover:text-pink-500" />
-                        <FacebookOutlined className="cursor-pointer hover:text-blue-600" />
+                    <div
+                        className="mb-4 flex gap-4 text-2xl"
+                        style={{ color: '#22448F' }}
+                    >
+                        <a
+                            href="https://www.instagram.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Image
+                                src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+                                alt="Instagram"
+                                width={24}
+                                height={24}
+                                className="cursor-pointer hover:opacity-80"
+                            />
+                        </a>
+                        <a
+                            href="https://www.facebook.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Image
+                                src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+                                alt="Facebook"
+                                width={24}
+                                height={24}
+                                className="cursor-pointer hover:opacity-80"
+                            />
+                        </a>
                     </div>
-                    <p className="mb-2 font-medium text-gray-700">THANH TOÁN</p>
+                    <p
+                        className="mb-2 font-medium"
+                        style={{ color: '#22448F' }}
+                    >
+                        THANH TOÁN
+                    </p>
 
                     <div className="mb-2 flex items-center gap-2">
                         <Image
@@ -94,21 +137,41 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center">
-                    <h2 className="mb-3 text-lg font-bold text-gray-800">
+                <div className="flex flex-col items-start sm:items-center">
+                    <h2
+                        className="mb-3 text-lg font-bold"
+                        style={{ color: '#22448F' }}
+                    >
                         ĐĂNG KÝ ĐỂ NHẬN ƯU ĐÃI
                     </h2>
-                    <p className="mb-3 text-center text-sm text-gray-700">
-                        Đăng ký để nhận ngay ưu đãi từ TechRental
+                    <p
+                        className="mb-3 text-sm sm:text-center"
+                        style={{ color: '#22448F' }}
+                    >
+                        Đăng ký để nhận ngay ưu đãi từ{' '}
+                        <span style={{ color: '#22448F' }}>TechRental</span>
                     </p>
-                    <div className="flex w-full overflow-hidden rounded-md border border-blue-300 bg-white">
+                    <div
+                        className="flex w-full max-w-xs overflow-hidden rounded-md border border-gray-300 bg-[#E7E7E7]"
+                        style={{ backgroundColor: '#E7E7E7' }}
+                    >
                         <Input
-                            className="h-10 flex-1 border-none px-3 text-sm text-gray-400 outline-none"
+                            className="h-10 flex-1 border-none bg-[#E7E7E7] px-3 text-sm outline-none"
                             placeholder="EMAIL"
+                            style={{
+                                backgroundColor: '#E7E7E7',
+                                height: '40px',
+                                color: '#22448F',
+                            }}
                         />
                         <Button
-                            className="h-10 !border-none !bg-blue-600 px-4 !text-white"
-                            style={{ height: '40px' }}
+                            className="h-10 !border-none bg-white px-4 text-sm"
+                            style={{
+                                backgroundColor: '#FFFFFF',
+                                height: '40px',
+                                lineHeight: 'normal',
+                                color: '#22448F',
+                            }}
                         >
                             Đăng ký
                         </Button>

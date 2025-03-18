@@ -276,7 +276,7 @@ export default function CartPage(): JSX.Element {
 
                         {/* Phần mã giảm giá */}
                         <div className="mb-6 flex flex-col items-center gap-3 md:flex-row">
-                            <span className="text-sm text-gray-600">Mã:</span>
+                            <span className="text-sm text-gray-600">Mã  :</span>
                             <Input
                                 placeholder="Nhập mã giảm giá"
                                 value={couponCode}
