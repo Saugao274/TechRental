@@ -71,7 +71,7 @@ export default function ProductCard({
                     alt={product.title}
                     width={300}
                     height={200}
-                    className="aspect-[4/3] h-56 rounded-lg object-cover"
+                    className="aspect-[4/3] h-56 w-full rounded-lg object-cover"
                     unoptimized
                 />
 

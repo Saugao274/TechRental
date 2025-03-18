@@ -8,6 +8,7 @@ interface AuthContextType {
     login: (userData: User) => void
     logout: () => void
     updateIdentifier: () => void
+    updateUser: (userData: User) => void
 }
 
 // Tạo context mặc định
@@ -41,9 +42,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(newUser)
         localStorage.setItem('user', JSON.stringify(newUser))
     }
+    const updateUser = (newUser: User) => {
+        setUser(newUser)
+        localStorage.setItem('user', JSON.stringify(newUser))
+    }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, updateIdentifier }}>
+        <AuthContext.Provider
+            value={{ user, login, logout, updateIdentifier, updateUser }}
+        >
             {children}
         </AuthContext.Provider>
     )

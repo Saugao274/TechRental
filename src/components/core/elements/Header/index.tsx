@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import {
     Bell,
-    ChevronDown,
     CircleUserRound,
     Facebook,
     Instagram,
@@ -47,9 +46,7 @@ export default function Header() {
     const handleBellClose = () => {
         setBellVisible(false)
     }
-    // Track scroll direction and position
     useMotionValueEvent(scrollY, 'change', (latest) => {
-        // Always show header at the top of the page
         if (latest < 10) {
             setIsVisible(true)
             setAtTop(true)
@@ -58,11 +55,7 @@ export default function Header() {
             setAtTop(false)
         }
 
-        // Determine scroll direction
         const direction = latest > lastScrollY ? 'down' : 'up'
-        console.log(direction)
-        // Only hide header when scrolling down and not at the top
-        // Show header when scrolling up
         if (direction === 'down' && latest > 100 && isVisible) {
             setIsVisible(false)
         } else if (direction === 'up' && !isVisible) {
@@ -76,7 +69,13 @@ export default function Header() {
         {
             key: '1',
             label: (
-                <p onClick={() => router.push(`/personal/update-info`)}>
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/personal/update-info`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Cập nhật thông tin cá nhân
                 </p>
             ),
@@ -84,7 +83,13 @@ export default function Header() {
         {
             key: '2',
             label: (
-                <p onClick={() => router.push(`/personal/payment`)}>
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/personal/payment`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Thanh toán
                 </p>
             ),
@@ -92,7 +97,13 @@ export default function Header() {
         {
             key: '3',
             label: (
-                <p onClick={() => router.push(`/personal/rented-history`)}>
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/personal/rented-history`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Lịch sử thuê
                 </p>
             ),
@@ -101,7 +112,13 @@ export default function Header() {
             key: '4',
 
             label: (
-                <p onClick={() => router.push(`/personal/rental-registry`)}>
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/personal/rental-registry`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Đăng ký làm người cho thuê
                 </p>
             ),
@@ -109,7 +126,13 @@ export default function Header() {
         {
             key: '5',
             label: (
-                <p onClick={() => router.push(`/personal/orders`)}>
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/personal/orders`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Đơn hàng của tôi
                 </p>
             ),
@@ -117,7 +140,13 @@ export default function Header() {
         {
             key: '6',
             label: (
-                <p onClick={() => router.push(`/personal/password`)}>
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/personal/password`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Thay đổi mật khẩu
                 </p>
             ),
@@ -125,7 +154,13 @@ export default function Header() {
         {
             key: '7',
             label: (
-                <p onClick={() => router.push(`/rental`)}>
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/rental`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
                     Chế độ người cho thuê
                 </p>
             ),
@@ -183,11 +218,9 @@ export default function Header() {
         <motion.header
             ref={headerRef}
             className="sticky top-0 z-50 mt-5 w-full"
-            animate={
-                {
-                    // top: isVisible ? 0 : -120,
-                }
-            }
+            animate={{
+                top: isVisible ? 0 : -120,
+            }}
             transition={{
                 duration: 0.3,
                 ease: 'easeInOut',
@@ -262,13 +295,19 @@ export default function Header() {
                     <div className="flex flex-row gap-[10px]">
                         <div>
                             <Link href={'/'}>
-                                <p className="text-[16px] text-primary">
+                                <p className="cursor-pointer text-[16px] text-primary">
                                     Trang chủ
                                 </p>
                             </Link>
                         </div>
                         <div>
-                            <a onClick={() => router.push(`/products`)}>
+                            <a
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    router.push('/products')
+                                    setMobileMenuOpen(false)
+                                }}
+                            >
                                 <Space className="flex items-center text-[16px] text-primary">
                                     <p>Sản phẩm</p>
                                     {/* <ChevronDown
@@ -340,9 +379,11 @@ export default function Header() {
                 <div className="flex items-center gap-2 md:hidden">
                     <div className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200">
                         <ShoppingCart size={20} />
-                        <div className="absolute right-[-5px] top-[-5px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
-                            <p className="text-[10px] text-white">4</p>
-                        </div>
+                        {user && (
+                            <div className="absolute right-[-5px] top-[-5px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                <p className="text-[10px] text-white">4</p>
+                            </div>
+                        )}
                     </div>
                     <div
                         className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
@@ -364,7 +405,6 @@ export default function Header() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
                             className="fixed inset-0 z-40 bg-black md:hidden"
-                            onClick={() => setMobileMenuOpen(false)}
                         />
 
                         {/* Menu panel */}
@@ -425,30 +465,58 @@ export default function Header() {
                                 </div>
 
                                 {/* User profile for mobile */}
-                                <motion.div
-                                    className="mx-4 mb-4 flex items-center gap-2 border-b pb-4"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.1 }}
-                                    onClick={() => {
-                                        router.push(`/personal`)
-                                        setMobileMenuOpen(false)
-                                    }}
-                                >
-                                    <CircleUserRound
-                                        size={24}
-                                        className="text-primary"
-                                    />
-                                    <p className="text-[16px] font-semibold text-primary">
-                                        Nguyen Van A
-                                    </p>
-                                </motion.div>
-
+                                {user ? (
+                                    <motion.div
+                                        className="mx-4 mb-4 flex items-center gap-2 border-b pb-4"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.1 }}
+                                    >
+                                        <CircleUserRound
+                                            size={24}
+                                            className="text-primary"
+                                        />
+                                        <p
+                                            onClick={() => {
+                                                router.push(`/personal`)
+                                                setMobileMenuOpen(false)
+                                            }}
+                                            className="cursor-pointer text-[16px] font-semibold text-primary"
+                                        >
+                                            {user.name}
+                                        </p>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        className="mx-4 mb-4 flex items-center gap-2 border-b pb-4"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.1 }}
+                                    >
+                                        <ButtonCommon
+                                            type="text"
+                                            className="!text-[16px]"
+                                            onClick={() => (
+                                                router.push('/signIn'),
+                                                setMobileMenuOpen(false)
+                                            )}
+                                        >
+                                            Đăng nhập
+                                        </ButtonCommon>
+                                        <ButtonCommon
+                                            type="primary"
+                                            className="!text-[16px]"
+                                            onClick={() => (
+                                                router.push('/signUp'),
+                                                setMobileMenuOpen(false)
+                                            )}
+                                        >
+                                            Đăng ký
+                                        </ButtonCommon>
+                                    </motion.div>
+                                )}
                                 {/* Navigation links for mobile */}
-                                <div
-                                    className="flex flex-col"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
+                                <div className="flex cursor-pointer flex-col">
                                     {[
                                         {
                                             href: '#',
@@ -472,7 +540,13 @@ export default function Header() {
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: item.delay }}
                                         >
-                                            <p className="block border-b px-4 py-3 text-[16px] text-primary">
+                                            <p
+                                                onClick={() => {
+                                                    router.push(item.href)
+                                                    setMobileMenuOpen(false)
+                                                }}
+                                                className="block border-b px-4 py-3 text-[16px] text-primary"
+                                            >
                                                 {item.label}
                                             </p>
                                         </motion.div>
@@ -504,12 +578,7 @@ export default function Header() {
                                                             0.2 + index * 0.05,
                                                     }}
                                                 >
-                                                    <Link
-                                                        href="#"
-                                                        className="block text-[14px] text-primary"
-                                                    >
-                                                        {item?.label}
-                                                    </Link>
+                                                    {item?.label}
                                                 </motion.div>
                                             ))}
                                         </div>
@@ -536,11 +605,13 @@ export default function Header() {
                                             <p className="text-[16px] text-primary">
                                                 Thông báo
                                             </p>
-                                            <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
-                                                <p className="text-[10px] text-white">
-                                                    2
-                                                </p>
-                                            </div>
+                                            {user && (
+                                                <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                                    <p className="text-[10px] text-white">
+                                                        2
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     </motion.div>
                                     <motion.div
@@ -563,29 +634,33 @@ export default function Header() {
                                             <p className="text-[16px] text-primary">
                                                 Tin nhắn
                                             </p>
-                                            <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
-                                                <p className="text-[10px] text-white">
-                                                    7
-                                                </p>
-                                            </div>
+                                            {user && (
+                                                <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                                    <p className="text-[10px] text-white">
+                                                        7
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     </motion.div>
 
                                     {/* Logout for mobile */}
-                                    <motion.div
-                                        className="border-b px-4 py-3"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.6 }}
-                                        onClick={logout}
-                                    >
-                                        <div className="flex items-center gap-2 text-primary">
-                                            <LogOut size={18} />
-                                            <p className="text-[16px]">
-                                                Đăng xuất
-                                            </p>
-                                        </div>
-                                    </motion.div>
+                                    {user && (
+                                        <motion.div
+                                            className="border-b px-4 py-3"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.6 }}
+                                            onClick={logout}
+                                        >
+                                            <div className="flex items-center gap-2 text-primary">
+                                                <LogOut size={18} />
+                                                <p className="text-[16px]">
+                                                    Đăng xuất
+                                                </p>
+                                            </div>
+                                        </motion.div>
+                                    )}
                                 </div>
 
                                 {/* Social links for mobile */}
@@ -656,9 +731,11 @@ const DropdownProfile = () => {
                     <Space>
                         <div className="flex cursor-pointer flex-row items-center gap-2 rounded p-2 text-primary">
                             <CircleUserRound />
-                            <p className="line-clamp-1 text-[16px] font-semibold">
-                                {user?.name}
-                            </p>
+                            <div className="w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                <p className="text-[16px] font-semibold">
+                                    {user?.name}
+                                </p>
+                            </div>
                         </div>
                     </Space>
                 </a>

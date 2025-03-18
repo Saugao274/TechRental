@@ -8,7 +8,7 @@ const NewArrivals = () => {
     return (
         <SectionCommon className="w- flex flex-col gap-10">
             <PageHader title="Có gì mới" />
-            <div className="grid grid-cols-2 justify-center justify-items-center md:grid-cols-4">
+            <div className="grid grid-cols-2 justify-center justify-items-center gap-8 max-sm:grid-cols-1 lg:grid-cols-4">
                 <NewArrivalCard
                     Title="DJI Power 1000"
                     Details="Công suất đầu ra tối đa 2200W"

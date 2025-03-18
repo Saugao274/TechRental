@@ -15,18 +15,36 @@ const HeaderProducts = () => {
     const [current, setCurrent] = useState(0)
     const totalImages = images.length
 
-    const nextSlide = () => {
-        setCurrent((prev) => (prev + 1) % totalImages)
-    }
-
-    const prevSlide = () => {
+    const nextSlide = () => setCurrent((prev) => (prev + 1) % totalImages)
+    const prevSlide = () =>
         setCurrent((prev) => (prev - 1 + totalImages) % totalImages)
-    }
 
     return (
         <SectionCommon className="relative flex h-80 items-center justify-center">
-            {/* Slider */}
-            <div className="relative flex w-[800px] items-center justify-center">
+            <div className="block lg:hidden">
+                <img
+                    src={images[current]}
+                    className="h-72 w-auto rounded-2xl object-cover"
+                />
+
+                <button
+                    onClick={prevSlide}
+                    className="absolute left-0 top-1/2 z-[5] -translate-y-1/2 rounded-full bg-white/80 p-1 opacity-50 transition-opacity hover:bg-white hover:opacity-100 focus:opacity-100"
+                    aria-label="Previous slide"
+                >
+                    <ChevronLeft className="h-6 w-6" />
+                </button>
+
+                <button
+                    onClick={nextSlide}
+                    className="absolute right-0 top-1/2 z-[5] -translate-y-1/2 rounded-full bg-white/80 p-1 opacity-50 transition-opacity hover:bg-white hover:opacity-100 focus:opacity-100"
+                    aria-label="Next slide"
+                >
+                    <ChevronRight className="h-6 w-6" />
+                </button>
+            </div>
+
+            <div className="relative hidden w-[800px] items-center justify-center lg:flex">
                 <img
                     src={images[(current + totalImages - 2) % totalImages]}
                     className="z-[2] h-48 w-auto rounded-2xl object-cover opacity-80 transition-all duration-500 ease-in-out"
@@ -51,7 +69,8 @@ const HeaderProducts = () => {
                     className="z-[2] h-48 w-auto rounded-2xl object-cover opacity-80 transition-all duration-500 ease-in-out"
                     style={{ transform: 'translateX(-300px)' }}
                 />
-                {/* Nút điều hướng cố định */}
+
+                {/* Nút điều hướng */}
                 <button
                     onClick={prevSlide}
                     className="absolute left-0 top-1/2 z-[5] -translate-y-1/2 rounded-full bg-white/80 p-3 opacity-50 transition-opacity hover:bg-white hover:opacity-100 focus:opacity-100"
