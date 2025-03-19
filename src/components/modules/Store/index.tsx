@@ -788,7 +788,8 @@ export default function StoreModule() {
                                                             }}
                                                         >
                                                             Đã thuê{' '}
-                                                            {product.soldCount}
+                                                            {product.soldCount}{' '}
+                                                            lần
                                                         </Text>
                                                     </div>
                                                 </Card>
