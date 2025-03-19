@@ -51,10 +51,10 @@ export function LeftSideBarElement() {
             transition={{ duration: 0.5 }}
             className="hidden w-1/5 md:block"
         >
-            <div className="flex flex-col p-5">
+            <div className="flex flex-col">
                 <div>
                     <h3 className="text-2xl font-bold text-primary">
-                        Chế độ người cho thuê
+                        Người cho thuê
                     </h3>
                     <p className="text-sm text-gray-600">
                         Quản lý sản phẩm và đơn hàng cho thuê

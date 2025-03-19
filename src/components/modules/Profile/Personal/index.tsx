@@ -71,10 +71,10 @@ export default function PersonalProfile() {
                     </div>
                 </div>
             ) : (
-                <div className="border-green-4 00 flex items-center rounded-md border bg-red-50 p-4">
+                <div className="border-green-4 flex flex-col items-center gap-3 rounded-md border bg-red-50 p-4 md:flex-row">
                     <ShieldQuestion className="mr-2 hidden text-xl font-bold text-red-500 md:block" />
-                    <div>
-                        <h3 className="text-[16px] font-bold text-black">
+                    <div className="gap 2 flex flex-col">
+                        <h3 className="mx-auto text-[16px] font-bold text-black md:mx-0">
                             Chưa xác minh
                         </h3>
                         <p className="text-[12px] text-black">
