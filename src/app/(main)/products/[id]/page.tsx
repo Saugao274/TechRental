@@ -12,7 +12,7 @@ import type { ColumnsType } from 'antd/es/table'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import PageHader from '@/components/core/common/PageHeader'
 import SectionCommon from '@/components/core/common/SectionCommon'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import {
     getRandomFallbackImageArray,
     productsData,
@@ -26,6 +26,8 @@ import { motion } from 'framer-motion'
 export default function ProductDetail() {
     const params = useParams()
     const { id } = params
+
+    const router = useRouter();
 
     const [currentImage, setCurrentImage] = useState(0)
     const [quantity, setQuantity] = useState(1)
@@ -262,7 +264,9 @@ export default function ProductDetail() {
                         </Button>
                     </div>
                     {/* Seller Info */}
-                    <div className="flex flex-col items-center justify-between gap-4 rounded-lg bg-gray-50 p-4 md:flex-row">
+                    <div className="flex flex-col items-center justify-between cursor-pointer gap-4 rounded-lg bg-gray-50 p-4 md:flex-row"
+                        onClick={() => router.push(`/store/${shopInfor.idShop}`)}
+                    >
                         <div className="flex min-w-0 items-center justify-center gap-3">
                             <Image
                                 src={shopInfor.avatar || ''}

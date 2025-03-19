@@ -6,7 +6,7 @@ export type ordersType = {
     nameCustomer: string
     status:
         | 'Đã hoàn thành'
-        | 'Đã thanh toán'
+        | 'Chờ thanh toán'
         | 'Chờ người cho thuê xác nhận'
         | 'Chờ người thuê thanh toán'
         | 'Người thuê đã hủy'
@@ -22,7 +22,7 @@ export type ordersType = {
 export const statusColors = {
     'Đã hoàn thành': 'green',
     //người thuê
-    'Đã thanh toán': 'orange',
+    'Chờ thanh toán': 'orange',
     'Người thuê đã hủy': 'red',
     'Chờ người cho thuê xác nhận': 'orange',
     'Chờ giao hàng': 'orange',

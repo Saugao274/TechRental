@@ -1,5 +1,5 @@
 'use client'
-import { Divider, Layout } from 'antd'
+import { Divider, Layout, message } from 'antd'
 import React from 'react'
 import SectionCommon from '../../common/SectionCommon'
 import {
@@ -17,6 +17,7 @@ import { cn } from '@/libs/utils'
 import { HTMLMotionProps, motion } from 'framer-motion'
 import { useAuth } from '@/context/AuthContext'
 import SignIn from '@/components/modules/SignIn'
+import webLocalStorage from '@/utils/webLocalStorage'
 
 export default function ProfileRootLayout({
     children,
@@ -130,6 +131,21 @@ export function ProfileOptionsNavigation({
             hidden: isLessor,
         },
     ]
+
+    const handlePushRouter = (route: any) => {
+        if (route.href === '/rental') {
+            const user = webLocalStorage.get('user') || '{}'
+            if (user?.isVerified) {
+                router.push(route.href)
+            } else {
+                message.error(
+                    'Vui lòng xác minh và đăng ký để truy cập chế độ người cho thuê',
+                )
+                return
+            }
+        }
+        router.push(route.href)
+    }
     return (
         <motion.nav
             initial={{ opacity: 0 }}
@@ -142,7 +158,7 @@ export function ProfileOptionsNavigation({
                 route.hidden ? null : (
                     <motion.p
                         key={route.href}
-                        onClick={() => router.push(route.href)}
+                        onClick={() => handlePushRouter(route)}
                         className={cn(
                             route.active
                                 ? 'bg-gray-100 hover:bg-gray-200'

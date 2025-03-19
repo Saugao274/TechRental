@@ -27,7 +27,7 @@ export default function RentalRootLayout({
     return (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent !font-vietnam">
             <SectionCommon>
-                <div className="flex flex-row gap-[20px]">
+                <div className="flex flex-col md:flex-row gap-[20px]">
                     <LeftSideBarElement />
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
@@ -51,10 +51,10 @@ export function LeftSideBarElement() {
             transition={{ duration: 0.5 }}
             className="hidden w-1/5 md:block"
         >
-            <div className="flex flex-col">
+            <div className="flex flex-col p-5">
                 <div>
                     <h3 className="text-2xl font-bold text-primary">
-                        Người cho thuê
+                        Chế độ người cho thuê
                     </h3>
                     <p className="text-sm text-gray-600">
                         Quản lý sản phẩm và đơn hàng cho thuê
