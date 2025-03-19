@@ -12,13 +12,13 @@ export interface SpecificationType {
     value: string
 }
 export type ProductDetail = {
+    idProduct: string
     title: string
     brand?: string
     category: string
     price: number
     images?: string[]
     view: number
-    idProduct: string
     idShop: string
     details: string
     shortDetails: string

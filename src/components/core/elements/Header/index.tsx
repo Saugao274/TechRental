@@ -24,7 +24,7 @@ import {
     useMotionValueEvent,
 } from 'framer-motion'
 import _ from 'lodash'
-import { useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import NotificationModal from '@/components/modules/NotificationModal'
 import { useAuth } from '@/context/AuthContext'
 
@@ -80,20 +80,20 @@ export default function Header() {
                 </p>
             ),
         },
-        {
-            key: '2',
-            label: (
-                <p
-                    className="block cursor-pointer text-[14px] text-primary"
-                    onClick={() => {
-                        router.push(`/personal/payment`)
-                        setMobileMenuOpen(false)
-                    }}
-                >
-                    Thanh toán
-                </p>
-            ),
-        },
+        // {
+        //     key: '2',
+        //     label: (
+        //         <p
+        //             className="block cursor-pointer text-[14px] text-primary"
+        //             onClick={() => {
+        //                 router.push(`/personal/payment`)
+        //                 setMobileMenuOpen(false)
+        //             }}
+        //         >
+        //             Thanh toán
+        //         </p>
+        //     ),
+        // },
         {
             key: '3',
             label: (
@@ -166,6 +166,93 @@ export default function Header() {
             ),
         },
     ]
+    const itemsRental: MenuProps['items'] = [
+        {
+            key: '1',
+            label: (
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/rental`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
+                    Quản lý sản phẩm
+                </p>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/rental/manage-orders`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
+                    Quản lý đơn thuê
+                </p>
+            ),
+        },
+        {
+            key: '3',
+            label: (
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/rental/transactions`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
+                    Thống Kê Giao Dịch
+                </p>
+            ),
+        },
+        {
+            key: '4',
+
+            label: (
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/rental/feedback`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
+                    Đánh Giá & Phản Hồi
+                </p>
+            ),
+        },
+        {
+            key: '5',
+            label: (
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/rental/policy`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
+                    Chính Sách Cho Thuê
+                </p>
+            ),
+        },
+        {
+            key: '6',
+            label: (
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
+                        router.push(`/rental/information`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
+                    Xác Minh Định Danh
+                </p>
+            ),
+        },
+    ]
 
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen)
@@ -213,6 +300,7 @@ export default function Header() {
 
         debouncedFocus()
     }
+    const path = usePathname()
 
     return (
         <motion.header
@@ -516,153 +604,313 @@ export default function Header() {
                                     </motion.div>
                                 )}
                                 {/* Navigation links for mobile */}
-                                <div className="flex cursor-pointer flex-col">
-                                    {[
-                                        {
-                                            href: '#',
-                                            label: 'Trang chủ',
-                                            delay: 0.15,
-                                        },
-                                        {
-                                            href: '/products',
-                                            label: 'Sản phẩm',
-                                            delay: 0.25,
-                                        },
-                                        {
-                                            href: '/personal',
-                                            label: 'Trang cá nhân',
-                                            delay: 0.45,
-                                        },
-                                    ].map((item, index) => (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: item.delay }}
-                                        >
-                                            <p
-                                                onClick={() => {
-                                                    router.push(item.href)
-                                                    setMobileMenuOpen(false)
+                                {!path.includes('rental') ? (
+                                    <div className="flex cursor-pointer flex-col">
+                                        {[
+                                            {
+                                                href: '#',
+                                                label: 'Trang chủ',
+                                                delay: 0.15,
+                                            },
+                                            {
+                                                href: '/products',
+                                                label: 'Sản phẩm',
+                                                delay: 0.25,
+                                            },
+                                            {
+                                                href: '/personal',
+                                                label: 'Trang cá nhân',
+                                                delay: 0.45,
+                                            },
+                                        ].map((item, index) => (
+                                            <motion.div
+                                                key={index}
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{
+                                                    delay: item.delay,
                                                 }}
-                                                className="block border-b px-4 py-3 text-[16px] text-primary"
                                             >
-                                                {item.label}
-                                            </p>
-                                        </motion.div>
-                                    ))}
-
-                                    <motion.div
-                                        className="border-b px-4 py-3"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.2 }}
-                                    >
-                                        <p className="text-[16px] font-medium text-primary">
-                                            Kênh người thuê
-                                        </p>
-                                        <div className="ml-4 mt-2 flex flex-col gap-2">
-                                            {items.map((item: any, index) => (
-                                                <motion.div
-                                                    key={item?.key}
-                                                    initial={{
-                                                        opacity: 0,
-                                                        x: -10,
+                                                <p
+                                                    onClick={() => {
+                                                        router.push(item.href)
+                                                        setMobileMenuOpen(false)
                                                     }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        x: 0,
-                                                    }}
-                                                    transition={{
-                                                        delay:
-                                                            0.2 + index * 0.05,
-                                                    }}
+                                                    className="block border-b px-4 py-3 text-[16px] text-primary"
                                                 >
-                                                    {item?.label}
-                                                </motion.div>
-                                            ))}
-                                        </div>
-                                    </motion.div>
+                                                    {item.label}
+                                                </p>
+                                            </motion.div>
+                                        ))}
 
-                                    {/* Notification links */}
-                                    <motion.div
-                                        className="border-b px-4 py-3"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.5 }}
-                                    >
-                                        <div
-                                            className="flex items-center gap-2"
-                                            onClick={() => {
-                                                user && setBellVisible(true)
-                                                setMobileMenuOpen(false)
-                                            }}
-                                        >
-                                            <Bell
-                                                size={18}
-                                                className="text-primary"
-                                            />
-                                            <p className="text-[16px] text-primary">
-                                                Thông báo
-                                            </p>
-                                            {user && (
-                                                <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
-                                                    <p className="text-[10px] text-white">
-                                                        2
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </motion.div>
-                                    <motion.div
-                                        className="border-b px-4 py-3"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.55 }}
-                                    >
-                                        <div
-                                            className="flex items-center gap-2"
-                                            onClick={() => {
-                                                router.push('/chat')
-                                                setMobileMenuOpen(false)
-                                            }}
-                                        >
-                                            <MessageCircle
-                                                size={18}
-                                                className="text-primary"
-                                            />
-                                            <p className="text-[16px] text-primary">
-                                                Tin nhắn
-                                            </p>
-                                            {user && (
-                                                <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
-                                                    <p className="text-[10px] text-white">
-                                                        7
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </motion.div>
-
-                                    {/* Logout for mobile */}
-                                    {user && (
                                         <motion.div
                                             className="border-b px-4 py-3"
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: 0.6 }}
-                                            onClick={logout}
+                                            transition={{ delay: 0.2 }}
                                         >
-                                            <div className="flex items-center gap-2 text-primary">
-                                                <LogOut size={18} />
-                                                <p className="text-[16px]">
-                                                    Đăng xuất
-                                                </p>
+                                            <p className="text-[16px] font-medium text-primary">
+                                                Kênh người thuê
+                                            </p>
+                                            <div className="ml-4 mt-2 flex flex-col gap-2">
+                                                {items.map(
+                                                    (item: any, index) => (
+                                                        <motion.div
+                                                            key={item?.key}
+                                                            initial={{
+                                                                opacity: 0,
+                                                                x: -10,
+                                                            }}
+                                                            animate={{
+                                                                opacity: 1,
+                                                                x: 0,
+                                                            }}
+                                                            transition={{
+                                                                delay:
+                                                                    0.2 +
+                                                                    index *
+                                                                        0.05,
+                                                            }}
+                                                        >
+                                                            {item?.label}
+                                                        </motion.div>
+                                                    ),
+                                                )}
                                             </div>
                                         </motion.div>
-                                    )}
-                                </div>
 
+                                        {/* Notification links */}
+                                        <motion.div
+                                            className="border-b px-4 py-3"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.5 }}
+                                        >
+                                            <div
+                                                className="flex items-center gap-2"
+                                                onClick={() => {
+                                                    user && setBellVisible(true)
+                                                    setMobileMenuOpen(false)
+                                                }}
+                                            >
+                                                <Bell
+                                                    size={18}
+                                                    className="text-primary"
+                                                />
+                                                <p className="text-[16px] text-primary">
+                                                    Thông báo
+                                                </p>
+                                                {user && (
+                                                    <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                                        <p className="text-[10px] text-white">
+                                                            2
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                        <motion.div
+                                            className="border-b px-4 py-3"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.55 }}
+                                        >
+                                            <div
+                                                className="flex items-center gap-2"
+                                                onClick={() => {
+                                                    router.push('/chat')
+                                                    setMobileMenuOpen(false)
+                                                }}
+                                            >
+                                                <MessageCircle
+                                                    size={18}
+                                                    className="text-primary"
+                                                />
+                                                <p className="text-[16px] text-primary">
+                                                    Tin nhắn
+                                                </p>
+                                                {user && (
+                                                    <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                                        <p className="text-[10px] text-white">
+                                                            7
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+
+                                        {/* Logout for mobile */}
+                                        {user && (
+                                            <motion.div
+                                                className="border-b px-4 py-3"
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: 0.6 }}
+                                                onClick={logout}
+                                            >
+                                                <div className="flex items-center gap-2 text-primary">
+                                                    <LogOut size={18} />
+                                                    <p className="text-[16px]">
+                                                        Đăng xuất
+                                                    </p>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="flex cursor-pointer flex-col">
+                                        {[
+                                            {
+                                                href: '#',
+                                                label: 'Trang chủ',
+                                                delay: 0.15,
+                                            },
+                                            {
+                                                href: '/products',
+                                                label: 'Sản phẩm',
+                                                delay: 0.25,
+                                            },
+                                            {
+                                                href: '/personal',
+                                                label: 'Trang cá nhân',
+                                                delay: 0.45,
+                                            },
+                                        ].map((item, index) => (
+                                            <motion.div
+                                                key={index}
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{
+                                                    delay: item.delay,
+                                                }}
+                                            >
+                                                <p
+                                                    onClick={() => {
+                                                        router.push(item.href)
+                                                        setMobileMenuOpen(false)
+                                                    }}
+                                                    className="block border-b px-4 py-3 text-[16px] text-primary"
+                                                >
+                                                    {item.label}
+                                                </p>
+                                            </motion.div>
+                                        ))}
+
+                                        <motion.div
+                                            className="border-b px-4 py-3"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.2 }}
+                                        >
+                                            <p className="text-[16px] font-medium text-primary">
+                                                Kênh người cho thuê
+                                            </p>
+                                            <div className="ml-4 mt-2 flex flex-col gap-2">
+                                                {itemsRental.map(
+                                                    (item: any, index) => (
+                                                        <motion.div
+                                                            key={item?.key}
+                                                            initial={{
+                                                                opacity: 0,
+                                                                x: -10,
+                                                            }}
+                                                            animate={{
+                                                                opacity: 1,
+                                                                x: 0,
+                                                            }}
+                                                            transition={{
+                                                                delay:
+                                                                    0.2 +
+                                                                    index *
+                                                                        0.05,
+                                                            }}
+                                                        >
+                                                            {item?.label}
+                                                        </motion.div>
+                                                    ),
+                                                )}
+                                            </div>
+                                        </motion.div>
+
+                                        {/* Notification links */}
+                                        <motion.div
+                                            className="border-b px-4 py-3"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.5 }}
+                                        >
+                                            <div
+                                                className="flex items-center gap-2"
+                                                onClick={() => {
+                                                    user && setBellVisible(true)
+                                                    setMobileMenuOpen(false)
+                                                }}
+                                            >
+                                                <Bell
+                                                    size={18}
+                                                    className="text-primary"
+                                                />
+                                                <p className="text-[16px] text-primary">
+                                                    Thông báo
+                                                </p>
+                                                {user && (
+                                                    <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                                        <p className="text-[10px] text-white">
+                                                            2
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                        <motion.div
+                                            className="border-b px-4 py-3"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.55 }}
+                                        >
+                                            <div
+                                                className="flex items-center gap-2"
+                                                onClick={() => {
+                                                    router.push('/chat')
+                                                    setMobileMenuOpen(false)
+                                                }}
+                                            >
+                                                <MessageCircle
+                                                    size={18}
+                                                    className="text-primary"
+                                                />
+                                                <p className="text-[16px] text-primary">
+                                                    Tin nhắn
+                                                </p>
+                                                {user && (
+                                                    <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500">
+                                                        <p className="text-[10px] text-white">
+                                                            7
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+
+                                        {/* Logout for mobile */}
+                                        {user && (
+                                            <motion.div
+                                                className="border-b px-4 py-3"
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ delay: 0.6 }}
+                                                onClick={logout}
+                                            >
+                                                <div className="flex items-center gap-2 text-primary">
+                                                    <LogOut size={18} />
+                                                    <p className="text-[16px]">
+                                                        Đăng xuất
+                                                    </p>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                )}
                                 {/* Social links for mobile */}
                                 <motion.div
                                     className="mb-4 mt-4 px-4"

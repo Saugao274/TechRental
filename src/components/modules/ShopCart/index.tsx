@@ -3,8 +3,13 @@
 import { Button, Input } from 'antd'
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+<<<<<<< HEAD
 import { useRouter } from 'next/navigation'
 
+=======
+
+// Định nghĩa interface cho sản phẩm
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
 interface Product {
     id: number
     shop: string
@@ -19,6 +24,10 @@ interface Product {
 }
 
 export default function CartPage(): JSX.Element {
+<<<<<<< HEAD
+=======
+    // Dữ liệu sản phẩm
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
     const initialProducts: Product[] = [
         {
             id: 1,
@@ -29,7 +38,11 @@ export default function CartPage(): JSX.Element {
             availableQuantity: 30,
             price: 150000,
             priceDisplay: '150.000đ',
+<<<<<<< HEAD
             image: 'https://tse3.mm.bing.net/th?id=OIP.Tk-zyaMmnDTvKU4WjhHkAQHaHa&pid=Api&P=0&h=220',
+=======
+            image: 'https://picsum.photos/200/200?random=1',
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
             days: 1,
         },
         {
@@ -41,7 +54,11 @@ export default function CartPage(): JSX.Element {
             availableQuantity: 252,
             price: 700000,
             priceDisplay: '700.000đ',
+<<<<<<< HEAD
             image: 'https://tse1.mm.bing.net/th?id=OIP.J9bna2G4uiIGIGcaPzYI-wHaD4&pid=Api&P=0&h=220',
+=======
+            image: 'https://picsum.photos/200/200?random=2',
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
             days: 1,
         },
         {
@@ -54,7 +71,11 @@ export default function CartPage(): JSX.Element {
             availableQuantity: 5,
             price: 2000000,
             priceDisplay: '2.000.000đ',
+<<<<<<< HEAD
             image: 'https://tse4.mm.bing.net/th?id=OIF.3nGmzTmWnd8MyHWGVJUKiQ&pid=Api&P=0&h=220',
+=======
+            image: 'https://picsum.photos/200/200?random=3',
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
             days: 1,
         },
         {
@@ -67,7 +88,11 @@ export default function CartPage(): JSX.Element {
             availableQuantity: 56,
             price: 700000,
             priceDisplay: '700.000đ',
+<<<<<<< HEAD
             image: 'https://tse4.mm.bing.net/th?id=OIP.yH03xmDauFTCSZjxeqC1OAHaHa&pid=Api&P=0&h=220',
+=======
+            image: 'https://picsum.photos/200/200?random=4',
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
             days: 1,
         },
         {
@@ -80,18 +105,31 @@ export default function CartPage(): JSX.Element {
             availableQuantity: 1,
             price: 100000,
             priceDisplay: '100.000đ',
+<<<<<<< HEAD
             image: 'https://tse1.mm.bing.net/th?id=OIP.OiZfALhavRQwVM91AWs_ZwHaHa&pid=Api&P=0&h=220',
+=======
+            image: 'https://picsum.photos/200/200?random=5',
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
             days: 1,
         },
     ]
 
+<<<<<<< HEAD
+=======
+    // State
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
     const [selectedProducts, setSelectedProducts] = useState<number[]>([])
     const [products, setProducts] = useState<Product[]>(initialProducts)
     const [currentPage, setCurrentPage] = useState(1)
     const [couponCode, setCouponCode] = useState<string>('')
     const productsPerPage = 6
+<<<<<<< HEAD
     const router = useRouter()
 
+=======
+
+    // Logic phân trang
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
     const shouldPaginate = products.length > productsPerPage
     const totalPages = Math.ceil(products.length / productsPerPage)
     const indexOfLastProduct = currentPage * productsPerPage
@@ -100,8 +138,15 @@ export default function CartPage(): JSX.Element {
         ? products.slice(indexOfFirstProduct, indexOfLastProduct)
         : products
 
+<<<<<<< HEAD
     const uniqueShops = Array.from(new Set(currentProducts.map((p) => p.shop)))
 
+=======
+    // Lấy danh sách các shop duy nhất có sản phẩm trong currentProducts
+    const uniqueShops = Array.from(new Set(currentProducts.map((p) => p.shop)))
+
+    // Xử lý chọn sản phẩm
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
     const handleSelectProduct = (productId: number) => {
         setSelectedProducts((prev) => {
             if (prev.includes(productId)) {
@@ -112,6 +157,10 @@ export default function CartPage(): JSX.Element {
         })
     }
 
+<<<<<<< HEAD
+=======
+    // Xử lý chọn toàn bộ shop
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
     const handleSelectShop = (shopName: string, isChecked: boolean) => {
         const shopProductIds = products
             .filter((p) => p.shop === shopName)
@@ -123,6 +172,10 @@ export default function CartPage(): JSX.Element {
         )
     }
 
+<<<<<<< HEAD
+=======
+    // Xử lý thay đổi số lượng và ngày
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
     const handleInputChange = (
         id: number,
         field: 'quantity' | 'days',
@@ -134,6 +187,10 @@ export default function CartPage(): JSX.Element {
         )
     }
 
+<<<<<<< HEAD
+=======
+    // Tính tổng tiền
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
     const total = selectedProducts.reduce((sum, id) => {
         const product = products.find((p) => p.id === id)
         return product
@@ -141,11 +198,18 @@ export default function CartPage(): JSX.Element {
             : sum
     }, 0)
 
+<<<<<<< HEAD
     const selectedProductCount = selectedProducts.length
 
     const ProductItem = ({ product }: { product: Product }) => (
         <div className="product-item flex items-center justify-between border-b border-gray-200 bg-transparent px-6 py-4">
             <div className="product-info flex items-center gap-4">
+=======
+    // Component hiển thị sản phẩm
+    const ProductItem = ({ product }: { product: Product }) => (
+        <div className="flex flex-col items-center justify-between border-b border-gray-200 px-6 py-4 md:flex-row">
+            <div className="mb-4 flex items-center gap-6 md:mb-0">
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
                 <input
                     type="checkbox"
                     checked={selectedProducts.includes(product.id)}
@@ -154,18 +218,30 @@ export default function CartPage(): JSX.Element {
                 />
                 <button
                     onClick={() => handleSelectProduct(product.id)}
+<<<<<<< HEAD
                     className="text-gray-400 hover:text-red-500"
                 >
                     ✕
                 </button>
                 <div className="h-20 w-20">
+=======
+                    className="text-gray-400 hover:text-gray-600"
+                >
+                    ✕
+                </button>
+                <div className="h-24 w-24">
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
                     <img
                         className="h-full w-full object-contain"
                         alt={product.name}
                         src={product.image}
                     />
                 </div>
+<<<<<<< HEAD
                 <div className="flex-1">
+=======
+                <div className="flex flex-col">
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
                     <h3 className="text-sm font-medium text-gray-800">
                         {product.name}
                     </h3>
@@ -174,11 +250,19 @@ export default function CartPage(): JSX.Element {
                     </p>
                 </div>
             </div>
+<<<<<<< HEAD
             <div className="product-details flex items-center gap-4">
                 <span className="price w-24 text-center text-sm font-medium text-gray-800">
                     {product.priceDisplay}
                 </span>
                 <div className="quantity flex items-center gap-2">
+=======
+            <div className="flex flex-col items-center gap-6 md:flex-row">
+                <span className="w-24 text-center text-sm font-medium text-gray-800">
+                    {product.priceDisplay}
+                </span>
+                <div className="flex items-center gap-2">
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
                     <Input
                         value={product.quantity}
                         onChange={(e) =>
@@ -188,10 +272,17 @@ export default function CartPage(): JSX.Element {
                                 e.target.value,
                             )
                         }
+<<<<<<< HEAD
                         className="h-10 w-16 rounded-none border-gray-300 text-center text-sm"
                     />
                 </div>
                 <div className="days flex items-center gap-2">
+=======
+                        className="h-10 w-16 rounded-none border-gray-300 p-0 text-center text-sm"
+                    />
+                </div>
+                <div className="flex items-center gap-2">
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
                     <Input
                         value={product.days}
                         onChange={(e) =>
@@ -201,11 +292,19 @@ export default function CartPage(): JSX.Element {
                                 e.target.value,
                             )
                         }
+<<<<<<< HEAD
                         className="h-10 w-16 rounded-none border-gray-300 text-center text-sm"
                     />
                     <span className="text-sm text-gray-600">ngày</span>
                 </div>
                 <span className="total w-24 text-center text-sm font-medium text-gray-800">
+=======
+                        className="h-10 w-16 rounded-none border-gray-300 p-0 text-center text-sm"
+                    />
+                    <span className="text-sm text-gray-600">ngày</span>
+                </div>
+                <span className="w-24 text-center text-sm font-medium text-gray-800">
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
                     {(
                         product.price *
                         product.quantity *
@@ -217,9 +316,16 @@ export default function CartPage(): JSX.Element {
         </div>
     )
 
+<<<<<<< HEAD
     const ShopSection = ({ shopName }: { shopName: string }) => (
         <div className="shop-section mb-6 rounded-lg border border-gray-200 bg-transparent shadow-sm">
             <div className="shop-header flex h-12 items-center gap-2 border-b border-gray-200 bg-transparent px-6">
+=======
+    // Component hiển thị shop
+    const ShopSection = ({ shopName }: { shopName: string }) => (
+        <div className="mb-6 rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div className="flex h-12 items-center gap-2 border-b border-gray-200 bg-gray-50 px-6">
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
                 <input
                     type="checkbox"
                     checked={products
@@ -231,9 +337,22 @@ export default function CartPage(): JSX.Element {
                     className="h-5 w-5"
                 />
                 <span className="text-sm font-medium text-gray-800">
+<<<<<<< HEAD
                     {shopName} <span className="text-blue-500">⨯</span>
                 </span>
             </div>
+=======
+                    {shopName}
+                </span>
+            </div>
+            <div className="hidden items-center border-b border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-600 md:grid md:grid-cols-[1fr_auto_auto_auto_auto]">
+                <span className="text-left">Sản phẩm</span>
+                <span className="w-24 text-center">Giá</span>
+                <span className="w-24 text-center">Số lượng</span>
+                <span className="w-24 text-center">Số ngày</span>
+                <span className="w-24 text-center">Tổng phụ</span>
+            </div>
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
             {currentProducts
                 .filter((p) => p.shop === shopName)
                 .map((product) => (
@@ -243,6 +362,7 @@ export default function CartPage(): JSX.Element {
     )
 
     return (
+<<<<<<< HEAD
         <>
             <div className="min-h-screen py-8">
                 <div className="main-content mx-auto max-w-6xl px-4">
@@ -534,5 +654,108 @@ export default function CartPage(): JSX.Element {
                 }
             `}</style>
         </>
+=======
+        <div className="min-h-screen bg-white py-8">
+            <div className="mx-auto max-w-6xl px-4">
+                <motion.h1
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-8 text-center text-3xl font-bold text-gray-800"
+                >
+                    Giỏ hàng
+                </motion.h1>
+
+                <div className="flex flex-col gap-8 md:flex-row">
+                    {/* Danh sách sản phẩm */}
+                    <div className="order-1 flex-1">
+                        {uniqueShops.map((shopName) => (
+                            <ShopSection key={shopName} shopName={shopName} />
+                        ))}
+
+                        {/* Phần mã giảm giá */}
+                        <div className="mb-6 flex flex-col items-center gap-3 md:flex-row">
+                            <span className="text-sm text-gray-600">Mã  :</span>
+                            <Input
+                                placeholder="Nhập mã giảm giá"
+                                value={couponCode}
+                                onChange={(e) => setCouponCode(e.target.value)}
+                                className="h-10 w-full rounded-none border-gray-300 md:w-40"
+                            />
+                            <Button
+                                className="h-10 w-full rounded-none bg-gray-800 text-white hover:bg-gray-700 md:w-auto"
+                                onClick={() => alert('Đã áp dụng mã giảm giá!')}
+                            >
+                                Áp dụng mã giảm giá
+                            </Button>
+                            <Button
+                                className="h-10 w-full rounded-none border-gray-300 text-gray-800 hover:bg-gray-100 md:w-auto"
+                                onClick={() => setProducts([])}
+                            >
+                                ✕ Xóa giỏ hàng
+                            </Button>
+                        </div>
+
+                        {/* Phân trang */}
+                        {shouldPaginate && (
+                            <div className="mt-4 flex justify-center gap-2">
+                                <Button
+                                    disabled={currentPage === 1}
+                                    onClick={() =>
+                                        setCurrentPage((prev) => prev - 1)
+                                    }
+                                    className="h-10 w-full rounded-none border-gray-300 px-3 text-sm md:w-auto"
+                                >
+                                    Trang trước
+                                </Button>
+                                <span className="text-sm text-gray-600">
+                                    Trang {currentPage} của {totalPages}
+                                </span>
+                                <Button
+                                    disabled={currentPage === totalPages}
+                                    onClick={() =>
+                                        setCurrentPage((prev) => prev + 1)
+                                    }
+                                    className="h-10 w-full rounded-none border-gray-300 px-3 text-sm md:w-auto"
+                                >
+                                    Trang sau
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Tổng giỏ hàng */}
+                    <div className="order-2 w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm md:w-96">
+                        <h2 className="mb-4 text-lg font-semibold text-gray-800">
+                            Tổng giỏ hàng
+                        </h2>
+                        <div className="mb-4 flex justify-between">
+                            <span className="text-sm text-gray-600">
+                                Tổng phụ
+                            </span>
+                            <span className="text-sm font-medium text-gray-800">
+                                {total.toLocaleString('vi-VN')}đ
+                            </span>
+                        </div>
+                        <div className="mb-6 flex justify-between">
+                            <span className="text-sm text-gray-600">
+                                Tổng cộng
+                            </span>
+                            <span className="text-lg font-semibold text-gray-800">
+                                {total.toLocaleString('vi-VN')}đ
+                            </span>
+                        </div>
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="flex w-full items-center justify-center gap-2 rounded-none bg-[#28a745] py-3 text-sm font-semibold text-white hover:bg-[#218838]"
+                            onClick={() => alert('Đặt thuê thành công!')}
+                        >
+                            <span>✓</span> Tiến hành thanh toán
+                        </motion.button>
+                    </div>
+                </div>
+            </div>
+        </div>
+>>>>>>> 94c677e6a23f57c709f01ecfa8d3825ae9da3570
     )
 }

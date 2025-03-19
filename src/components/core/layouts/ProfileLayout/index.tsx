@@ -92,12 +92,12 @@ export function ProfileOptionsNavigation({
             icon: User,
             active: pathname === '/personal/update-info',
         },
-        {
-            href: '/personal/payment',
-            label: 'Thanh toán',
-            icon: CreditCard,
-            active: pathname === '/personal/payment',
-        },
+        // {
+        //     href: '/personal/payment',
+        //     label: 'Thanh toán',
+        //     icon: CreditCard,
+        //     active: pathname === '/personal/payment',
+        // },
         {
             href: '/personal/rented-history',
             label: 'Lịch sử thuê',
