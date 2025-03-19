@@ -6,7 +6,7 @@ export type ordersType = {
     nameCustomer: string
     status:
         | 'Đã hoàn thành'
-        | 'Đã thanh toán'
+        | 'Chờ thanh toán'
         | 'Chờ người cho thuê xác nhận'
         | 'Chờ người thuê thanh toán'
         | 'Người thuê đã hủy'
