@@ -37,7 +37,7 @@ export default function ManageProducts() {
                     <Button
                         key="viewTenant"
                         type="dashed"
-                        // onClick={() => showTenantInfo()}
+                        onClick={() => showTenantInfo()}
                     >
                         Xem thông tin người thuê
                     </Button>,
@@ -130,9 +130,48 @@ export default function ManageProducts() {
             ),
         },
     ]
+    const [isTenantModalOpen, setIsTenantModalOpen] = useState(false)
+
+    const showTenantInfo = () => {
+        setIsTenantModalOpen(true)
+    }
+
+    const closeTenantModal = () => {
+        setIsTenantModalOpen(false)
+    }
 
     return (
         <div className="flex flex-col gap-5 !bg-transparent">
+            <Modal
+                title="Thông tin người thuê"
+                open={isTenantModalOpen}
+                onCancel={closeTenantModal}
+                footer={[
+                    <Button key="close" onClick={closeTenantModal}>
+                        Đóng
+                    </Button>,
+                ]}
+            >
+                {selectedOrder && (
+                    <div>
+                        <p>
+                            <strong>Tên người thuê:</strong>{' '}
+                            {selectedOrder.nameCustomer}
+                        </p>
+                        <p>
+                            <strong>Địa chỉ:</strong>{' '}
+                            {/* {selectedOrder.address || 'Chưa cập nhật'} */}
+                            Khu đại học FPT Đà Nẵng
+                        </p>
+                        <p>
+                            <strong>Số điện thoại:</strong>{' '}
+                            {/* {selectedOrder.phone || 'Chưa cập nhật'} */}{' '}
+                            09123456789
+                        </p>
+                    </div>
+                )}
+            </Modal>
+
             <Modal
                 title={
                     <div className="flex items-center space-x-2">
