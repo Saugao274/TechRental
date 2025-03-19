@@ -1,5 +1,5 @@
 'use client'
-import { Divider, Layout } from 'antd'
+import { Divider, Layout, message } from 'antd'
 import React from 'react'
 import SectionCommon from '../../common/SectionCommon'
 import {
@@ -15,13 +15,18 @@ import {
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/libs/utils'
 import { HTMLMotionProps, motion } from 'framer-motion'
+import { useAuth } from '@/context/AuthContext'
+import SignIn from '@/components/modules/SignIn'
+import webLocalStorage from '@/utils/webLocalStorage'
 
 export default function ProfileRootLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
-    return (
+    const { user } = useAuth()
+
+    return user ? (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
                 <div className="flex flex-row gap-[20px]">
@@ -37,6 +42,8 @@ export default function ProfileRootLayout({
                 </div>
             </SectionCommon>
         </Layout>
+    ) : (
+        <SignIn />
     )
 }
 
@@ -86,12 +93,12 @@ export function ProfileOptionsNavigation({
             icon: User,
             active: pathname === '/personal/update-info',
         },
-        {
-            href: '/personal/payment',
-            label: 'Thanh toán',
-            icon: CreditCard,
-            active: pathname === '/personal/payment',
-        },
+        // {
+        //     href: '/personal/payment',
+        //     label: 'Thanh toán',
+        //     icon: CreditCard,
+        //     active: pathname === '/personal/payment',
+        // },
         {
             href: '/personal/rented-history',
             label: 'Lịch sử thuê',
@@ -124,19 +131,34 @@ export function ProfileOptionsNavigation({
             hidden: isLessor,
         },
     ]
+
+    const handlePushRouter = (route: any) => {
+        if (route.href === '/rental') {
+            const user = webLocalStorage.get('user') || '{}'
+            if (user?.isVerified) {
+                router.push(route.href)
+            } else {
+                message.error(
+                    'Vui lòng xác minh và đăng ký để truy cập chế độ người cho thuê',
+                )
+                return
+            }
+        }
+        router.push(route.href)
+    }
     return (
         <motion.nav
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={cn('!font-vietnam flex flex-col space-y-2', className)}
+            className={cn('flex flex-col space-y-2 !font-vietnam', className)}
             {...props}
         >
             {routes.map((route) =>
                 route.hidden ? null : (
                     <motion.p
                         key={route.href}
-                        onClick={() => router.push(route.href)}
+                        onClick={() => handlePushRouter(route)}
                         className={cn(
                             route.active
                                 ? 'bg-gray-100 hover:bg-gray-200'

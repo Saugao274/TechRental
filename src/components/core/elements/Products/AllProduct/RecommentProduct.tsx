@@ -10,7 +10,9 @@ import SectionCommon from '@/components/core/common/SectionCommon'
 const RecommentProduct = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [filteredProducts, setFilteredProducts] = useState(productsData)
-    const pageSize = 9
+
+    const pageSize =
+        typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 9
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page)
@@ -27,12 +29,14 @@ const RecommentProduct = () => {
 
     return (
         <SectionCommon className="container mx-auto h-full p-4">
-            <div className="flex h-full items-center justify-center gap-6">
-                <div className="w-1/4 flex-shrink-0">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+                {/* Sidebar */}
+                <div className="w-full lg:w-1/4">
                     <FilterSidebar onFilter={handleFilter} />
                 </div>
 
-                <div className="w-4/3 grid flex-1 grid-cols-1 grid-rows-3 gap-5 sm:grid-cols-2 md:grid-cols-3">
+                {/* Danh sách sản phẩm */}
+                <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-3">
                     {currentProducts.map((product) => (
                         <ProductCard
                             key={product.idProduct}

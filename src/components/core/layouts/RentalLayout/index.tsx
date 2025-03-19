@@ -27,7 +27,7 @@ export default function RentalRootLayout({
     return (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent !font-vietnam">
             <SectionCommon>
-                <div className="flex flex-row gap-[20px]">
+                <div className="flex flex-col md:flex-row gap-[20px]">
                     <LeftSideBarElement />
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}

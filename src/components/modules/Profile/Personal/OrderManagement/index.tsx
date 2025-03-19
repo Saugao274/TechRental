@@ -77,15 +77,21 @@ export default function OrderManagement() {
         {
             title: '',
             key: 'action',
-            render: () => <Button type="link" className='!text-primary'>Chi tiết</Button>,
+            render: () => (
+                <Button type="link" className="!text-primary">
+                    Chi tiết
+                </Button>
+            ),
         },
     ]
 
     return (
         <div className="flex flex-col gap-5">
             <div>
-                <Title level={3} className='!text-primary'>Quản lý đơn hàng</Title>
-                <Text type="secondary" className='!text-primary'>
+                <Title level={3} className="!text-primary">
+                    Quản lý đơn hàng
+                </Title>
+                <Text type="secondary" className="!text-primary">
                     Quản lý các đơn hàng thuê sản phẩm của bạn
                 </Text>
             </div>
@@ -108,41 +114,41 @@ export default function OrderManagement() {
                         onChange={(e) => setSearch(e.target.value)}
                     />
                 </div>
-                    <Tabs defaultActiveKey="all">
-                        <TabPane tab="Tất cả" key="all">
-                            <Table
-                                columns={columns}
-                                dataSource={filteredOrders}
-                                rowKey="id"
-                            />
-                        </TabPane>
-                        <TabPane tab="Chờ xác nhận" key="pending">
-                            <Table
-                                columns={columns}
-                                dataSource={filteredOrders.filter(
-                                    (o) => o.status === 'Chờ xác nhận',
-                                )}
-                                rowKey="id"
-                            />
-                        </TabPane>
-                        <TabPane tab="Đang xử lý" key="processing">
-                            <Table
-                                columns={columns}
-                                dataSource={filteredOrders.filter(
-                                    (o) => o.status === 'Đang xử lý',
-                                )}
-                                rowKey="id"
-                            />
-                        </TabPane>
-                        <TabPane tab="Đã hoàn thành" key="completed">
-                            <Table
-                                columns={columns}
-                                dataSource={filteredOrders.filter(
-                                    (o) => o.status === 'Đã hoàn thành',
-                                )}
-                                rowKey="id"
-                            />
-                        </TabPane>
+                <Tabs defaultActiveKey="all">
+                    <TabPane tab="Tất cả" key="all">
+                        <Table
+                            columns={columns}
+                            dataSource={filteredOrders}
+                            rowKey="id"
+                        />
+                    </TabPane>
+                    <TabPane tab="Chờ xác nhận" key="pending">
+                        <Table
+                            columns={columns}
+                            dataSource={filteredOrders.filter(
+                                (o) => o.status === 'Chờ xác nhận',
+                            )}
+                            rowKey="id"
+                        />
+                    </TabPane>
+                    <TabPane tab="Đang xử lý" key="processing">
+                        <Table
+                            columns={columns}
+                            dataSource={filteredOrders.filter(
+                                (o) => o.status === 'Đang xử lý',
+                            )}
+                            rowKey="id"
+                        />
+                    </TabPane>
+                    <TabPane tab="Đã hoàn thành" key="completed">
+                        <Table
+                            columns={columns}
+                            dataSource={filteredOrders.filter(
+                                (o) => o.status === 'Đã hoàn thành',
+                            )}
+                            rowKey="id"
+                        />
+                    </TabPane>
                     <TabPane tab="Đã hủy" key="cancelled">
                         <Table
                             columns={columns}

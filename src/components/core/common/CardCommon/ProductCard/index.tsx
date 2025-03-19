@@ -65,17 +65,15 @@ export default function ProductCard({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <div className="flex flex-col items-center justify-center gap-3 hover:scale-105 hover:border-2 hover:shadow-md hover:shadow-blue-300">
-                <div className='md:w-fit w-full'>
-                    <Image
-                        src={currentImage}
-                        alt={product.title}
-                        width={300}
-                        height={200}
-                        className="aspect-[4/3] h-56 w-full rounded-lg object-cover md:w-fit"
-                        unoptimized
-                    />
-                </div>
+            <div className="flex flex-col gap-3 hover:scale-105 hover:border-2 hover:shadow-md hover:shadow-blue-300">
+                <Image
+                    src={currentImage}
+                    alt={product.title}
+                    width={300}
+                    height={200}
+                    className="aspect-[4/3] h-56 w-full rounded-lg object-cover"
+                    unoptimized
+                />
 
                 <div className="flex w-full flex-col items-center justify-center gap-3">
                     <h3 className="line-clamp-1 text-xl font-semibold text-blue-900">
