@@ -299,7 +299,7 @@ export default function TransactionStatistics() {
                     flexWrap: 'wrap',
                 }}
             >
-                <Title level={2}>Thống kê giao dịch</Title>
+                <p className='text-2xl !font-bold !text-primary'>Thống kê giao dịch</p>
 
                 <Space wrap>
                     <DatePicker

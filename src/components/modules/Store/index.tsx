@@ -613,7 +613,7 @@ export default function StoreModule() {
                                             key={product.id}
                                         >
                                             <Link
-                                                href={`/san-pham/${product.id}`}
+                                                href={`/products/${product.id}`}
                                                 style={{
                                                     textDecoration: 'none',
                                                 }}
@@ -787,7 +787,7 @@ export default function StoreModule() {
                                                                     '12px',
                                                             }}
                                                         >
-                                                            Đã bán{' '}
+                                                            Đã thuê{' '}
                                                             {product.soldCount}
                                                         </Text>
                                                     </div>
