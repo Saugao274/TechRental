@@ -1,9 +1,10 @@
 'use client'
+
 import { Table, Input, Button, Card } from 'antd'
 import { Search, Eye } from 'lucide-react'
 import React, { useState } from 'react'
+import { statusColors } from '@/data/manageProductData'
 
-// Định nghĩa interface cho data item
 interface RentalItem {
     key: string
     product: string
@@ -21,7 +22,7 @@ export default function RentalHistoryPage() {
             product: 'Máy ảnh Canon EOS R5',
             orderDate: '01/01/2023',
             dueDate: '5 ngày',
-            status: 'Hoàn thành',
+            status: 'Đã hoàn thành',
             total: '2.500.000 đ',
             isPaid: true,
         },
@@ -30,7 +31,7 @@ export default function RentalHistoryPage() {
             product: 'MacBook Pro',
             orderDate: '15/02/2023',
             dueDate: '7 ngày',
-            status: 'Hoàn thành',
+            status: 'Đã hoàn thành',
             total: '3.200.000 đ',
             isPaid: true,
         },
@@ -39,7 +40,7 @@ export default function RentalHistoryPage() {
             product: 'Drone DJI Mini 3',
             orderDate: '05/04/2023',
             dueDate: '3 ngày',
-            status: 'Chờ xác nhận',
+            status: 'Cần xác nhận',
             total: '1.500.000 đ',
             isPaid: false,
         },
@@ -48,7 +49,7 @@ export default function RentalHistoryPage() {
             product: 'Máy quay Sony FX3',
             orderDate: '10/04/2023',
             dueDate: '10 ngày',
-            status: 'Đang xử lý',
+            status: 'Đang giao hàng',
             total: '5.000.000 đ',
             isPaid: false,
         },
@@ -108,19 +109,20 @@ export default function RentalHistoryPage() {
             dataIndex: 'status',
             key: 'status',
             width: 80,
-            render: (text: string) => (
-                <span
-                    className={`rounded-full px-1 py-0.5 text-xs ${
-                        text === 'Hoàn thành'
-                            ? 'bg-green-100 text-green-800'
-                            : text === 'Chờ xác nhận'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-blue-100 text-blue-800'
-                    }`}
-                >
-                    {text}
-                </span>
-            ),
+            render: (text: string) => {
+                const color =
+                    statusColors[text as keyof typeof statusColors] || 'gray'
+                return (
+                    <div className="flex items-center gap-2">
+                        <span
+                            className={`h-3 w-3 rounded-full bg-${color}-500`}
+                        ></span>
+                        <span className={`rounded-full px-2 py-0.5 text-xs`}>
+                            {text}
+                        </span>
+                    </div>
+                )
+            },
             className: 'min-w-[80px] text-center',
         },
         {
@@ -220,52 +222,57 @@ export default function RentalHistoryPage() {
 
             <div className="block md:hidden">
                 <div className="grid grid-cols-1 gap-4">
-                    {paginatedData.map((item) => (
-                        <Card
-                            key={item.key}
-                            className="shadow-sm transition-shadow hover:shadow-md"
-                        >
-                            <div className="flex flex-col gap-2">
-                                <div className="flex-1">
-                                    <h3 className="font-medium text-gray-700">
-                                        Mã đơn: {item.key}
-                                    </h3>
-                                    <p className="truncate text-sm text-gray-500">
-                                        Sản phẩm: {item.product}
-                                    </p>
+                    {paginatedData.map((item) => {
+                        const color =
+                            statusColors[
+                                item.status as keyof typeof statusColors
+                            ] || 'gray'
+                        return (
+                            <Card
+                                key={item.key}
+                                className="shadow-sm transition-shadow hover:shadow-md"
+                            >
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex-1">
+                                        <h3 className="font-medium text-gray-700">
+                                            Mã đơn: {item.key}
+                                        </h3>
+                                        <p className="truncate text-sm text-gray-500">
+                                            Sản phẩm: {item.product}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <span
+                                                className={`h-3 w-3 rounded-full bg-${color}-500`}
+                                            ></span>
+                                            <span
+                                                className={`inline-flex items-center rounded-full px-2 py-1 text-xs bg-${color}-100`}
+                                            >
+                                                {item.status}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-gray-600">
+                                            Tổng: {item.total}
+                                        </p>
+                                        <Button
+                                            type="primary"
+                                            icon={<Eye className="h-4 w-4" />}
+                                            className="h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                                            onClick={() =>
+                                                console.log(
+                                                    'Xem chi tiết đơn hàng:',
+                                                    item.key,
+                                                )
+                                            }
+                                        >
+                                            Xem
+                                        </Button>
+                                    </div>
                                 </div>
-                                <div className="flex items-center justify-between gap-2">
-                                    <span
-                                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs ${
-                                            item.status === 'Hoàn thành'
-                                                ? 'bg-green-100 text-green-800'
-                                                : item.status === 'Chờ xác nhận'
-                                                  ? 'bg-yellow-100 text-yellow-800'
-                                                  : 'bg-blue-100 text-blue-800'
-                                        }`}
-                                    >
-                                        {item.status}
-                                    </span>
-                                    <p className="text-sm text-gray-600">
-                                        Tổng: {item.total}
-                                    </p>
-                                    <Button
-                                        type="primary"
-                                        icon={<Eye className="h-4 w-4" />}
-                                        className="h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
-                                        onClick={() =>
-                                            console.log(
-                                                'Xem chi tiết đơn hàng:',
-                                                item.key,
-                                            )
-                                        }
-                                    >
-                                        Xem
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
-                    ))}
+                            </Card>
+                        )
+                    })}
                 </div>
 
                 <div className="mt-6 flex justify-center gap-2">
