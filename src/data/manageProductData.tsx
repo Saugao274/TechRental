@@ -22,7 +22,7 @@ export type ordersType = {
 export const statusColors = {
     'Đã hoàn thành': 'green',
     //người thuê
-    'Đã thanh toán': 'orange',
+    'Chờ thanh toán': 'orange',
     'Người thuê đã hủy': 'red',
     'Chờ người cho thuê xác nhận': 'orange',
     'Chờ giao hàng': 'orange',
