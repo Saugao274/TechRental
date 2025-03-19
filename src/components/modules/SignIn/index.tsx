@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react'
 const SignIn = () => {
     const router = useRouter()
     const { login } = useAuth()
+    const [form] = Form.useForm()
     const [loading, setLoading] = useState(true)
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -23,6 +24,7 @@ const SignIn = () => {
 
     const onSubmit = async (value: any) => {
         try {
+            await form.validateFields()
             message.success('Đăng nhập thành công!')
 
             login(user)
@@ -80,6 +82,11 @@ const SignIn = () => {
                                             required: true,
                                             message:
                                                 'Vui lòng nhập số điện thoại',
+                                        },
+                                        {
+                                            pattern: /^[0-9]{10,11}$/,
+                                            message:
+                                                'Số điện thoại không hợp lệ!',
                                         },
                                     ]}
                                     name="phone"
