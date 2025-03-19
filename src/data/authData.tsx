@@ -25,7 +25,3 @@ export const user = {
     rentedProducts: 10,
     isLandlord: false,
 }
-export const newUser = {
-    ...user,
-    isVerified: true,
-}

@@ -1,5 +1,5 @@
 'use client'
-import { newUser, User } from '@/data/authData'
+import { User } from '@/data/authData'
 import { useRouter } from 'next/navigation'
 import React, { createContext, useContext, useState, useEffect } from 'react'
 
@@ -39,8 +39,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     const updateIdentifier = () => {
-        setUser(newUser)
-        localStorage.setItem('user', JSON.stringify(newUser))
+        if (user) {
+            const updatedUser = { ...user, isVerified: true }
+            setUser(updatedUser)
+            localStorage.setItem('user', JSON.stringify(updatedUser))
+        }
     }
     const updateUser = (newUser: User) => {
         setUser(newUser)
