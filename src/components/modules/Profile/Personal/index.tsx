@@ -28,15 +28,15 @@ import { useAuth } from '@/context/AuthContext'
 
 export default function PersonalProfile() {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const { user } = useAuth()
+    const { user, updateIdentifier } = useAuth()
     const [gender, setGender] = useState('')
     const router = useRouter()
-
     const handleVerificationClick = () => {
         setIsModalOpen(true)
     }
 
     const handleOk = () => {
+        updateIdentifier()
         setIsModalOpen(false)
     }
 
