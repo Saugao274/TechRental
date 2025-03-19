@@ -11,18 +11,20 @@ import {
     message,
 } from 'antd'
 import { ShieldCheck } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
 
 export default function PersonalRentalRegistryPage() {
-    const user = {
-        name: 'Nguyễn Văn A',
-        isVerified: true,
-    }
-
+    const { user, registeredLessor } = useAuth()
     const [showTermsModal, setShowTermsModal] = useState(false)
 
     const onFinish = (values: any) => {
         console.log('Form values:', values)
-        message.success('Đã gửi thông tin đăng ký cho admin duyệt!')
+        message.loading('Đang gửi thông tin đăng ký...', 3)
+
+        setTimeout(() => {
+            message.success('Admin đã duyệt đơn đăng ký của bạn!')
+            registeredLessor()
+        }, 3000)
     }
 
     const onFinishFailed = (errorInfo: any) => {
@@ -33,7 +35,7 @@ export default function PersonalRentalRegistryPage() {
         <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
             <div className="mb-4">
                 <h1 className="text-2xl font-bold text-primary">
-                    Xin chào, {user.name}
+                    Xin chào, {user?.name}
                 </h1>
                 <p className="text-primary">
                     Chào mừng bạn đến với trang cá nhân của mình
@@ -41,7 +43,7 @@ export default function PersonalRentalRegistryPage() {
             </div>
 
             {/* Thông báo đã xác minh */}
-            {user.isVerified && (
+            {user?.isVerified && (
                 <div className="mb-4 flex items-center rounded-md border border-green-400 bg-green-50 p-4">
                     <ShieldCheck className="mr-2 hidden text-xl text-green-500 md:block" />
                     <div>

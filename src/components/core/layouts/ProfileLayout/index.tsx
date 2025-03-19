@@ -78,6 +78,8 @@ export function ProfileOptionsNavigation({
     isLessor = false,
     ...props
 }: SidebarNavProps) {
+    const { user } = useAuth()
+
     const pathname = usePathname()
     const router = useRouter()
     const routes = [
@@ -110,6 +112,7 @@ export function ProfileOptionsNavigation({
             label: 'Đăng ký làm người cho thuê',
             icon: UserPlus,
             active: pathname === '/personal/rental-registry',
+            hidden: user?.isVerified && user?.registeredLessorr,
         },
         {
             href: '/personal/orders',
@@ -134,8 +137,10 @@ export function ProfileOptionsNavigation({
 
     const handlePushRouter = (route: any) => {
         if (route.href === '/rental') {
-            const user = webLocalStorage.get('user') || '{}'
-            if (user?.isVerified) {
+            console.log('ÍUDSDF1', user?.isVerified)
+            console.log('ÍUDSDF1', user?.registeredLessorr)
+
+            if (user?.isVerified === true && user?.registeredLessorr === true) {
                 router.push(route.href)
             } else {
                 message.error(

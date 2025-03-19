@@ -2,6 +2,7 @@
 import { Card, Tabs, Table, Input, Badge, Button, Typography } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 
 const { Title, Text } = Typography
 const { TabPane } = Tabs
@@ -50,6 +51,7 @@ const statusColors = {
 
 export default function OrderManagement() {
     const [search, setSearch] = useState('')
+    const isMobile = useMediaQuery({ maxWidth: 768 }) // Check nếu là mobile
 
     const filteredOrders = orders.filter(
         (order) =>
@@ -57,36 +59,74 @@ export default function OrderManagement() {
             order.id.toLowerCase().includes(search.toLowerCase()),
     )
 
-    const columns = [
-        { title: 'Mã đơn hàng', dataIndex: 'id', key: 'id' },
-        { title: 'Sản phẩm', dataIndex: 'product', key: 'product' },
-        { title: 'Ngày đặt', dataIndex: 'date', key: 'date' },
-        { title: 'Thời gian thuê', dataIndex: 'duration', key: 'duration' },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status: string) => (
-                <Badge
-                    color={statusColors[status as keyof typeof statusColors]}
-                    text={status}
-                />
-            ),
-        },
-        { title: 'Tổng tiền', dataIndex: 'total', key: 'total' },
-        {
-            title: '',
-            key: 'action',
-            render: () => (
-                <Button type="link" className="!text-primary">
-                    Chi tiết
-                </Button>
-            ),
-        },
-    ]
+    const columns = isMobile
+        ? [
+              { title: 'Mã đơn', dataIndex: 'id', key: 'id' },
+              {
+                  title: 'Sản phẩm',
+                  dataIndex: 'product',
+                  key: 'product',
+                  ellipsis: true,
+              },
+              {
+                  title: 'Trạng thái',
+                  dataIndex: 'status',
+                  key: 'status',
+                  render: (status: string) => (
+                      <Badge
+                          color={
+                              statusColors[status as keyof typeof statusColors]
+                          }
+                          text={status}
+                      />
+                  ),
+              },
+              {
+                  title: '',
+                  key: 'action',
+                  render: () => (
+                      <Button type="link" className="!text-primary">
+                          Chi tiết
+                      </Button>
+                  ),
+              },
+          ]
+        : [
+              { title: 'Mã đơn hàng', dataIndex: 'id', key: 'id' },
+              { title: 'Sản phẩm', dataIndex: 'product', key: 'product' },
+              { title: 'Ngày đặt', dataIndex: 'date', key: 'date' },
+              {
+                  title: 'Thời gian thuê',
+                  dataIndex: 'duration',
+                  key: 'duration',
+              },
+              {
+                  title: 'Trạng thái',
+                  dataIndex: 'status',
+                  key: 'status',
+                  render: (status: string) => (
+                      <Badge
+                          color={
+                              statusColors[status as keyof typeof statusColors]
+                          }
+                          text={status}
+                      />
+                  ),
+              },
+              { title: 'Tổng tiền', dataIndex: 'total', key: 'total' },
+              {
+                  title: '',
+                  key: 'action',
+                  render: () => (
+                      <Button type="link" className="!text-primary">
+                          Chi tiết
+                      </Button>
+                  ),
+              },
+          ]
 
     return (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 px-4 sm:px-6 lg:px-8">
             <div>
                 <Title level={3} className="!text-primary">
                     Quản lý đơn hàng
@@ -95,14 +135,9 @@ export default function OrderManagement() {
                     Quản lý các đơn hàng thuê sản phẩm của bạn
                 </Text>
             </div>
+
             <Card>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginBottom: 16,
-                    }}
-                >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <Title level={4}>Đơn hàng của bạn</Title>
                         <Text>Danh sách các đơn hàng thuê sản phẩm</Text>
@@ -110,7 +145,7 @@ export default function OrderManagement() {
                     <Input
                         prefix={<SearchOutlined />}
                         placeholder="Tìm kiếm đơn hàng..."
-                        style={{ width: 300 }}
+                        className="w-full sm:w-72"
                         onChange={(e) => setSearch(e.target.value)}
                     />
                 </div>
@@ -120,6 +155,7 @@ export default function OrderManagement() {
                             columns={columns}
                             dataSource={filteredOrders}
                             rowKey="id"
+                            scroll={{ x: isMobile ? 500 : undefined }}
                         />
                     </TabPane>
                     <TabPane tab="Chờ xác nhận" key="pending">
@@ -129,6 +165,7 @@ export default function OrderManagement() {
                                 (o) => o.status === 'Chờ xác nhận',
                             )}
                             rowKey="id"
+                            scroll={{ x: isMobile ? 500 : undefined }}
                         />
                     </TabPane>
                     <TabPane tab="Đang xử lý" key="processing">
@@ -138,6 +175,7 @@ export default function OrderManagement() {
                                 (o) => o.status === 'Đang xử lý',
                             )}
                             rowKey="id"
+                            scroll={{ x: isMobile ? 500 : undefined }}
                         />
                     </TabPane>
                     <TabPane tab="Đã hoàn thành" key="completed">
@@ -147,6 +185,7 @@ export default function OrderManagement() {
                                 (o) => o.status === 'Đã hoàn thành',
                             )}
                             rowKey="id"
+                            scroll={{ x: isMobile ? 500 : undefined }}
                         />
                     </TabPane>
                     <TabPane tab="Đã hủy" key="cancelled">
@@ -156,6 +195,7 @@ export default function OrderManagement() {
                                 (o) => o.status === 'Đã hủy',
                             )}
                             rowKey="id"
+                            scroll={{ x: isMobile ? 500 : undefined }}
                         />
                     </TabPane>
                 </Tabs>

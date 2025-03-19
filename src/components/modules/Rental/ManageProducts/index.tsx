@@ -9,18 +9,23 @@ import {
     Typography,
     Modal,
 } from 'antd'
-import { CheckCircleOutlined, SearchOutlined } from '@ant-design/icons'
+import {
+    CheckCircleOutlined,
+    SearchOutlined,
+    FileTextOutlined,
+} from '@ant-design/icons'
 import { useState } from 'react'
 import { orders, statusColors, type ordersType } from '@/data/manageProductData'
 import { productsData } from '@/data/products'
 import { useRouter } from 'next/navigation'
+import { useMediaQuery } from 'react-responsive'
 
 const { Title, Text } = Typography
 const { TabPane } = Tabs
 
 export default function ManageProducts() {
     const router = useRouter()
-
+    const isMobile = useMediaQuery({ maxWidth: 768 })
     const getFooterButtons = (status: string | undefined) => {
         switch (status) {
             case 'Cần xác nhận':
@@ -80,17 +85,24 @@ export default function ManageProducts() {
         setSelectedOrder(undefined)
     }
 
-    const columns = [
-        { title: 'Mã đơn hàng', dataIndex: 'idOrder', key: 'idOrder' },
+    const columns: any = [
+        {
+            title: 'Mã đơn hàng',
+            dataIndex: 'idOrder',
+            key: 'idOrder',
+        },
+
         {
             title: 'Tên khách hàng',
             dataIndex: 'nameCustomer',
             key: 'nameCustomer',
+            responsive: ['md', 'lg', 'xl'],
         },
         {
             title: 'Sản phẩm',
             dataIndex: 'idProduct',
             key: 'product',
+            responsive: ['md', 'lg', 'xl'],
             render: (idProducts: string[]) =>
                 idProducts.length > 0
                     ? idProducts
@@ -102,12 +114,11 @@ export default function ManageProducts() {
                           .join(', ')
                     : 'Không có sản phẩm',
         },
-
-        // { title: 'Thời gian thuê', dataIndex: 'duration', key: 'duration' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
+            responsive: ['md', 'lg', 'xl'],
             render: (status: string) => (
                 <Badge
                     color={statusColors[status as keyof typeof statusColors]}
@@ -115,18 +126,16 @@ export default function ManageProducts() {
                 />
             ),
         },
-
         {
-            title: '',
+            title: 'Xem chi tiết',
             key: 'action',
             render: (_: any, record: any) => (
                 <Button
                     type="link"
                     className="!text-primary"
                     onClick={() => showModal(record)}
-                >
-                    Chi tiết
-                </Button>
+                    icon={<FileTextOutlined />}
+                />
             ),
         },
     ]
@@ -248,86 +257,122 @@ export default function ManageProducts() {
                 )}
             </Modal>
 
-            <div>
-                <Title level={3} className="!text-primary">
-                    Quản lý đơn hàng
-                </Title>
-                <Text type="secondary" className="!text-primary">
-                    Quản lý các đơn hàng thuê sản phẩm của bạn
-                </Text>
-            </div>
-            <Card>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginBottom: 16,
-                    }}
-                >
-                    <div>
-                        <Title level={4}>Đơn hàng của bạn</Title>
-                        <Text>Danh sách các đơn hàng thuê sản phẩm</Text>
+            <>
+                <Card>
+                    <div className="mb-4 flex justify-between">
+                        <Title className="w-2/3 !text-primary" level={4}>
+                            Quản lý đơn hàng
+                        </Title>
+                        <Input
+                            prefix={<SearchOutlined />}
+                            placeholder="Tìm kiếm đơn hàng..."
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-1/3"
+                        />
                     </div>
-                    <Input
-                        prefix={<SearchOutlined />}
-                        placeholder="Tìm kiếm đơn hàng..."
-                        style={{ width: 300 }}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </div>
-                <Tabs defaultActiveKey="all">
-                    <TabPane tab="Tất cả" key="all">
-                        <Table
-                            columns={columns}
-                            dataSource={filteredOrders}
-                            rowKey="id"
-                        />
-                    </TabPane>
-                    <TabPane tab="Chờ xác nhận" key="pending">
-                        <Table
-                            columns={columns}
-                            dataSource={filteredOrders.filter(
-                                (o) =>
-                                    o.status === 'Chờ người thuê thanh toán' ||
-                                    o.status === 'Cần xác nhận',
-                            )}
-                            rowKey="id"
-                        />
-                    </TabPane>
-                    <TabPane tab="Đang xử lý" key="processing">
-                        <Table
-                            columns={columns}
-                            dataSource={filteredOrders.filter(
-                                (o) =>
-                                    o.status === 'Đã giao hàng' ||
-                                    o.status === 'Đang giao hàng' ||
-                                    o.status === 'Đã nhận hàng',
-                            )}
-                            rowKey="id"
-                        />
-                    </TabPane>
-                    <TabPane tab="Đã hoàn thành" key="completed">
-                        <Table
-                            columns={columns}
-                            dataSource={filteredOrders.filter(
-                                (o) => o.status === 'Đã hoàn thành',
-                            )}
-                            rowKey="id"
-                        />
-                    </TabPane>
-                    <TabPane tab="Đã hủy" key="cancelled">
-                        <Table
-                            columns={columns}
-                            dataSource={filteredOrders.filter(
-                                (o) =>
-                                    o.status === 'Người thuê đã hủy' ||
-                                    o.status === 'Người bán đã hủy',
-                            )}
-                            rowKey="id"
-                        />
-                    </TabPane>
-                </Tabs>
-            </Card>
+                    {!isMobile ? (
+                        <Tabs
+                            defaultActiveKey="all"
+                            tabBarStyle={{
+                                minWidth: 'max-content',
+                                display: 'flex',
+                            }}
+                        >
+                            <TabPane tab="Tất cả" key="all">
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredOrders}
+                                    rowKey="id"
+                                />
+                            </TabPane>
+                            <TabPane tab="Chờ xác nhận" key="pending">
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredOrders.filter(
+                                        (o) =>
+                                            o.status ===
+                                                'Chờ người thuê thanh toán' ||
+                                            o.status === 'Cần xác nhận',
+                                    )}
+                                    rowKey="id"
+                                />
+                            </TabPane>
+                            <TabPane tab="Đang xử lý" key="processing">
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredOrders.filter(
+                                        (o) =>
+                                            o.status === 'Đã giao hàng' ||
+                                            o.status === 'Đang giao hàng' ||
+                                            o.status === 'Đã nhận hàng',
+                                    )}
+                                    rowKey="id"
+                                />
+                            </TabPane>
+                            <TabPane tab="Đã hoàn thành" key="completed">
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredOrders.filter(
+                                        (o) => o.status === 'Đã hoàn thành',
+                                    )}
+                                    rowKey="id"
+                                />
+                            </TabPane>
+                            <TabPane tab="Đã hủy" key="cancelled">
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredOrders.filter(
+                                        (o) =>
+                                            o.status === 'Người thuê đã hủy' ||
+                                            o.status === 'Người bán đã hủy',
+                                    )}
+                                    rowKey="id"
+                                />
+                            </TabPane>
+                        </Tabs>
+                    ) : (
+                        <Tabs
+                            defaultActiveKey="all"
+                            tabBarStyle={{
+                                minWidth: 'max-content',
+                                display: 'flex',
+                            }}
+                        >
+                            <TabPane tab="Tất cả" key="all">
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredOrders}
+                                    rowKey="id"
+                                />
+                            </TabPane>
+                            <TabPane tab="Chờ xác nhận" key="pending">
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredOrders.filter(
+                                        (o) =>
+                                            o.status ===
+                                                'Chờ người thuê thanh toán' ||
+                                            o.status === 'Cần xác nhận',
+                                    )}
+                                    rowKey="id"
+                                />
+                            </TabPane>
+                            <TabPane tab="Đang xử lý" key="processing">
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredOrders.filter(
+                                        (o) =>
+                                            o.status === 'Đã giao hàng' ||
+                                            o.status === 'Đang giao hàng' ||
+                                            o.status === 'Đã nhận hàng',
+                                    )}
+                                    rowKey="id"
+                                />
+                            </TabPane>
+                        </Tabs>
+                    )}
+                </Card>
+            </>
         </div>
     )
 }
