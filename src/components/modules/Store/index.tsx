@@ -304,7 +304,7 @@ export default function StoreModule() {
     }, [])
 
     return (
-        <div style={{ padding: '0 24px 24px' }}>
+        <div>
             {/* Breadcrumb */}
             {/* <Breadcrumb
                 style={{ margin: '16px 0' }}
@@ -496,6 +496,7 @@ export default function StoreModule() {
                                         onChange={(value) =>
                                             setActiveCategory(value)
                                         }
+                                        className='w-full'
                                     >
                                         <Select.Option value="all">
                                             {' '}
@@ -558,7 +559,8 @@ export default function StoreModule() {
                                     placeholder="Tìm kiếm trong cửa hàng"
                                     allowClear
                                     onSearch={(value) => setSearchValue(value)}
-                                    style={{ width: 300 }}
+                                    className='w-full md:w-[300px]'
+                                    
                                 />
 
                                 <Space wrap>
