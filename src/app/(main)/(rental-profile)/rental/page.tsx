@@ -376,10 +376,10 @@ export default function ProductManagement() {
   const renderMobileView = () => (
     <>
       <div style={{ marginBottom: "16px" }}>
-        <Title level={4} style={{ color: "#0052cc", marginBottom: "8px" }}>
+        <Title level={4} className="!text-primary">
           Quản lý sản phẩm
         </Title>
-        <Paragraph style={{ color: "#0052cc", opacity: 0.7, fontSize: "14px", marginBottom: "16px" }}>
+        <Paragraph className="!text-primary !text-opacity-70 text-sm mb-4">
           Mọi sản phẩm sẽ được thông tin chi tiết để người cho thuê hoặc mượn dễ dàng quản lý và kiểm tra.
         </Paragraph>
       </div>
