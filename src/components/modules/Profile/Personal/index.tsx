@@ -11,7 +11,6 @@ import {
     DatePicker,
     Upload,
     Button,
-    message,
 } from 'antd'
 import {
     CalendarClock,
@@ -36,14 +35,9 @@ export default function PersonalProfile() {
         setIsModalOpen(true)
     }
 
-    const handleOk = () => {
-        message.loading('Đang gửi thông tin định danh...', 3)
-
-        setTimeout(() => {
-            message.success('Đã định danh!')
-            updateIdentifier()
-            setIsModalOpen(false)
-        }, 3000)
+    const handleOk = async () => {
+        await updateIdentifier()
+        setIsModalOpen(false)
     }
 
     const handleCancel = () => {

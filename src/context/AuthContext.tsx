@@ -43,6 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const updateIdentifier = () => {
         if (user) {
             const updatedUser = { ...user, isVerified: true }
+            console.log("IÊ",updateUser)
             setUser(updatedUser)
             localStorage.setItem('user', JSON.stringify(updatedUser))
         }
