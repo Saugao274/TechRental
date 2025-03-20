@@ -4,6 +4,8 @@ import { Button, Input } from 'antd'
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import SignIn from '../SignIn'
+import { useAuth } from '@/context/AuthContext'
 
 interface Product {
     id: number
@@ -242,7 +244,9 @@ export default function CartPage(): JSX.Element {
         </div>
     )
 
-    return (
+    const { user } = useAuth()
+
+    return user ? (
         <>
             <div className="min-h-screen py-8">
                 <div className="main-content mx-auto max-w-6xl px-4">
@@ -534,5 +538,7 @@ export default function CartPage(): JSX.Element {
                 }
             `}</style>
         </>
+    ) : (
+        <SignIn />
     )
 }
