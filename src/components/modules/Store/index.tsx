@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     Typography,
     Card,
@@ -285,6 +285,24 @@ export default function StoreModule() {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ'
     }
 
+    const [isMobile, setIsMobile] = useState(false)
+
+    // Check if screen is mobile
+    useEffect(() => {
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth < 768)
+        }
+
+        // Initial check
+        checkIfMobile()
+
+        // Add event listener
+        window.addEventListener('resize', checkIfMobile)
+
+        // Cleanup
+        return () => window.removeEventListener('resize', checkIfMobile)
+    }, [])
+
     return (
         <div style={{ padding: '0 24px 24px' }}>
             {/* Breadcrumb */}
@@ -471,33 +489,61 @@ export default function StoreModule() {
                             }}
                         >
                             {/* Categories */}
-                            <div
-                                style={{
-                                    overflowX: 'auto',
-                                    whiteSpace: 'nowrap',
-                                    padding: '8px 0',
-                                }}
-                            >
-                                <Radio.Group
-                                    value={activeCategory}
-                                    onChange={(e) =>
-                                        setActiveCategory(e.target.value)
-                                    }
-                                    buttonStyle="solid"
+                            {isMobile ? (
+                                <div>
+                                    <Select
+                                        value={activeCategory}
+                                        onChange={(value) =>
+                                            setActiveCategory(value)
+                                        }
+                                    >
+                                        <Select.Option value="all">
+                                            {' '}
+                                            Tất cả
+                                        </Select.Option>
+                                        {storeData.categories.map(
+                                            (category) => (
+                                                <Select.Option
+                                                    key={category}
+                                                    value={category}
+                                                >
+                                                    {category}
+                                                </Select.Option>
+                                            ),
+                                        )}
+                                    </Select>
+                                </div>
+                            ) : (
+                                <div
+                                    style={{
+                                        overflowX: 'auto',
+                                        whiteSpace: 'nowrap',
+                                        padding: '8px 0',
+                                    }}
                                 >
-                                    <Radio.Button value="all">
-                                        Tất cả
-                                    </Radio.Button>
-                                    {storeData.categories.map((category) => (
-                                        <Radio.Button
-                                            key={category}
-                                            value={category}
-                                        >
-                                            {category}
+                                    <Radio.Group
+                                        value={activeCategory}
+                                        onChange={(e) =>
+                                            setActiveCategory(e.target.value)
+                                        }
+                                        buttonStyle="solid"
+                                    >
+                                        <Radio.Button value="all">
+                                            Tất cả
                                         </Radio.Button>
-                                    ))}
-                                </Radio.Group>
-                            </div>
+                                        {storeData.categories.map(
+                                            (category) => (
+                                                <Radio.Button
+                                                    key={category}
+                                                    value={category}
+                                                >
+                                                    {category}
+                                                </Radio.Button>
+                                            ),
+                                        )}
+                                    </Radio.Group>
+                                </div>
+                            )}
 
                             {/* Search and filters */}
                             <div
@@ -642,6 +688,7 @@ export default function StoreModule() {
                                                                         'cover',
                                                                 }}
                                                             />
+
                                                             {product.discount >
                                                                 0 && (
                                                                 <div
