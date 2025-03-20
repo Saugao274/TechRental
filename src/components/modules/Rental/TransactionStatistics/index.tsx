@@ -358,7 +358,7 @@ export default function TransactionStatistics() {
   )
 
   return (
-    <div style={{ padding: isMobile ? "12px" : "16px" }}>
+    <div style={{ padding: isMobile ? "0" : "16px" }}>
       <div
         style={{
           marginBottom: "24px",
