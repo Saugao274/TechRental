@@ -560,6 +560,7 @@ export default function StoreModule() {
                                     allowClear
                                     onSearch={(value) => setSearchValue(value)}
                                     className='w-full md:w-[300px]'
+                                    
                                 />
 
                                 <Space wrap>
