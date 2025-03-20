@@ -7,7 +7,7 @@ import {
     RightOutlined,
     ShoppingCartOutlined,
 } from '@ant-design/icons'
-import { Button, Rate, Card, Table, Avatar, Checkbox, Radio } from 'antd'
+import { Button, Rate, Card, Table, Avatar, Checkbox, Radio, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import PageHader from '@/components/core/common/PageHeader'
@@ -22,6 +22,7 @@ import {
 import NotFound from '@/app/not-found'
 import ProductCard from '@/components/core/common/CardCommon/ProductCard'
 import { motion } from 'framer-motion'
+import webLocalStorage from '@/utils/webLocalStorage'
 
 export default function ProductDetail() {
     const params = useParams()
@@ -131,6 +132,15 @@ export default function ProductDetail() {
     const currentImageTemp = productDetail.images
         ? productDetail.images
         : getRandomFallbackImageArray(5)
+
+    const handleAddToCart = () => {
+        const user = webLocalStorage.get('user');
+        if (!user) {
+            message.warning('Vui lòng đăng nhập để thêm vào giỏ hàng')
+            router.push('/signIn')
+        } 
+        
+    }
     return (
         <SectionCommon className="mx-auto flex flex-col gap-24 !pb-4 md:max-w-[1440px]">
             <div className="mx-auto grid grid-cols-1 gap-8 rounded-lg md:grid-cols-2">
@@ -259,6 +269,7 @@ export default function ProductDetail() {
                             size="large"
                             icon={<ShoppingCartOutlined />}
                             className="h-12 w-full bg-blue-700 text-lg"
+                            onClick={() => handleAddToCart()}
                         >
                             THÊM VÀO GIỎ HÀNG
                         </Button>

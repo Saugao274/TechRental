@@ -8,6 +8,7 @@ export interface User {
     isVerified: boolean
     ownedProducts: number
     rentingProducts: number
+    registeredLessorr: boolean
     rentedProducts: number
     isLandlord: boolean
 }
@@ -24,4 +25,5 @@ export const user = {
     rentingProducts: 2,
     rentedProducts: 10,
     isLandlord: false,
+    registeredLessorr: false,
 }

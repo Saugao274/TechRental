@@ -17,22 +17,22 @@ const NewArrivals = () => {
                     itemStyle="top-4 -rotate-0 w-40"
                 />
                 <NewArrivalCard
-                    Title="DJI Power 1000"
-                    Details="Công suất đầu ra tối đa 2200W"
+                    Title="DJI Flip"
+                    Details="Cá nhân hóa AI theo ý bạn"
                     Background="/Products/NewArrival/bg2.png"
                     itemImg="/Products/NewArrival/item2.png"
                     itemStyle="top-20 scale-95 w-60"
                 />
                 <NewArrivalCard
-                    Title="DJI Power 1000"
-                    Details="Công suất đầu ra tối đa 2200W"
+                    Title="DJI Avatar 2"
+                    Details="Từ bàn tay chạm đến bài trời"
                     Background="/Products/NewArrival/bg3.png"
                     itemImg="/Products/NewArrival/item3.png"
                     itemStyle="top-20 scale-10 drop-shadow-2xl w-52 right-40"
                 />
                 <NewArrivalCard
-                    Title="DJI Power 1000"
-                    Details="Công suất đầu ra tối đa 2200W"
+                    Title="DJI RS 4 Mini"
+                    Details="Module theo dõi thông minh"
                     Background="/Products/NewArrival/bg4.png"
                     itemImg="/Products/NewArrival/item4.png"
                     itemStyle="top-8 left-34  w-60  -rotate-5"

@@ -35,8 +35,8 @@ export default function PersonalProfile() {
         setIsModalOpen(true)
     }
 
-    const handleOk = () => {
-        updateIdentifier()
+    const handleOk = async () => {
+        await updateIdentifier()
         setIsModalOpen(false)
     }
 

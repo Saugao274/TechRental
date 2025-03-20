@@ -68,7 +68,7 @@ export default function ShopProfilePage() {
     }
 
     return (
-        <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
+        <div className="mx-auto w-full max-w-3xl md:p-6">
             <div className="mb-4">
                 <h1 className="text-2xl font-bold text-primary">
                     Trang cá nhân của Shop
@@ -95,8 +95,8 @@ export default function ShopProfilePage() {
             )}
 
             <div className="rounded-md bg-white p-6 shadow-md">
-                <div className="mb-6 flex items-center justify-between">
-                    <Space>
+                <div className="mb-6 flex flex-col  md:flex-row gap-5 items-center justify-between">
+                    <Space >
                         <Avatar src={shop.avatar} size={100} />
                         <div>
                             <Typography.Title level={3} style={{ margin: 0 }}>
@@ -108,6 +108,7 @@ export default function ShopProfilePage() {
                         </div>
                     </Space>
                     <Button
+                        className='w-full md:w-auto'
                         type="primary"
                         icon={<EditOutlined />}
                         onClick={() => setIsEditModalOpen(true)}

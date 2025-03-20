@@ -8,6 +8,8 @@ interface AuthContextType {
     login: (userData: User) => void
     logout: () => void
     updateIdentifier: () => void
+    registeredLessor: () => void
+
     updateUser: (userData: User) => void
 }
 
@@ -41,6 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const updateIdentifier = () => {
         if (user) {
             const updatedUser = { ...user, isVerified: true }
+            console.log("IÊ",updateUser)
             setUser(updatedUser)
             localStorage.setItem('user', JSON.stringify(updatedUser))
         }
@@ -49,10 +52,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(newUser)
         localStorage.setItem('user', JSON.stringify(newUser))
     }
-
+    const registeredLessor = () => {
+        if (user) {
+            const updatedUser = { ...user, registeredLessorr: true }
+            setUser(updatedUser)
+            localStorage.setItem('user', JSON.stringify(updatedUser))
+        }
+    }
     return (
         <AuthContext.Provider
-            value={{ user, login, logout, updateIdentifier, updateUser }}
+            value={{
+                user,
+                login,
+                logout,
+                updateIdentifier,
+                updateUser,
+                registeredLessor,
+            }}
         >
             {children}
         </AuthContext.Provider>

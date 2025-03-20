@@ -156,7 +156,7 @@ export default function CustomerReviewsPage() {
         })
 
     return (
-        <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
+        <div className="mx-auto w-full max-w-3xl  md:p-6">
             <div className="mb-4">
                 <h1 className="text-2xl font-bold text-primary">
                     Đánh giá và phản hồi từ khách hàng
