@@ -20,7 +20,13 @@ export default function PersonalRentalRegistryPage() {
     const onFinish = (values: any) => {
         console.log('Form values:', values)
         message.loading('Đang gửi thông tin đăng ký...', 3)
-
+        if (!user?.isVerified) {
+            setTimeout(() => {
+                message.success('Bạn phải xác minh tài khoản!')
+                registeredLessor()
+            }, 3000)
+            return
+        }
         setTimeout(() => {
             message.success('Admin đã duyệt đơn đăng ký của bạn!')
             registeredLessor()

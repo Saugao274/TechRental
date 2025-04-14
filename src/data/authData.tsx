@@ -1,16 +1,16 @@
 export interface User {
     id: string
+    fullname?: string //sau khi định danh
     name: string
     email: string
     joinDate: string
     phone: string
     address: string
-    isVerified: boolean
+    isVerified: boolean // là đã định danh
     ownedProducts: number
     rentingProducts: number
-    registeredLessorr: boolean
-    rentedProducts: number
-    isLandlord: boolean
+    registeredLessorr: boolean // là người bán
+    rentedProducts?: number //có thể lọc từ tổng số sản phẩm cùng _id
 }
 
 export const user = {
@@ -24,6 +24,5 @@ export const user = {
     ownedProducts: 5,
     rentingProducts: 2,
     rentedProducts: 10,
-    isLandlord: false,
     registeredLessorr: false,
 }

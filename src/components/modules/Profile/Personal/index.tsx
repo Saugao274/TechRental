@@ -11,6 +11,7 @@ import {
     DatePicker,
     Upload,
     Button,
+    message,
 } from 'antd'
 import {
     CalendarClock,
@@ -25,18 +26,99 @@ import { UploadOutlined } from '@ant-design/icons'
 
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
+import * as faceapi from 'face-api.js'
+import { CameraOutlined } from '@ant-design/icons'
+import { useRef, useEffect } from 'react'
+import webLocalStorage from '@/utils/webLocalStorage'
 
 export default function PersonalProfile() {
+    var videoRef = useRef<HTMLVideoElement>(null)
+    const [isModelLoaded, setIsModelLoaded] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const { user, updateIdentifier } = useAuth()
     const [gender, setGender] = useState('')
     const router = useRouter()
+    const [capturedImage, setCapturedImage] = useState<string | null>(null)
+
+    useEffect(() => {
+        const loadModels = async () => {
+            await faceapi.nets.tinyFaceDetector.loadFromUri(
+                '/models/tiny_face_detector',
+            )
+            await faceapi.nets.faceLandmark68Net.loadFromUri(
+                '/models/face_landmark_68',
+            )
+            await faceapi.nets.faceRecognitionNet.loadFromUri(
+                '/models/face_recognition',
+            )
+            setIsModelLoaded(true)
+        }
+
+        const startVideo = () => {
+            navigator.mediaDevices
+                .getUserMedia({ video: true })
+                .then((stream) => {
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = stream
+                    }
+                })
+        }
+
+        if (isModalOpen) {
+            loadModels().then(startVideo)
+        } else {
+            if (videoRef.current?.srcObject) {
+                const stream = videoRef.current.srcObject as MediaStream
+                const tracks = stream.getTracks()
+                tracks.forEach((track) => track.stop())
+            }
+        }
+    }, [isModalOpen, capturedImage])
+
+    const handleCaptureFace = async () => {
+        if (!videoRef.current || !isModelLoaded) return
+
+        const detection = await faceapi
+            .detectSingleFace(
+                videoRef.current,
+                new faceapi.TinyFaceDetectorOptions(),
+            )
+            .withFaceLandmarks()
+            .withFaceDescriptor()
+
+        if (detection) {
+            const descriptor = Array.from(detection.descriptor)
+            webLocalStorage.set('faceDescriptor', JSON.stringify(descriptor))
+
+            const canvas = document.createElement('canvas')
+            canvas.width = videoRef.current.videoWidth
+            canvas.height = videoRef.current.videoHeight
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+                ctx.drawImage(
+                    videoRef.current,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height,
+                )
+                const imageData = canvas.toDataURL('image/jpeg')
+                setCapturedImage(imageData)
+            }
+
+            message.success('Đã lưu khuôn mặt để xác thực sau này!')
+        } else {
+            message.error('Không nhận diện được khuôn mặt. Hãy thử lại.')
+        }
+    }
+
     const handleVerificationClick = () => {
         setIsModalOpen(true)
     }
 
-    const handleOk = async () => {
-        await updateIdentifier()
+    const handleOk = () => {
+        updateIdentifier()
+        message.success('Đã hoàn tất quá trình xác minh.')
         setIsModalOpen(false)
     }
 
@@ -220,7 +302,49 @@ export default function PersonalProfile() {
                             </Upload>
                         </div>
                     </div>
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Xác thực khuôn mặt
+                        </label>
+                        <div className="flex flex-col items-center space-y-2">
+                            {capturedImage ? (
+                                <img
+                                    src={capturedImage}
+                                    alt="Ảnh khuôn mặt đã chụp"
+                                    className="rounded-md border"
+                                    width="300"
+                                />
+                            ) : (
+                                <video
+                                    ref={videoRef}
+                                    autoPlay
+                                    muted
+                                    width="300"
+                                    className="rounded-md border"
+                                />
+                            )}
 
+                            {!capturedImage ? (
+                                <Button
+                                    icon={<CameraOutlined />}
+                                    onClick={handleCaptureFace}
+                                    className="bg-blue-500 text-white hover:bg-blue-600"
+                                >
+                                    Chụp và lưu khuôn mặt
+                                </Button>
+                            ) : (
+                                <Button
+                                    onClick={() => {
+                                        setCapturedImage(null)
+                                        setIsModelLoaded(false)
+                                    }}
+                                    className="bg-yellow-500 text-white hover:bg-yellow-600"
+                                >
+                                    Thử lại
+                                </Button>
+                            )}
+                        </div>
+                    </div>
                     <div className="mt-6">
                         <Button
                             type="primary"
@@ -357,7 +481,7 @@ export default function PersonalProfile() {
                 <h2 className="mb-4 text-lg font-bold">
                     Thông tin người cho thuê
                 </h2>
-                {!user?.isLandlord ? (
+                {!user?.registeredLessorr ? (
                     <Card className="flex items-center">
                         <div className="flex flex-row items-center gap-5">
                             <Avatar
