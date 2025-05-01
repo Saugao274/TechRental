@@ -42,6 +42,8 @@ export default function PersonalProfile() {
     const [uploadedCCCDImageURL, setUploadedCCCDImageURL] = useState<
         string | null
     >(null)
+    const streamRef = useRef<MediaStream | null>(null)
+
     const handleFrontCCCDUpload = (info: any) => {
         if (info.file.status === 'done') {
             const reader = new FileReader()
@@ -50,43 +52,56 @@ export default function PersonalProfile() {
             reader.readAsDataURL(info.file.originFileObj)
         }
     }
+    const loadModels = async () => {
+        await faceapi.nets.tinyFaceDetector.loadFromUri(
+            '/models/tiny_face_detector',
+        )
 
+        await faceapi.nets.faceLandmark68Net.loadFromUri(
+            '/models/face_landmark_68',
+        )
+        await faceapi.nets.faceRecognitionNet.loadFromUri(
+            '/models/face_recognition',
+        )
+        setIsModelLoaded(true)
+    }
+    const startVideo = async () => {
+        await loadModels()
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+        })
+        streamRef.current = stream
+        if (videoRef.current) {
+            videoRef.current.srcObject = stream
+        }
+    }
     useEffect(() => {
-        const loadModels = async () => {
-            await faceapi.nets.tinyFaceDetector.loadFromUri(
-                '/models/tiny_face_detector',
-            )
-
-            await faceapi.nets.faceLandmark68Net.loadFromUri(
-                '/models/face_landmark_68',
-            )
-            await faceapi.nets.faceRecognitionNet.loadFromUri(
-                '/models/face_recognition',
-            )
-            setIsModelLoaded(true)
-        }
-
-        const startVideo = () => {
-            navigator.mediaDevices
-                .getUserMedia({ video: true })
-                .then((stream) => {
-                    if (videoRef.current) {
-                        videoRef.current.srcObject = stream
-                    }
-                })
-        }
-
-        if (isModalOpen) {
-            loadModels().then(startVideo)
-        } else {
-            if (videoRef.current?.srcObject) {
-                const stream = videoRef.current.srcObject as MediaStream
-                const tracks = stream.getTracks()
-                tracks.forEach((track) => track.stop())
+        const stopVideo = () => {
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach((track) => track.stop())
+                streamRef.current = null
+            }
+            if (videoRef.current) {
+                videoRef.current.srcObject = null
             }
         }
+
+        if (!isModalOpen || capturedImage) {
+            stopVideo()
+        } else {
+            startVideo()
+        }
+
+        return () => stopVideo()
     }, [isModalOpen, capturedImage])
 
+    const OffCamera = () => {
+        if (videoRef.current && videoRef.current.srcObject) {
+            const stream = videoRef.current.srcObject as MediaStream
+            stream.getTracks().forEach((track) => track.stop())
+            videoRef.current.srcObject = null
+        }
+    }
     const handleCaptureFace = async () => {
         if (!videoRef.current || !isModelLoaded) return
 
@@ -150,7 +165,11 @@ export default function PersonalProfile() {
         const webcamDescriptor = JSON.parse(
             webLocalStorage.get('faceDescriptor') || '[]',
         )
-        if (!webcamDescriptor || webcamDescriptor.length === 0) {
+        if (
+            !webcamDescriptor ||
+            webcamDescriptor.length === 0 ||
+            !uploadedCCCDImageURL
+        ) {
             message.error('Chưa lưu khuôn mặt từ webcam.')
             return
         }
@@ -172,13 +191,15 @@ export default function PersonalProfile() {
         if (isMatch) {
             updateIdentifier()
             message.success('Xác minh khuôn mặt thành công!')
-            setIsModalOpen(false)
+            handleCancel()
         } else {
             message.error('Khuôn mặt không khớp với ảnh CCCD.')
         }
     }
 
     const handleCancel = () => {
+        OffCamera()
+        setCapturedImage(null)
         setIsModalOpen(false)
     }
     return (
@@ -249,7 +270,6 @@ export default function PersonalProfile() {
                 width={600}
                 className="rounded-xl"
                 centered
-                onOk={handleOk}
             >
                 <form className="space-y-5 p-4">
                     <div>
