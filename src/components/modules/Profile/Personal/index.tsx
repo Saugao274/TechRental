@@ -39,12 +39,24 @@ export default function PersonalProfile() {
     const [gender, setGender] = useState('')
     const router = useRouter()
     const [capturedImage, setCapturedImage] = useState<string | null>(null)
+    const [uploadedCCCDImageURL, setUploadedCCCDImageURL] = useState<
+        string | null
+    >(null)
+    const handleFrontCCCDUpload = (info: any) => {
+        if (info.file.status === 'done') {
+            const reader = new FileReader()
+            reader.onload = () =>
+                setUploadedCCCDImageURL(reader.result as string)
+            reader.readAsDataURL(info.file.originFileObj)
+        }
+    }
 
     useEffect(() => {
         const loadModels = async () => {
             await faceapi.nets.tinyFaceDetector.loadFromUri(
                 '/models/tiny_face_detector',
             )
+
             await faceapi.nets.faceLandmark68Net.loadFromUri(
                 '/models/face_landmark_68',
             )
@@ -115,11 +127,55 @@ export default function PersonalProfile() {
     const handleVerificationClick = () => {
         setIsModalOpen(true)
     }
+    const extractFaceFromImage = async (imageUrl: string) => {
+        const img = await faceapi.fetchImage(imageUrl)
+        const detection = await faceapi
+            .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceDescriptor()
 
-    const handleOk = () => {
-        updateIdentifier()
-        message.success('Đã hoàn tất quá trình xác minh.')
-        setIsModalOpen(false)
+        return detection?.descriptor || null
+    }
+
+    const compareDescriptors = (desc1: Float32Array, desc2: Float32Array) => {
+        if (!desc1 || !desc2) {
+            return false
+        }
+        const distance = faceapi.euclideanDistance(desc1, desc2)
+        console.log(`Khoảng cách giữa các khuôn mặt: ${distance}`)
+        return distance < 0.6
+    }
+
+    const handleOk = async () => {
+        const webcamDescriptor = JSON.parse(
+            webLocalStorage.get('faceDescriptor') || '[]',
+        )
+        if (!webcamDescriptor || webcamDescriptor.length === 0) {
+            message.error('Chưa lưu khuôn mặt từ webcam.')
+            return
+        }
+
+        const imageFile = uploadedCCCDImageURL
+
+        const cccdDescriptor = await extractFaceFromImage(imageFile || '')
+
+        if (!cccdDescriptor) {
+            message.error('Không phát hiện khuôn mặt trong ảnh CCCD.')
+            return
+        }
+
+        const isMatch = compareDescriptors(
+            new Float32Array(webcamDescriptor),
+            new Float32Array(cccdDescriptor),
+        )
+
+        if (isMatch) {
+            updateIdentifier()
+            message.success('Xác minh khuôn mặt thành công!')
+            setIsModalOpen(false)
+        } else {
+            message.error('Khuôn mặt không khớp với ảnh CCCD.')
+        }
     }
 
     const handleCancel = () => {
@@ -180,12 +236,20 @@ export default function PersonalProfile() {
                     </h2>
                 }
                 open={isModalOpen}
-                onOk={handleOk}
                 onCancel={handleCancel}
-                footer={null}
+                footer={
+                    <Button
+                        type="primary"
+                        onClick={handleOk}
+                        className="h-10 w-full rounded-md border-none bg-gradient-to-r from-green-500 to-teal-500 text-white transition-all duration-300 hover:from-green-600 hover:to-teal-600"
+                    >
+                        Hoàn tất
+                    </Button>
+                }
                 width={600}
                 className="rounded-xl"
                 centered
+                onOk={handleOk}
             >
                 <form className="space-y-5 p-4">
                     <div>
@@ -275,6 +339,7 @@ export default function PersonalProfile() {
                                 listType="picture"
                                 maxCount={1}
                                 className="w-full"
+                                onChange={handleFrontCCCDUpload}
                             >
                                 <Button
                                     icon={<UploadOutlined />}
@@ -344,16 +409,6 @@ export default function PersonalProfile() {
                                 </Button>
                             )}
                         </div>
-                    </div>
-                    <div className="mt-6">
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            className="h-10 w-full rounded-md border-none bg-gradient-to-r from-green-500 to-teal-500 text-white transition-all duration-300 hover:from-green-600 hover:to-teal-600"
-                            onClick={handleOk}
-                        >
-                            Hoàn tất
-                        </Button>
                     </div>
                 </form>
             </Modal>
