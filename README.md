@@ -38,32 +38,30 @@ This project is a Next.js application built with TypeScript and follows a scalab
 ## Folder Structure
 
 The project is organized as follows:
-/src
-├── /app // (Optional) Use with Next.js App Router (Next 13+)
-├── /pages // Routes/pages (if not using the app directory)
-│ ├── \_app.tsx // Custom App component
-│ ├── index.tsx // Home page
-│ └── about.tsx // Additional pages
-├── /assets // Static assets (images, fonts, etc.)
-│ └── images/
+src/
+├── app/ # (Optional) Next.js App Router (Next 13+)
+├── pages/ # Routes/pages (nếu không dùng app directory)
+│ ├── index.tsx # Trang chủ
+│ ├── about.tsx # Trang giới thiệu
+├── assets/ # Static assets (images, fonts, ...)
+│ ├── images/
 │ └── fonts/
-├── /components // Reusable UI components (e.g., Button, ProductCard)
-├── /layouts // Layout components (e.g., MainLayout, AdminLayout)
-├── /features // Feature modules (e.g., product, auth)
+├── components/ # UI components dùng lại được (Button, ProductCard, ...)
+├── layouts/ # Layout components (MainLayout, AdminLayout)
+├── features/ # Các module chức năng (e.g., product, auth)
 │ └── product/
-│ ├── components/ // Components specific to product feature
-│ ├── hooks/
-│ ├── types.ts
-│ └── index.ts
-├── /context // Global state (using Context API/Redux slices)
-├── /data // Static data and config (e.g., products.json, site-config.ts)
-├── /hooks // Custom hooks (e.g., useAuth, useWindowSize)
-├── /lib // External libraries config & utilities (e.g., axiosInstance)
-├── /services // API service calls (e.g., productService.ts, authService.ts)
-├── /styles // Global CSS, Tailwind config imports, SCSS files
-├── /types // Global TypeScript types (e.g., product.ts, user.ts)
-├── /utils // Utility/helper functions (e.g., formatDate.ts, debounce.ts)
-└── /public // Public static files (favicon, robots.txt, etc.)
+│ └── components/ # Component riêng cho tính năng product
+├── hooks/ # Custom hooks (e.g., useAuth, useWindowSize)
+├── types.ts # Global TypeScript types (hoặc đặt vào thư mục /types)
+├── index.ts
+├── context/ # Global state (Context API hoặc Redux slices)
+├── data/ # Static data và config (e.g., site-config.ts)
+├── lib/ # Thư viện ngoài, axiosInstance, utils chung
+├── services/ # API service (e.g., productService.ts, authService.ts)
+├── styles/ # CSS/SCSS chung, config Tailwind
+├── types/ # TypeScript type definitions (e.g., user.ts, product.ts)
+├── utils/ # Helper/utility (e.g., formatDate.ts, debounce.ts)
+public/ # Static files (favicon, robots.txt, ...)
 
 ## Installation
 
