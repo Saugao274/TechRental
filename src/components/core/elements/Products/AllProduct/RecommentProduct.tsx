@@ -1,14 +1,30 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Pagination } from 'antd'
 import FilterSidebar from './FilterSidebar'
-import { productsData } from '@/data/products'
 import ProductCard from '@/components/core/common/CardCommon/ProductCard'
 import SectionCommon from '@/components/core/common/SectionCommon'
+import { productEndpoint } from '@/settings/endpoints'
+import { getRequest } from '@/request'
 
 const RecommentProduct = () => {
     const [currentPage, setCurrentPage] = useState(1)
+    const [productsData, setProductsData] = useState<any[]>([])
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const responseAllProduct = await getRequest(
+                    productEndpoint.GET_ALL,
+                )
+                setProductsData(responseAllProduct.metadata)
+            } catch (error) {
+                console.error('Error fetching products:', error)
+            }
+        }
+
+        fetchProducts()
+    }, [productsData])
     const [filteredProducts, setFilteredProducts] = useState(productsData)
 
     const pageSize =

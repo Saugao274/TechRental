@@ -14,11 +14,12 @@ import {
     SearchOutlined,
     FileTextOutlined,
 } from '@ant-design/icons'
-import { useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { orders, statusColors, type ordersType } from '@/data/manageProductData'
-import { productsData } from '@/data/products'
 import { useRouter } from 'next/navigation'
 import { useMediaQuery } from 'react-responsive'
+import { getRequest } from '@/request'
+import { productEndpoint } from '@/settings/endpoints'
 
 const { Title, Text } = Typography
 const { TabPane } = Tabs
@@ -54,7 +55,21 @@ export default function ManageProducts() {
                 return []
         }
     }
+    const [productsData, setProductsData] = useState<any[]>([])
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const responseAllProduct = await getRequest(
+                    productEndpoint.GET_ALL,
+                )
+                setProductsData(responseAllProduct.metadata)
+            } catch (error) {
+                console.error('Error fetching products:', error)
+            }
+        }
 
+        fetchProducts()
+    }, [productsData])
     const [search, setSearch] = useState('')
     const findProductById = (idProduct: string) => {
         return productsData.find((product) => product.idProduct === idProduct)

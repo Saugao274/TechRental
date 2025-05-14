@@ -1,10 +1,26 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PageHader from '../../common/PageHeader'
 import ProductCard from '../../common/CardCommon/ProductCard'
 import SectionCommon from '../../common/SectionCommon'
-import { productsData } from '@/data/products'
+import { productEndpoint } from '@/settings/endpoints'
+import { getRequest } from '@/request'
 
 const NewProduct = () => {
+    const [productsData, setProductsData] = useState<any[]>([])
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const responseAllProduct = await getRequest(
+                    productEndpoint.GET_ALL,
+                )
+                setProductsData(responseAllProduct.metadata)
+            } catch (error) {
+                console.error('Error fetching products:', error)
+            }
+        }
+
+        fetchProducts()
+    }, [productsData])
     const newProductsData = productsData.filter(
         (product) => product.isNewProduct,
     )

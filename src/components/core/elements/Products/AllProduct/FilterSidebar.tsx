@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { Checkbox, Collapse, Button, Select } from 'antd'
-import { productsData } from '@/data/products'
+import { getRequest } from '@/request'
+import { productEndpoint } from '@/settings/endpoints'
 
 const { Panel } = Collapse
 const { Option } = Select
@@ -43,6 +44,32 @@ const FilterSidebar = ({
     const [selectedPrices, setSelectedPrices] = useState<string[]>([])
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [selectedLocations, setSelectedLocations] = useState<string[]>([])
+    const [productsData, setProductsData] = useState<any[]>([])
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await getRequest(productEndpoint.GET_ALL)
+                setProductsData(response.metadata)
+            } catch (error) {
+                console.error('Error fetching products:', error)
+            }
+        }
+
+        fetchProducts()
+    }, [])
+
+    useEffect(() => {
+        const noFilterSelected =
+            selectedPrices.length === 0 &&
+            selectedCategories.length === 0 &&
+            selectedLocations.length === 0
+
+        if (noFilterSelected) {
+            onFilter(productsData)
+        } else {
+            applyFilters()
+        }
+    }, [productsData, selectedPrices, selectedCategories, selectedLocations])
 
     const handleFilterChange = (type: string, value: string) => {
         if (type === 'price') {
@@ -119,11 +146,7 @@ const FilterSidebar = ({
                     </p>
                 </div>
                 <div className="flex flex-col gap-3 lg:hidden">
-                    <Select
-                        placeholder="Chọn mức giá"
-                        className="w-full"
-                        onChange={(value) => handleFilterChange('price', value)}
-                    >
+                    <Select placeholder="Chọn mức giá" className="w-full">
                         {priceOptions.map((price) => (
                             <Option key={price} value={price}>
                                 {price}
@@ -131,13 +154,7 @@ const FilterSidebar = ({
                         ))}
                     </Select>
 
-                    <Select
-                        placeholder="Chọn sản phẩm"
-                        className="w-full"
-                        onChange={(value) =>
-                            handleFilterChange('category', value)
-                        }
-                    >
+                    <Select placeholder="Chọn sản phẩm" className="w-full">
                         {productOptions.map((product) => (
                             <Option key={product} value={product}>
                                 {product}
@@ -145,13 +162,7 @@ const FilterSidebar = ({
                         ))}
                     </Select>
 
-                    <Select
-                        placeholder="Chọn tỉnh thành"
-                        className="w-full"
-                        onChange={(value) =>
-                            handleFilterChange('location', value)
-                        }
-                    >
+                    <Select placeholder="Chọn tỉnh thành" className="w-full">
                         {locationOptions.map((location) => (
                             <Option key={location} value={location}>
                                 {location}
@@ -235,13 +246,6 @@ const FilterSidebar = ({
                     </Panel>
                 </Collapse>
             </div>
-            <Button
-                type="primary"
-                className="mt-4 w-full"
-                onClick={applyFilters}
-            >
-                Lọc
-            </Button>
         </div>
     )
 }
