@@ -2,7 +2,7 @@ const ACCESS_TOKEN = '_accessToken'
 const REFRESH_TOKEN = '_refreshToken'
 const VNPAY_PAYMENT_URL = '_vnpay_payment_url'
 
-const API_SERVER = process.env.NEXT_PUBLIC_API_SERVER
+const API_SERVER = 'http://localhost:5000'
 
 const constants = {
     ACCESS_TOKEN,

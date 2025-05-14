@@ -1,13 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import {
     LeftOutlined,
     RightOutlined,
     ShoppingCartOutlined,
 } from '@ant-design/icons'
-import { Button, Rate, Card, Table, Avatar, Checkbox, Radio, message } from 'antd'
+import {
+    Button,
+    Rate,
+    Card,
+    Table,
+    Avatar,
+    Checkbox,
+    Radio,
+    message,
+} from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import PageHader from '@/components/core/common/PageHeader'
@@ -15,35 +24,45 @@ import SectionCommon from '@/components/core/common/SectionCommon'
 import { useParams, useRouter } from 'next/navigation'
 import {
     getRandomFallbackImageArray,
-    productsData,
     shopDetails,
+    type ProductDetail,
+    type ReviewsType,
     type SpecificationType,
 } from '@/data/products'
 import NotFound from '@/app/not-found'
 import ProductCard from '@/components/core/common/CardCommon/ProductCard'
 import { motion } from 'framer-motion'
 import webLocalStorage from '@/utils/webLocalStorage'
+import { getRequest } from '@/request'
+import { productEndpoint } from '@/settings/endpoints'
 
 export default function ProductDetail() {
-    const params = useParams()
-    const { id } = params
+    const params = useParams<{ id: string }>()
+    const router = useRouter()
+    const [productsData, setProductsData] = useState<ProductDetail[]>([])
+    const [productDetail, setProductDetail] = useState<ProductDetail>()
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await getRequest(
+                    productEndpoint.GET_BY_ID(params.id),
+                )
+                const responseAllProduct = await getRequest(
+                    productEndpoint.GET_ALL,
+                )
+                setProductsData(responseAllProduct.metadata)
+                setProductDetail(response.metadata)
+            } catch (error) {
+                console.error('Error fetching products:', error)
+            }
+        }
 
-    const router = useRouter();
+        fetchProducts()
+    }, [])
 
     const [currentImage, setCurrentImage] = useState(0)
     const [quantity, setQuantity] = useState(1)
-    const [productDetail, setProductDetail] = useState(
-        productsData.filter((item) => id === item.idProduct)[0],
-    )
-    if (!productDetail) {
-        return <NotFound />
-    }
-    const relatedProducts = productsData.filter(
-        (item) => item.category == productDetail.category,
-    )
-    const shopInfor = shopDetails.filter(
-        (item) => productDetail.idShop === item.idShop,
-    )[0]
+
     const rentalOptions = [
         { label: '1 ngày', value: '1' },
         { label: '2 ngày', value: '2' },
@@ -81,18 +100,28 @@ export default function ProductDetail() {
         { days: '30', value: 80 },
     ]
     const [selectedDays, setSelectedDays] = useState<string>('1')
-    const [basePrice] = useState<number>(productDetail.price)
+
+    const relatedProducts =
+        (productDetail &&
+            productsData.filter((item) => {
+                return item.category?._id === productDetail.category?._id
+            })) ||
+        []
+
+    const shopInfor = productDetail?.idShop
+
     const [discountNumber, setDiscountNumber] = useState<number>(5)
 
     const calculateDiscountedPrice = (selectedDays: number) => {
+        const price = productDetail?.price ?? 0
         const discount = discountRates.find(
             (item) => item.days === selectedDays.toString(),
         )
-        if (!discount) return basePrice * selectedDays
+        if (!discount) return price * selectedDays
 
         const discountValue = discount.value
         const discountedPrice =
-            (basePrice * selectedDays * (100 - discountValue)) / 100
+            (price * selectedDays * (100 - discountValue)) / 100
         return discountedPrice
     }
 
@@ -129,17 +158,22 @@ export default function ProductDetail() {
         'Có hướng dẫn sử dụng đi kèm không?',
         'Sản phẩm có tương thích với thiết bị của tôi không?',
     ]
-    const currentImageTemp = productDetail.images
-        ? productDetail.images
-        : getRandomFallbackImageArray(5)
+    const currentImageTemp =
+        productDetail &&
+        productDetail.images &&
+        productDetail.images?.length > 0
+            ? productDetail.images
+            : getRandomFallbackImageArray(5)
 
     const handleAddToCart = () => {
-        const user = webLocalStorage.get('user');
+        const user = webLocalStorage.get('user')
         if (!user) {
             message.warning('Vui lòng đăng nhập để thêm vào giỏ hàng')
             router.push('/signIn')
-        } 
-        
+        }
+    }
+    if (!productDetail) {
+        return <NotFound />
     }
     return (
         <SectionCommon className="mx-auto flex flex-col gap-24 !pb-4 md:max-w-[1440px]">
@@ -199,9 +233,11 @@ export default function ProductDetail() {
                 {/* Product Info */}
                 <div className="space-y-4">
                     {/* Breadcrumb */}
-                    <div className="mb-4 text-sm text-gray-500">
-                        Trang chủ / {productDetail.category}
-                    </div>
+                    {productDetail?.category?.name && (
+                        <div className="mb-4 text-sm text-gray-500">
+                            Trang chủ / {productDetail?.category?.name}
+                        </div>
+                    )}
                     <div>
                         <div className="flex items-center gap-5">
                             <h1 className="text-2xl font-bold">
@@ -209,17 +245,22 @@ export default function ProductDetail() {
                             </h1>
                         </div>
                         <div className="mt-1 flex w-full flex-col items-start justify-start gap-2">
-                            <span className="text-gray-500">
-                                <span className="font-bold">Thương hiệu:</span>{' '}
-                                {productDetail.brand}
-                            </span>
-
-                            <span className="text-gray-500">
-                                <span className="font-bold">
-                                    Loại sản phẩm:
-                                </span>{' '}
-                                {productDetail.category}
-                            </span>
+                            {productDetail?.brand && (
+                                <span className="text-gray-500">
+                                    <span className="font-bold">
+                                        Thương hiệu:
+                                    </span>{' '}
+                                    {productDetail.brand}
+                                </span>
+                            )}
+                            {productDetail?.category?.name && (
+                                <span className="text-gray-500">
+                                    <span className="font-bold">
+                                        Loại sản phẩm:
+                                    </span>{' '}
+                                    {productDetail.category.name}
+                                </span>
+                            )}
                         </div>
                         <div className="mt-2 flex items-center gap-3">
                             <span className="rounded bg-white px-2 py-1 text-sm font-bold text-red-500">
@@ -230,7 +271,8 @@ export default function ProductDetail() {
                             </span>
                             <span className="ml-2 text-gray-500 line-through">
                                 {(
-                                    basePrice * parseInt(selectedDays)
+                                    productDetail?.price *
+                                    parseInt(selectedDays)
                                 ).toLocaleString('vi-VN')}
                             </span>
                         </div>
@@ -275,12 +317,15 @@ export default function ProductDetail() {
                         </Button>
                     </div>
                     {/* Seller Info */}
-                    <div className="flex flex-col items-center justify-between cursor-pointer gap-4 rounded-lg bg-gray-50 p-4 md:flex-row"
-                        onClick={() => router.push(`/store/${shopInfor.idShop}`)}
+                    <div
+                        className="flex cursor-pointer flex-col items-center justify-between gap-4 rounded-lg bg-gray-50 p-4 md:flex-row"
+                        onClick={() =>
+                            router.push(`/store/${shopInfor?.idShop}`)
+                        }
                     >
                         <div className="flex min-w-0 items-center justify-center gap-3">
                             <Image
-                                src={shopInfor.avatar || ''}
+                                src={shopInfor?.avatar || ''}
                                 alt="Seller avatar"
                                 width={56}
                                 height={56}
@@ -288,33 +333,42 @@ export default function ProductDetail() {
                             />
                             <div className="flex min-w-0 flex-col">
                                 <div className="truncate text-lg font-semibold text-[#1D3D85]">
-                                    {shopInfor.nameShop}
+                                    {shopInfor?.name}
                                 </div>
                                 <div className="flex flex-wrap gap-3 text-sm text-gray-500">
-                                    <span className="text-[#1D3D85]">
-                                        Phản hồi {shopInfor.response}%
-                                    </span>
-                                    <span className="text-[#1D3D85]">
-                                        {shopInfor.rentered} đã thuê
-                                    </span>
+                                    {shopInfor?.responseRate && (
+                                        <span className="text-[#1D3D85]">
+                                            Phản hồi {shopInfor?.responseRate}%
+                                        </span>
+                                    )}
+                                    {shopInfor?.followers && (
+                                        <span className="text-[#1D3D85]">
+                                            {shopInfor?.followers} người theo
+                                            dõi
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="text-sm text-gray-500">
-                                    Hoạt động 3 giờ trước
+                                    Hoạt động {shopInfor?.lastActive}
                                 </div>
                             </div>
                         </div>
 
                         {/* Đánh giá */}
                         <div className="flex flex-col items-center gap-1 text-center">
-                            <span className="text-xl font-semibold text-yellow-400">
-                                ★{' '}
-                                <span className="text-black">
-                                    {shopInfor.rate}/5
+                            {shopInfor?.rating && (
+                                <span className="text-xl font-semibold text-yellow-400">
+                                    ★{' '}
+                                    <span className="text-black">
+                                        {shopInfor?.rating}/5
+                                    </span>
                                 </span>
-                            </span>
-                            <span className="text-base text-[#1D3D85]">
-                                {shopInfor.totalReviews} đánh giá
-                            </span>
+                            )}
+                            {shopInfor?.totalReviews && (
+                                <span className="text-base text-[#1D3D85]">
+                                    {shopInfor?.totalReviews} đánh giá
+                                </span>
+                            )}
                         </div>
                     </div>
 
@@ -379,95 +433,104 @@ export default function ProductDetail() {
                     />
                 </Card>
             </div>
-            <div className="flex flex-col gap-8">
-                <PageHader title={'Đánh giá sản phẩm'} unDivider />
-                <div className="space-y-6 p-4">
-                    <div className="flex flex-col gap-5 rounded-lg bg-white p-4">
-                        <div className="flex items-center justify-center gap-4">
-                            <span className="text-3xl font-bold">4.3</span>
-                            <Rate disabled defaultValue={4.3} />
-                            <span className="text-gray-500">(12 đánh giá)</span>
+            {productDetail.reviews.length > 0 && (
+                <div className="flex flex-col gap-8">
+                    <PageHader title={'Đánh giá sản phẩm'} unDivider />
+                    <div className="space-y-6 p-4">
+                        <div className="flex flex-col gap-5 rounded-lg bg-white p-4">
+                            <div className="flex items-center justify-center gap-4">
+                                <span className="text-3xl font-bold">4.3</span>
+                                <Rate disabled defaultValue={4.3} />
+                                <span className="text-gray-500">
+                                    (12 đánh giá)
+                                </span>
+                            </div>
+                            <div className="flex flex-wrap justify-center gap-5">
+                                <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
+                                    <p className="font-semibold text-primary">
+                                        Giao tiếp lịch sự thân thiện
+                                    </p>
+                                </div>
+                                <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
+                                    <p className="font-semibold text-primary">
+                                        Đáng tin cậy
+                                    </p>
+                                </div>
+                                <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
+                                    <p className="font-semibold text-primary">
+                                        Sản phẩm tốt
+                                    </p>
+                                </div>
+                                <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
+                                    <p className="font-semibold text-primary">
+                                        Mô tả đúng sản phẩm
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex flex-wrap justify-center gap-5">
-                            <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
-                                <p className="font-semibold text-primary">
-                                    Giao tiếp lịch sự thân thiện
-                                </p>
-                            </div>
-                            <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
-                                <p className="font-semibold text-primary">
-                                    Đáng tin cậy
-                                </p>
-                            </div>
-                            <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
-                                <p className="font-semibold text-primary">
-                                    Sản phẩm tốt
-                                </p>
-                            </div>
-                            <div className="rounded-[20px] bg-[#E7E7E7] px-[14px] py-[12px]">
-                                <p className="font-semibold text-primary">
-                                    Mô tả đúng sản phẩm
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="rounded-lg bg-white p-5">
-                        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                            {productDetail.reviews.map((review) => (
-                                <Card
-                                    key={review.id}
-                                    variant="borderless"
-                                    className="!overflow-hidden"
-                                >
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex min-w-0 items-center gap-4">
-                                            <Avatar
-                                                src={review.avatar}
-                                                size={40}
-                                            />
-                                            <div className="flex min-w-0 flex-col">
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <span className="truncate font-semibold">
-                                                        {review.author}
-                                                    </span>
-                                                    <Rate
-                                                        disabled
-                                                        defaultValue={
-                                                            review.rating
-                                                        }
-                                                        className="text-sm"
+                        <div className="rounded-lg bg-white p-5">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                                {productDetail.reviews.map(
+                                    (review: ReviewsType) => (
+                                        <Card
+                                            key={review.id}
+                                            variant="borderless"
+                                            className="!overflow-hidden"
+                                        >
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex min-w-0 items-center gap-4">
+                                                    <Avatar
+                                                        src={review.avatar}
+                                                        size={40}
                                                     />
+                                                    <div className="flex min-w-0 flex-col">
+                                                        <div className="flex flex-wrap items-center gap-2">
+                                                            <span className="truncate font-semibold">
+                                                                {review.author}
+                                                            </span>
+                                                            <Rate
+                                                                disabled
+                                                                defaultValue={
+                                                                    review.rating
+                                                                }
+                                                                className="text-sm"
+                                                            />
+                                                        </div>
+                                                        <div className="text-sm text-gray-500">
+                                                            {review.date}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="text-sm text-gray-500">
-                                                    {review.date}
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <p className="rounded-2xl bg-[#E3EDF7] px-4 py-2 text-primary shadow-md shadow-cyan-50">
-                                            {review.content}
-                                        </p>
-                                    </div>
-                                </Card>
-                            ))}
+                                                <p className="rounded-2xl bg-[#E3EDF7] px-4 py-2 text-primary shadow-md shadow-cyan-50">
+                                                    {review.content}
+                                                </p>
+                                            </div>
+                                        </Card>
+                                    ),
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
+            )}
             {/* Related Products */}
-            <div className="border-t p-6">
-                <h2 className="mb-4 text-lg font-bold">SẢN PHẨM LIÊN QUAN</h2>
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-                    {relatedProducts.slice(0, 4).map((product, index) => (
-                        <ProductCard
-                            product={product}
-                            key={index}
-                            hiddenShortDetails={true}
-                        />
-                    ))}
+            {relatedProducts.length > 0 && (
+                <div className="border-t p-6">
+                    <h2 className="mb-4 text-lg font-bold">
+                        SẢN PHẨM LIÊN QUAN
+                    </h2>
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
+                        {relatedProducts.slice(0, 4).map((product, index) => (
+                            <ProductCard
+                                product={product}
+                                key={index}
+                                hiddenShortDetails={true}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
         </SectionCommon>
     )
 }

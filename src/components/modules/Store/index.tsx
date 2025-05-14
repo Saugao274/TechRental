@@ -74,6 +74,9 @@ const storeData = {
         'Chân máy',
         'Túi máy ảnh',
     ],
+    totalReviews: 280,
+
+    lastActive: '3 giờ trước',
 }
 
 // Dữ liệu mẫu cho sản phẩm
@@ -496,7 +499,7 @@ export default function StoreModule() {
                                         onChange={(value) =>
                                             setActiveCategory(value)
                                         }
-                                        className='w-full'
+                                        className="w-full"
                                     >
                                         <Select.Option value="all">
                                             {' '}
@@ -559,8 +562,7 @@ export default function StoreModule() {
                                     placeholder="Tìm kiếm trong cửa hàng"
                                     allowClear
                                     onSearch={(value) => setSearchValue(value)}
-                                    className='w-full md:w-[300px]'
-                                    
+                                    className="w-full md:w-[300px]"
                                 />
 
                                 <Space wrap>

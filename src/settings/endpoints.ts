@@ -1,9 +1,30 @@
+const prefixBase: string = '/api'
+
 const authEndpoint = {
     SIGN_IN: '/auth/login',
     SIGN_UP: '/auth/register',
     FORGOT_PASSWORD: '/auth/forgotPassword',
+    REFRESH_TOKEN: '/auth/refreshToken',
 }
 const userEndpoint = {
-    CHANGE_PASSWORD: '/auth/changePassword',
+    CHANGE_PASSWORD: `${prefixBase}/auth/changePassword`,
 }
-export { authEndpoint, userEndpoint }
+const productEndpoint = {
+    GET_ALL: `${prefixBase}/product`,
+    GET_BY_ID: (id: string) => `${prefixBase}/product/${id}`,
+    CREATE: `${prefixBase}/product`,
+    // UPDATE: (id: string) => `/products/${id}`,
+    // DELETE: (id: string) => `/products/${id}`,
+    // GET_BY_CATEGORY: (categoryId: string) => `/products/category/${categoryId}`,
+    // GET_BY_SUBCATEGORY: (subcategoryId: string) => `/products/subcategory/${subcategoryId}`,
+    // GET_BY_BRAND: (brandId: string) => `/products/brand/${brandId}`,
+    // GET_BY_SEARCH: (search: string) => `/products/search/${search}`,
+    // GET_BY_PRICE: (minPrice: number, maxPrice: number) => `/products/price/${minPrice}/${maxPrice}`,
+    // GET_BY_RATING: (rating: number) => `/products/rating/${rating}`,
+    // GET_BY_COLOR: (color: string) => `/products/color/${color}`,
+    // GET_BY_SIZE: (size: string) => `/products/size/${size}`,
+    // GET_BY_TAG: (tag: string) => `/products/tag/${tag}`,
+    // GET_BY_DISCOUNT: (discount: number) => `/products/discount/${discount}`,
+    // GET_BY_STOCK: (inStock: boolean) => `/products/stock/${inStock}`,
+}
+export { authEndpoint, userEndpoint, productEndpoint }
