@@ -1,17 +1,28 @@
-# Nextjs Boilerplate and Starter-Kit. Minimal yet scalable setup for Next.js projects
+# 🛒 Mini Mart Front-End with NextJS, TypeScript
 
-A Next.js boilerplate that helps you get jump right into building your app without having to set up everything from scratch every time you start a new project. It comes with a minimal yet scalable setup that includes Next.js, Typescript, TailwindCSS, ESLint, Prettier, Husky, Lint-staged, Commitlint, and SEO-friendly features.
+Mini Mart is a web platform that supports private grocery stores in Vietnam by providing a modern, easy-to-use and efficient management system. The platform helps store owners manage products, orders, staff and revenue — thereby saving time and optimizing business operations.
 
-## Live Demo
+## 🚀 Outstanding features
 
-Check out the live demo of this boilerplate in action:
+✅ Manage products, inventory, barcodes, expiration dates
 
-[https://nextjs-boilerplate-oe.vercel.app](https://nextjs-boilerplate-oe.vercel.app)
+✅ Manage sales, orders, payments
+
+✅ Manage revenue by day, month, cost, profit
+
+✅ Manage users by role: admin, sales staff, warehouse staff
+
+✅ Modern interface, compatible on many devices
+
+✅ Support authentication with GitHub (via NextAuth)
 
 ## Features
 
 - [x] [Next.js](https://nextjs.org): Full-fledged framework for React apps
-- [x] [Typescript](https://typescriptlang.org): Type checking and better code quality
+- [x] [TypeScript](https://www.typescriptlang.org): Type checking and better code quality
+- [x] [TailwindCSS](https://tailwindcss.com): Utility-first CSS framework
+- [x] [ESLint](https://eslint.org): Linting for clean and consistent code
+- [x] [Prettier](https://prettier.io): Code formatting
 
 ## Use this boilerplate
 
@@ -22,16 +33,6 @@ npm install
 npm run dev
 ```
 
-Make sure you config your NextAuth before running the project. For this boilerplate, it uses Github as the authentication provider so you need to create a Github OAuth app and set the `GITHUB_ID` and `GITHUB_SECRET` environment variables in your `.env` file. You can find more information about how to do this in the [NextAuth documentation](https://authjs.dev/guides/configuring-github).
-
-Basically your .env file should look like this:
-
-```env
-AUTH_SECRET="yourAuthSecret"
-AUTH_GITHUB_ID=yourGithubClientId
-AUTH_GITHUB_SECRET=yourGithubClientSecret
-```
-
 ## Project Structure
 
 - All common things (project-wide, global) are placed in the `src` directory. This includes components, types, styles, and utility functions. This is where we put things that are shared across the project.
@@ -40,51 +41,41 @@ AUTH_GITHUB_SECRET=yourGithubClientSecret
 - The project uses Next.js App Router to handle routing. The router is divided into two groups: `auth` and `unauth`. The `auth` group contains routes that require authentication, while the `unauth` group contains public routes.
 
 ```
-|-- public                              # Static files
+|-- public                              # Static files (e.g., images, fonts)
 |-- src                                 # Next.js source directory
 |   |-- app                             # Next.js App Router
-|   |   |-- (auth)                      # (Group) Private routes
+|   |   |-- (auth)                      # Route group for authentication pages (e.g., login, register)
 |   |   |   |-- layout.tsx              # Authenticated layout
-|   |   |   |-- profile                 # (Module) Profile page
-|   |   |   |   `-- page.tsx
-|   |   |-- (unauth)                    # (Group) Public routes
-|   |   |   |-- layout.tsx              # Unauthenticated layout
-|   |   |   |-- page.tsx                # Unauthenticated index page
-|   |   |   `-- products                # (Module) Product page
-|   |   |       |-- components          # Components for the product page
-|   |   |       |   `-- ProductCard.tsx
-|   |   |       |-- layout.tsx
-|   |   |       `-- page.tsx
+|   |   |-- (main)                      # (Group) Private routes
+|   |   |   |-- layout.tsx              # Main layout
+|   |   |-- globals.css                 # Global css
 |   |   |-- layout.tsx                  # App layout
-|   |   |-- robots.ts                   # Robots.txt
-|   |   `-- sitemap.ts                  # Sitemap.xml
+|   |   |-- not-found.tsx               # 404 file
+|   |   `-- provider.tsx                # App-level providers (context, theme, etc.)
 |   |-- components                      # Global components
-|   |   |-- Footer.tsx
-|   |   |-- Header.tsx
-|   |   `-- ui                          # Atomic design components
-|   |       |-- Button.tsx
-|   |       `-- Tag.tsx
-|   |-- api                             # Global API route handlers
-|   |   `-- auth
-|   |-- styles
+|   |   |-- common                      # Shared/common components (e.g., Button, Input)
+|   |   `-- elements                    # Atomic design UI elements (e.g., Header, Footer)
+|   |       |-- Footer.tsx
+|   |       `-- Header.tsx
+|   |   `-- layouts                     # Page layout components
+|   |       |-- MainLayout
+|   |       `-- AuthLayout
+|   |-- api                             # Server-side API route handlers (Next.js API routes)
+|   |   `-- auth                        # Authentication-related APIs
+|   |-- styles                          # Additional global/local styles
 |   |   `-- global.css                  # Global styles
 |   |-- types                           # Global types
-|   |   `-- global.ts
 |   |-- libs                            # 3rd-party libraries
 |   |   `-- auth.ts
-|   `-- utils                           # Global utility functions
+|   `-- utils                           # Utility/helper functions
 |       `-- helpers.ts
-|-- tailwind.config.ts                  # TailwindCSS configuration
 |-- .eslintrc.json                      # ESLint configuration
-|-- .prettierrc                         # Prettier configuration
-|-- LICENSE
 |-- README.md
-|-- commitlint.config.ts                # Commitlint configuration
-|-- lint-staged.config.js               # Lint-staged configuration
 |-- next-env.d.ts
-|-- next.config.mjs
+|-- next.config.ts
 |-- package-lock.json
 |-- package.json
+|-- tailwind.config.ts                  # Tailwind configuration
 |-- postcss.config.mjs                  # PostCSS configuration
 `-- tsconfig.json                       # Typescript configuration
 ```
