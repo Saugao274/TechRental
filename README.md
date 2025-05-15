@@ -1,12 +1,10 @@
-# Nextjs Boilerplate and Starter-Kit. Minimal yet scalable setup for Next.js projects
-
-A Next.js boilerplate that helps you get jump right into building your app without having to set up everything from scratch every time you start a new project. It comes with a minimal yet scalable setup that includes Next.js, Typescript, TailwindCSS, ESLint, Prettier, Husky, Lint-staged, Commitlint, and SEO-friendly features.
+# Nextjs TechRental P2P
 
 ## Live Demo
 
 Check out the live demo of this boilerplate in action:
 
-[https://nextjs-boilerplate-oe.vercel.app](https://nextjs-boilerplate-oe.vercel.app)
+[techrental.vercel.app](https://techrental.vercel.app/)
 
 ## Features
 
