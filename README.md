@@ -80,21 +80,13 @@ npm run dev
 `-- tsconfig.json                       # Typescript configuration
 ```
 
-## Commit message convention
-
-- The project uses Husky and Lint-staged to run ESLint and Prettier on staged files before committing.
-- Commit messages must follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/).
-
 ## Eslint configuration
 
 - The project uses common Eslint configuration for Typescript projects. The configuration is based on the following packages:
     - [eslint-config-airbnb-typescript](https://www.npmjs.com/package/eslint-config-airbnb-typescript): Airbnb's ESLint config with TypeScript support.
     - [typescript-eslint](https://typescript-eslint.io/): Enables Eslint to lint TypeScript code.
+    - Commit in format: [Git issue Number][Member name][Task title ] description
 
 ## Contributing
 
 If you have a question or have found a bug, or have any suggestions for improvement, feel free to create an issue or a pull request. Everyone is welcome.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
