@@ -20,16 +20,6 @@ npm install
 npm run dev
 ```
 
-Make sure you config your NextAuth before running the project. For this boilerplate, it uses Github as the authentication provider so you need to create a Github OAuth app and set the `GITHUB_ID` and `GITHUB_SECRET` environment variables in your `.env` file. You can find more information about how to do this in the [NextAuth documentation](https://authjs.dev/guides/configuring-github).
-
-Basically your .env file should look like this:
-
-```env
-AUTH_SECRET="yourAuthSecret"
-AUTH_GITHUB_ID=yourGithubClientId
-AUTH_GITHUB_SECRET=yourGithubClientSecret
-```
-
 ## Project Structure
 
 - All common things (project-wide, global) are placed in the `src` directory. This includes components, types, styles, and utility functions. This is where we put things that are shared across the project.
