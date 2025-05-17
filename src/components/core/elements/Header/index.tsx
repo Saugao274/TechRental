@@ -67,6 +67,18 @@ export default function Header() {
 
     const items: MenuProps['items'] = [
         {
+            key: 'personal',
+            label: (
+                <span onClick={() => router.push('/user/personal')}>
+                    Trang cá nhân
+                </span>
+            ),
+        },
+        {
+            key: 'logout',
+            label: <span onClick={logout}>Đăng xuất</span>,
+        },
+        {
             key: '1',
             label: (
                 <p
@@ -942,12 +954,13 @@ export default function Header() {
 const DropdownProfile = () => {
     const router = useRouter()
     const { user, logout } = useAuth()
+    console.log('USER in Header:', user)
     const items: MenuProps['items'] = [
         {
-            key: '1',
+            key: 'personal',
             label: (
                 <p
-                    onClick={() => router.push(`/personal`)}
+                    onClick={() => router.push('/user/personal')}
                     className="text-[16px]"
                 >
                     Trang cá nhân
@@ -955,11 +968,18 @@ const DropdownProfile = () => {
             ),
         },
         {
-            key: '2',
-            label: <p className="text-[16px]">Lịch sử thuê</p>,
+            key: 'history',
+            label: (
+                <p
+                    onClick={() => router.push('/personal/rented-history')}
+                    className="text-[16px]"
+                >
+                    Lịch sử thuê
+                </p>
+            ),
         },
         {
-            key: '3',
+            key: 'logout',
             label: (
                 <div
                     className="flex flex-row items-center gap-2"
@@ -973,21 +993,19 @@ const DropdownProfile = () => {
     ]
 
     return (
-        <div>
-            <Dropdown menu={{ items }} trigger={['click']}>
-                <a onClick={(e) => e.preventDefault()}>
-                    <Space>
-                        <div className="flex cursor-pointer flex-row items-center gap-2 rounded p-2 text-primary">
-                            <CircleUserRound />
-                            <div className="w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                <p className="text-[16px] font-semibold">
-                                    {user?.name}
-                                </p>
-                            </div>
+        <Dropdown menu={{ items }} trigger={['click']}>
+            <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                    <div className="flex cursor-pointer flex-row items-center gap-2 rounded p-2 text-primary">
+                        <CircleUserRound />
+                        <div className="w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
+                            <p className="text-[16px] font-semibold">
+                                {user?.name || 'Tài khoản'}
+                            </p>
                         </div>
-                    </Space>
-                </a>
-            </Dropdown>
-        </div>
+                    </div>
+                </Space>
+            </a>
+        </Dropdown>
     )
 }
