@@ -47,16 +47,6 @@ export default function NewsModule({ article }: TProps) {
                                 __html: article?.content,
                             }}
                         ></div>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: article?.content,
-                            }}
-                        ></div>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: article?.content,
-                            }}
-                        ></div>
                     </div>
                     {/* Sidebar */}
                     <div className="lg:col-span-1">
