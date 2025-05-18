@@ -1,30 +1,31 @@
+'use client'
+
 import { NewsData } from '@/data/news'
 import { Divider, Pagination } from 'antd'
-import { CalendarIcon, ChevronRightIcon } from 'lucide-react'
-import Image from 'next/image'
+import { CalendarIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 type TProps = {
     article: any
 }
 
 export default function NewsModule({ article }: TProps) {
-    console.log(article)
     const mostViewedNews = NewsData.filter((news) => news.isMostViewed).slice(
         0,
         3,
     )
-    const router = useRouter();
+    const router = useRouter()
     const news = NewsData.sort()
     console.log(news)
     const [currentPage, setCurrentPage] = useState(1)
     const pageSize = 4
     const startIndex = (currentPage - 1) * pageSize
     const endIndex = startIndex + pageSize
-    const currentNews = news.filter((item) => item.keyID !== article?.keyId).slice(startIndex, endIndex)
-    console.log(currentNews);
-    const handleClick = (id:string) => {
+    const currentNews = news
+        .filter((item) => item.keyID !== article?.keyId)
+        .slice(startIndex, endIndex)
+    const handleClick = (id: string) => {
         router.push(`/news/${id}`)
     }
     return (
@@ -41,16 +42,25 @@ export default function NewsModule({ article }: TProps) {
                                 <p>Thứ ba 22/4/2025, 19:00 (+07:+7)</p>
                             </div>
                         </div>
-
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: article?.content,
+                            }}
+                        ></div>
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: article?.content,
+                            }}
+                        ></div>
                         <div
                             dangerouslySetInnerHTML={{
                                 __html: article?.content,
                             }}
                         ></div>
                     </div>
-
+                    {/* Sidebar */}
                     <div className="lg:col-span-1">
-                        <div className="mb-6 rounded-md p-4 shadow-sm">
+                        <div className="sticky top-20 mb-6 rounded-md p-4 shadow-sm">
                             <div className="relative mb-4 h-fit">
                                 <div className="inline-block rounded-md bg-primary px-3 py-1 text-sm font-medium text-white">
                                     XEM NHIỀU
@@ -59,7 +69,10 @@ export default function NewsModule({ article }: TProps) {
                             </div>
 
                             <div className="space-y-4">
-                                <div className="flex flex-col gap-3" onClick={() => handleClick(article?.keyID)}>
+                                <div
+                                    className="flex flex-col gap-3"
+                                    onClick={() => handleClick(article?.keyID)}
+                                >
                                     <img
                                         src={`/images/${article?.Image}`}
                                         alt=""
@@ -76,7 +89,11 @@ export default function NewsModule({ article }: TProps) {
                                 <Divider className="bg-primary" />
 
                                 {mostViewedNews.map((item, index) => (
-                                    <div key={index} className="flex gap-3" onClick={() => handleClick(item?.keyID)}>
+                                    <div
+                                        key={index}
+                                        className="flex cursor-pointer gap-3"
+                                        onClick={() => handleClick(item?.keyID)}
+                                    >
                                         <img
                                             src={`/images/${item?.Image}`}
                                             alt={`Camera siêu nhanh chụp P320...`}
@@ -113,7 +130,7 @@ export default function NewsModule({ article }: TProps) {
                         {currentNews.map((item, index) => (
                             <div
                                 key={index}
-                                className="overflow-hidden rounded-md"
+                                className="cursor-pointer overflow-hidden rounded-md"
                                 onClick={() => handleClick(item?.keyID)}
                             >
                                 <img
