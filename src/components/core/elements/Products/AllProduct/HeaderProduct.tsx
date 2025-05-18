@@ -1,7 +1,7 @@
 'use client'
 import SectionCommon from '@/components/core/common/SectionCommon'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const images = [
     '/images/Products/HeaderProduct/ws1.png',
@@ -18,6 +18,7 @@ const HeaderProducts = () => {
     const nextSlide = () => setCurrent((prev) => (prev + 1) % totalImages)
     const prevSlide = () =>
         setCurrent((prev) => (prev - 1 + totalImages) % totalImages)
+
 
     return (
         <SectionCommon className="relative flex h-80 items-center justify-center">

@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         router.push('/')
     }
 
+
     const updateUser = (newUser: User) => {
         setUser(newUser)
         persist(newUser)
