@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Form, Select } from 'antd'
+import { Form, message, Select } from 'antd'
 import type { StepProps } from '@/components/modules/Profile/Personal/Verification'
 import SectionCommon from '../../common/SectionCommon'
 import { ArrowLeft, Contact, Flag, GlobeIcon, IdCard } from 'lucide-react'
 import ButtonCommon from '../../common/ButtonCommon'
-const VERIFY_COUNTRY_KEY = 'verify-country-step'
+import { VERIFY_COUNTRY_KEY, VERIFY_DOC_KEY } from './VerifyCountry'
 const documentTypes = [
     {
         value: 'cccd',
@@ -29,20 +29,36 @@ const documentTypes = [
 const VerifyDocument = ({ setStep }: StepProps) => {
     const [selectedDoc, setSelectedDoc] = useState('cccd')
     const [form] = Form.useForm()
+    const savedCountry = localStorage.getItem(VERIFY_COUNTRY_KEY)
+    const saveDoc = localStorage.getItem(VERIFY_DOC_KEY)
 
     useEffect(() => {
-        const saved = localStorage.getItem(VERIFY_COUNTRY_KEY)
-        if (saved) {
+        if (savedCountry) {
             try {
-                const parsed = JSON.parse(saved)
+                const parsed = JSON.parse(savedCountry)
                 if (parsed?.residence) {
                     form.setFieldsValue({ nationality: parsed.residence })
                 }
             } catch (error) {
-                console.error('Không thể đọc verify-country-step:', error)
+                message.error('Không thể đọc thông tin xác minh trước đó.')
+            }
+        }
+        if (saveDoc) {
+            try {
+                const parsed = JSON.parse(saveDoc)
+                setSelectedDoc(parsed)
+            } catch (error) {
+                console.error('Không thể đọc verify-doc-step:', error)
             }
         }
     }, [form])
+
+    const onFinish = () => {
+        if (savedCountry) {
+            localStorage.setItem(VERIFY_DOC_KEY, JSON.stringify(selectedDoc))
+            setStep('guide')
+        }
+    }
 
     return (
         <SectionCommon className="flex flex-col gap-4">
@@ -55,45 +71,49 @@ const VerifyDocument = ({ setStep }: StepProps) => {
                     quá trình thuê thiết bị
                 </p>
             </div>
-            <Form.Item
-                label="Quốc gia/khu vực cấp giấy tờ"
-                name="nationality"
+            <Form
+                form={form}
                 layout="vertical"
-                rules={[
-                    {
-                        required: true,
-                        message: 'Vui lòng chọn quốc tịch',
-                    },
-                ]}
+                className="flex w-1/2 flex-col gap-4"
             >
-                <Select
-                    disabled
-                    style={{ width: 300 }}
-                    placeholder="Quốc tịch"
-                    optionFilterProp="label"
-                    options={[
+                <Form.Item
+                    label="Quốc tịch"
+                    name="nationality"
+                    rules={[
                         {
-                            value: 'vn',
-                            label: (
-                                <div className="flex items-center gap-2">
-                                    <Flag />
-                                    <span>Việt Nam</span>
-                                </div>
-                            ),
-                        },
-                        {
-                            value: 'us',
-                            label: (
-                                <div className="flex items-center gap-2">
-                                    <Flag />
-                                    <span>United States</span>
-                                </div>
-                            ),
+                            required: true,
+                            message: 'Vui lòng chọn quốc tịch',
                         },
                     ]}
-                />
-            </Form.Item>
-
+                >
+                    <Select
+                        disabled
+                        style={{ width: 300 }}
+                        placeholder="Chọn quốc tịch"
+                        optionFilterProp="label"
+                        options={[
+                            {
+                                value: 'vn',
+                                label: (
+                                    <div className="flex items-center gap-2">
+                                        <Flag />
+                                        <span>Việt Nam</span>
+                                    </div>
+                                ),
+                            },
+                            {
+                                value: 'us',
+                                label: (
+                                    <div className="flex items-center gap-2">
+                                        <Flag />
+                                        <span>United States</span>
+                                    </div>
+                                ),
+                            },
+                        ]}
+                    />
+                </Form.Item>
+            </Form>
             <div>
                 <label className="mb-2 block text-sm font-medium">
                     Loại giấy tờ
@@ -139,7 +159,7 @@ const VerifyDocument = ({ setStep }: StepProps) => {
                 <ButtonCommon
                     type="default"
                     className="w-1/3 rounded-lg bg-gray-200 px-4 py-2 text-primary hover:bg-gray-300"
-                    onClick={() => setStep((prev) => prev - 1)}
+                    onClick={() => setStep('information')}
                 >
                     <ArrowLeft />
                     Quay lại
@@ -148,6 +168,7 @@ const VerifyDocument = ({ setStep }: StepProps) => {
                     type="primary"
                     className="w-1/3 rounded-lg bg-primary px-4 py-2 text-white hover:bg-blue-700"
                     htmlType="submit"
+                    onClick={onFinish}
                 >
                     Tiếp tục
                 </ButtonCommon>

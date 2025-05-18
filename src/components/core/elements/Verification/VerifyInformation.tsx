@@ -8,17 +8,19 @@ import ButtonCommon from '../../common/ButtonCommon'
 import { type StepProps } from '@/components/modules/Profile/Personal/Verification'
 import { useFormAutoSave } from '@/hooks/useFormAutoSave'
 import TextArea from 'antd/es/input/TextArea'
-
-const VERIFY_COUNTRY_KEY = 'verify-country-step'
+import { VERIFY_COUNTRY_KEY, VERIFY_INFO_KEY } from './VerifyCountry'
+import dayjs from 'dayjs'
 
 const VerifyInformation = ({ setStep }: StepProps) => {
     const [form] = Form.useForm()
-    const { onValuesChange } = useFormAutoSave(form, 'VERIFY_INFO_KEY')
+    const { onValuesChange } = useFormAutoSave(form, VERIFY_INFO_KEY)
+    const savedCountry = localStorage.getItem(VERIFY_COUNTRY_KEY)
+    const saveInfo = localStorage.getItem(VERIFY_INFO_KEY)
+
     useEffect(() => {
-        const saved = localStorage.getItem(VERIFY_COUNTRY_KEY)
-        if (saved) {
+        if (savedCountry) {
             try {
-                const parsed = JSON.parse(saved)
+                const parsed = JSON.parse(savedCountry)
                 if (parsed?.residence) {
                     form.setFieldsValue({ nationality: parsed.residence })
                 }
@@ -26,20 +28,27 @@ const VerifyInformation = ({ setStep }: StepProps) => {
                 console.error('Không thể đọc verify-country-step:', error)
             }
         }
+
+        if (saveInfo) {
+            try {
+                const parsed = JSON.parse(saveInfo)
+                if (parsed?.dob && typeof parsed.dob === 'string') {
+                    parsed.dob = dayjs(parsed.dob)
+                }
+                form.setFieldsValue(parsed)
+            } catch (error) {
+                console.error('Không thể đọc verify-info-step:', error)
+            }
+        }
     }, [form])
+
     const onFinish = (values: any) => {
-        console.log('Form values:', values)
-        useFormAutoSave(form, 'VERIFY_INFO_KEY')
-        // setStep(3)
+        localStorage.setItem(VERIFY_INFO_KEY, JSON.stringify(values))
+        setStep('document')
     }
+
     return (
-        <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-            onValuesChange={onValuesChange}
-            className="flex flex-col gap-4"
-        >
+        <div className="flex flex-col gap-4">
             <SectionCommon className="flex flex-col gap-4">
                 <div className="mb-4">
                     <h1 className="text-2xl font-bold text-primary">
@@ -56,6 +65,7 @@ const VerifyInformation = ({ setStep }: StepProps) => {
                     layout="vertical"
                     onFinish={onFinish}
                     className="flex w-1/2 flex-col gap-4"
+                    onValuesChange={onValuesChange}
                 >
                     <Form.Item
                         label="Quốc tịch"
@@ -162,12 +172,11 @@ const VerifyInformation = ({ setStep }: StepProps) => {
                             rows={2}
                         />
                     </Form.Item>
-
-                    <div className="mt-4 flex w-1/2 gap-2">
+                    <div className="mt-4 flex w-full gap-2">
                         <ButtonCommon
                             type="default"
                             className="w-1/3 rounded-lg bg-gray-200 px-4 py-2 text-primary hover:bg-gray-300"
-                            onClick={() => setStep((prev) => prev - 1)}
+                            onClick={() => setStep('country')}
                         >
                             <ArrowLeft />
                             Quay lại
@@ -182,7 +191,7 @@ const VerifyInformation = ({ setStep }: StepProps) => {
                     </div>
                 </Form>
             </SectionCommon>
-        </Form>
+        </div>
     )
 }
 

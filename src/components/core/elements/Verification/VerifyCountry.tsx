@@ -8,14 +8,16 @@ import ButtonCommon from '../../common/ButtonCommon'
 import { type StepProps } from '@/components/modules/Profile/Personal/Verification'
 import { useFormAutoSave } from '@/hooks/useFormAutoSave'
 
-const VERIFY_COUNTRY_KEY = 'verify-country-step'
+export const VERIFY_COUNTRY_KEY = 'verify-country-step'
+export const VERIFY_INFO_KEY = 'verify-infomation-step'
+export const VERIFY_DOC_KEY = 'verify-document-step'
 
 const VerifyCountry = ({ setStep }: StepProps) => {
     const [form] = Form.useForm()
     const { onValuesChange } = useFormAutoSave(form, VERIFY_COUNTRY_KEY)
 
     const onFinish = () => {
-        setStep(2)
+        setStep('information')
     }
 
     return (
