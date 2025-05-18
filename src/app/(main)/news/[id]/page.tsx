@@ -3,6 +3,9 @@ import React from 'react'
 import { useParams } from 'next/navigation'
 import { NewsData } from '@/data/news'
 import NotFound from '@/app/not-found'
+import Image from 'next/image'
+import { CalendarIcon, ChevronRightIcon } from 'lucide-react'
+import NewsModule from '@/components/modules/News'
 
 const NewsDetail = () => {
     const params = useParams()
@@ -13,14 +16,7 @@ const NewsDetail = () => {
         return <NotFound />
     }
 
-    return (
-        <div className="news-detail">
-            <h1>{article.Title}</h1>
-            <img src={`/images/${article.Image}`} alt={article.Title} />
-            <p>{article.Details}</p>
-            <span>{article.Date}</span>
-        </div>
-    )
+    return <NewsModule article={article}/>
 }
 
 export default NewsDetail
