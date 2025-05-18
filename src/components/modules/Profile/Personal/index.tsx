@@ -140,7 +140,8 @@ export default function PersonalProfile() {
     }
 
     const handleVerificationClick = () => {
-        setIsModalOpen(true)
+        // setIsModalOpen(true)
+        router.push('/personal/verification')
     }
     const extractFaceFromImage = async (imageUrl: string) => {
         const img = await faceapi.fetchImage(imageUrl)

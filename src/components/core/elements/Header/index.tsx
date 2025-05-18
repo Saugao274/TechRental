@@ -24,7 +24,7 @@ import {
     useMotionValueEvent,
 } from 'framer-motion'
 import _ from 'lodash'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import NotificationModal from '@/components/modules/NotificationModal'
 import { useAuth } from '@/context/AuthContext'
 
