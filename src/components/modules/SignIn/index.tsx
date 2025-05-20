@@ -3,7 +3,7 @@
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import { useAuth } from '@/context/AuthContext'
 import { Form, Input, message, Skeleton } from 'antd'
-import { Lock } from 'lucide-react'
+import { Lock, Mail } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -125,6 +125,7 @@ const SignIn = () => {
                                     ]}
                                 >
                                     <div className="flex flex-row items-center gap-5 rounded-lg border bg-white px-5 py-2">
+                                        <Mail />
                                         <Input
                                             placeholder="Nhập email của bạn"
                                             className="w-full !bg-transparent outline-none"
