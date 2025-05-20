@@ -416,7 +416,7 @@ export default function ProductCreateForm() {
                                         marginBottom: 4,
                                     }}
                                 >
-                                    Tên sản phẩmphẩm
+                                    Tên sản phẩm
                                 </Title>
                                 <Text>
                                     Tên sản phẩm có nhãn hiệu rõ ràng và nhấn
