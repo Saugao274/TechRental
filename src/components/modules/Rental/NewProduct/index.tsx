@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { useState } from 'react'
 import {
@@ -16,10 +16,20 @@ import {
     Card,
     Collapse,
     Progress,
+    Col,
+    Row,
 } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
 import { UploadFile } from 'antd/es/upload/interface'
-import { Lightbulb, RotateCw, TriangleAlert, UploadCloud } from 'lucide-react'
+import {
+    ChevronDown,
+    ChevronUp,
+    Lightbulb,
+    RotateCw,
+    TriangleAlert,
+    UploadCloud,
+    X,
+} from 'lucide-react'
 import TextArea from 'antd/es/input/TextArea'
 
 const { Panel } = Collapse
@@ -54,10 +64,41 @@ export default function ProductCreateForm() {
 
         return isMp4 && isLt100MB
     }
-
+    const [collapsed, setCollapsed] = useState(true)
     const handleSubmit = (values: any) => {
         //todo: submit form data to server
         console.log('Form values:', values)
+    }
+    const getContentScore = (values: any, priceFields: any[]): number => {
+        let score = 0
+        const detailImages = values.detailImage || []
+        if (detailImages.length >= 3) score += 1
+
+        const description = values.description || ''
+        if (description.trim().length >= 30) score += 1
+
+        priceFields.forEach((field) => {
+            const price = values[`${field.name}Price`]
+            const stock = values[`${field.name}Stock`]
+            const enabled = values[`${field.name}Enabled`]
+
+            if (enabled && price > 0 && stock > 0) {
+                score += 1
+            }
+        })
+        console.log(score)
+        return score
+    }
+
+    const [contentScore, setContentScore] = useState(0)
+    const [detailImages, setDetailImages] = useState<File[]>([])
+    const [realImages, setRealImages] = useState<File[]>([])
+
+    function getContentRank(score: number): string {
+        if (score === 0) return 'Poor'
+        if (score <= 2) return 'Fair'
+        if (score <= 4) return 'Good'
+        return 'Excellent'
     }
 
     return (
@@ -71,6 +112,12 @@ export default function ProductCreateForm() {
                 <Form
                     layout="vertical"
                     form={form}
+                    onValuesChange={() => {
+                        const values = form.getFieldsValue()
+                        console.log('first', values)
+                        const score = getContentScore(values, priceFields)
+                        setContentScore(score)
+                    }}
                     onFinish={handleSubmit}
                     className="mx-auto flex max-w-2xl flex-col gap-5 rounded-xl"
                     initialValues={{
@@ -143,48 +190,31 @@ export default function ProductCreateForm() {
                                 },
                             ]}
                         >
-                            <div className="w-full rounded-md border p-2">
-                                <Upload
-                                    listType="picture-card"
-                                    beforeUpload={() => false}
-                                    maxCount={20}
-                                    accept="image/*"
-                                >
-                                    <div className="flex flex-col items-center justify-center">
-                                        <UploadCloud className="h-5 w-5" />
-                                        <span>Tải ảnh</span>
-                                    </div>
-                                </Upload>
-                            </div>
+                           <ImageUploadPreview
+                                value={realImages}
+                                onChange={(newFiles) => {
+                                    setRealImages(newFiles)
+                                }}
+                            />
                         </Form.Item>
 
                         <Form.Item
                             name="detailImage"
                             label="Ảnh chi tiết của sản phẩm"
-                            valuePropName="fileList"
-                            getValueFromEvent={(e) =>
-                                Array.isArray(e) ? e : e?.fileList
-                            }
                             rules={[
                                 {
                                     required: true,
                                     message: 'Vui lòng tải lên ảnh chi tiết',
                                 },
                             ]}
+                            getValueFromEvent={(e) => e}
                         >
-                            <div className="w-full rounded-md border p-2">
-                                <Upload
-                                    listType="picture-card"
-                                    beforeUpload={() => false}
-                                    maxCount={20}
-                                    accept="image/*"
-                                >
-                                    <div className="flex flex-col items-center justify-center">
-                                        <UploadCloud className="h-5 w-5" />
-                                        <span>Tải ảnh</span>
-                                    </div>
-                                </Upload>
-                            </div>
+                            <ImageUploadPreview
+                                value={detailImages}
+                                onChange={(newFiles) => {
+                                    setDetailImages(newFiles)
+                                }}
+                            />
                         </Form.Item>
 
                         <Form.Item
@@ -217,14 +247,210 @@ export default function ProductCreateForm() {
                     </div>
                     <div className="rounded-2xl bg-white p-4">
                         <h3 className="text-lg font-bold text-primary">
-                            Mô tả sản phẩm
+                            Đặc tính sản phẩm
                         </h3>
                         <h4>
                             Cung cấp đầy đủ đặc tính sản phẩm để tối ưu kết quả
                             tìm kiếm sản phẩm.
                         </h4>
-                        <TextArea className="" rows={6}></TextArea>
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="brand"
+                                    label="Thương hiệu"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message:
+                                                'Vui lòng nhập thương hiệu',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="status"
+                                    label="Tình trạng"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập tình trạng',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+
+                            <Col span={12}>
+                                <Form.Item
+                                    name="cameraType"
+                                    label="Loại máy ảnh"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message:
+                                                'Vui lòng nhập loại máy ảnh',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="productCode"
+                                    label="Mã sản phẩm"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message:
+                                                'Vui lòng nhập mã sản phẩm',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+
+                            <Col span={12}>
+                                <Form.Item
+                                    name="sensorSize"
+                                    label="Kích thước cảm biến"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message:
+                                                'Vui lòng nhập kích thước cảm biến',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="resolution"
+                                    label="Độ phân giải (MP)"
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+
+                            {/* Các trường có thể ẩn/hiện */}
+                            {!collapsed && (
+                                <>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="lensSupport"
+                                            label="Hệ lens (Canon EF, Sony E,...)"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="burstSpeed"
+                                            label="Tốc độ chụp liên tiếp"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="videoFormat"
+                                            label="Định Dạng Quay Video"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="opticalZoom"
+                                            label="Zoom quang học"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="iso"
+                                            label="Chỉ số ISO"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="storage"
+                                            label="Ổ cứng lưu trữ (nếu tích hợp)"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="screen"
+                                            label="Màn hình xoay / cảm ứng"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="accessories"
+                                            label="Phụ kiện đi kèm"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
+                                        <Form.Item
+                                            name="mic"
+                                            label="Input mic / tai nghe"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+                                </>
+                            )}
+                        </Row>
+
+                        <div className="mt-4 flex justify-start">
+                            <Button
+                                type="link"
+                                icon={
+                                    collapsed ? (
+                                        <ChevronDown size={16} />
+                                    ) : (
+                                        <ChevronUp size={16} />
+                                    )
+                                }
+                                onClick={() => setCollapsed(!collapsed)}
+                                className="font-medium text-blue-600"
+                            >
+                                {collapsed ? 'Mở rộng' : 'Thu gọn'}
+                            </Button>
+                        </div>
                     </div>
+                    <Form.Item name={'description'}>
+                        <div className="rounded-2xl bg-white p-4">
+                            <h3 className="text-lg font-bold text-primary">
+                                Mô tả sản phẩm
+                            </h3>
+                            <h4>
+                                Cung cấp đầy đủ đặc tính sản phẩm để tối ưu kết
+                                quả tìm kiếm sản phẩm.
+                            </h4>
+                            <TextArea className="" rows={6}></TextArea>
+                        </div>
+                    </Form.Item>
                     <div className="rounded-2xl bg-white p-4">
                         <h3 className="text-lg font-bold text-primary">
                             Giá bán và kho hàng
@@ -306,7 +532,7 @@ export default function ProductCreateForm() {
                             </p>
                         </div>
                         <div className="col-span-2 flex flex-row items-center gap-2">
-                            <Form.Item className='!mb-0'>
+                            <Form.Item className="!mb-0">
                                 <Button
                                     htmlType="submit"
                                     variant="outlined"
@@ -315,8 +541,10 @@ export default function ProductCreateForm() {
                                     Lưu bản nháp
                                 </Button>
                             </Form.Item>
-                            <Form.Item className='!mb-0'>
-                                <Button htmlType='submit' type="primary">Gửi đi</Button>
+                            <Form.Item className="!mb-0">
+                                <Button htmlType="submit" type="primary">
+                                    Gửi đi
+                                </Button>
                             </Form.Item>
                         </div>
                     </div>
@@ -334,17 +562,42 @@ export default function ProductCreateForm() {
                                     <RotateCw size={24} />
                                 </div>
                             </div>
-                            <div className="flex flex-row gap-5">
+                            <div className="flex flex-row items-center gap-5">
                                 <Progress
-                                    percent={0}
+                                    percent={(contentScore / 5) * 100} // maxScore là tổng tối đa, ví dụ 6
                                     showInfo={false}
-                                    status="exception"
-                                    strokeColor="#EF4444"
+                                    status={
+                                        contentScore === 0
+                                            ? 'exception'
+                                            : 'normal'
+                                    }
+                                    strokeColor={
+                                        contentScore === 0
+                                            ? '#EF4444'
+                                            : contentScore <= 2
+                                              ? '#F59E0B'
+                                              : contentScore <= 4
+                                                ? '#3B82F6'
+                                                : '#10B981'
+                                    }
                                 />
-                                <span className="text-xl font-bold">0</span>
+                                <span className="text-lg font-bold">
+                                    { (contentScore/5)*100 }%
+                                </span>
                             </div>
-                            <Text type="danger" className="text-sm font-bold">
-                                Poor
+                            <Text
+                                type={
+                                    contentScore === 0
+                                        ? 'danger'
+                                        : contentScore <= 2
+                                          ? 'warning'
+                                          : contentScore <= 4
+                                            ? 'secondary'
+                                            : 'success'
+                                }
+                                className="text-sm font-bold"
+                            >
+                                {getContentRank(contentScore)}
                             </Text>
 
                             <Collapse
@@ -483,5 +736,88 @@ const CustomSwitch = () => {
                 backgroundColor: checked ? '#22C55E' : '#EF4444', // xanh khi ON, đỏ khi OFF
             }}
         />
+    )
+}
+
+interface ImageUploadPreviewProps {
+    value?: File[]
+    onChange?: (value: File[]) => void
+}
+
+const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
+    value = [],
+    onChange,
+}) => {
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files
+        if (!files) return
+
+        const selectedFiles = Array.from(files).slice(0, 20)
+        const combined = [...value, ...selectedFiles].slice(0, 20)
+        onChange?.(combined)
+        e.target.value = ''
+    }
+
+    const handleClick = () => {
+        inputRef.current?.click()
+    }
+
+    const handleRemove = (indexToRemove: number) => {
+        const newList = value.filter((_, index) => index !== indexToRemove)
+        onChange?.(newList)
+    }
+
+    // Cleanup preview URLs on unmount
+    useEffect(() => {
+        return () => {
+            value.forEach((file) => URL.revokeObjectURL(file as any))
+        }
+    }, [value])
+
+    return (
+        <div className="w-full">
+            <div className="hidden">
+                <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                />
+            </div>
+
+            <div
+                onClick={handleClick}
+                className="mb-2 flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed flex-col"
+            >
+                <UploadCloud className="h-5 w-5" size={40}/>
+                <span className="text-gray-500">Tải ảnh lên</span>
+            </div>
+
+            <div className="grid grid-cols-4 gap-2">
+                {value.map((file, index) => {
+                    const previewUrl = URL.createObjectURL(file)
+                    return (
+                        <div key={index} className="relative">
+                            <img
+                                src={previewUrl}
+                                className="h-24 w-full rounded object-cover"
+                                alt={`preview-${index}`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleRemove(index)}
+                                className="absolute right-1 top-1 rounded-full bg-black bg-opacity-50 p-1 text-white hover:bg-opacity-80"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+                    )
+                })}
+            </div>
+        </div>
     )
 }
