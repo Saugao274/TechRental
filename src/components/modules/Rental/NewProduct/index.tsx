@@ -55,9 +55,9 @@ export default function ProductCreateForm() {
         return isMp4 && isLt100MB
     }
 
-    const handleFinish = (values: any) => {
+    const handleSubmit = (values: any) => {
+        //todo: submit form data to server
         console.log('Form values:', values)
-        message.success('Thông tin hợp lệ!')
     }
 
     return (
@@ -71,7 +71,7 @@ export default function ProductCreateForm() {
                 <Form
                     layout="vertical"
                     form={form}
-                    onFinish={handleFinish}
+                    onFinish={handleSubmit}
                     className="mx-auto flex max-w-2xl flex-col gap-5 rounded-xl"
                     initialValues={{
                         dailyPrice: 0,
@@ -306,13 +306,18 @@ export default function ProductCreateForm() {
                             </p>
                         </div>
                         <div className="col-span-2 flex flex-row items-center gap-2">
-                            <Button
-                                variant="outlined"
-                                className="border-primary"
-                            >
-                                Lưu bản nháp
-                            </Button>
-                            <Button type="primary">Gửi đi</Button>
+                            <Form.Item className='!mb-0'>
+                                <Button
+                                    htmlType="submit"
+                                    variant="outlined"
+                                    className="border-primary"
+                                >
+                                    Lưu bản nháp
+                                </Button>
+                            </Form.Item>
+                            <Form.Item className='!mb-0'>
+                                <Button htmlType='submit' type="primary">Gửi đi</Button>
+                            </Form.Item>
                         </div>
                     </div>
                 </Form>
