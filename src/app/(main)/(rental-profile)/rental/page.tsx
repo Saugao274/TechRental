@@ -18,7 +18,6 @@ import { SearchOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons"
 import { useState, useEffect } from "react"
 import { Image, Badge, Rate } from "antd"
 import type { UploadFile, UploadProps } from "antd"
-import { useRouter } from "next/navigation"
 
 const { Panel } = Collapse
 const { Title, Text, Paragraph } = Typography
@@ -147,7 +146,6 @@ export default function ProductManagement() {
   const pageSize = 5
   const [isMobile, setIsMobile] = useState(false)
   const [activeTab, setActiveTab] = useState("products")
-  const router = useRouter();
 
   // Check if screen is mobile
   useEffect(() => {
@@ -480,7 +478,7 @@ export default function ProductManagement() {
           <Space>
             <Avatar src={shop.avatar} size={40} />
             <span style={{ fontSize: "16px", color: "#0052cc" }}>{shop.name}</span>
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => router.push('rental/new')}>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>
               Thêm sản phẩm mới
             </Button>
           </Space>
