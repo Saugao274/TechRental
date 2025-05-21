@@ -26,47 +26,23 @@ import { UploadOutlined } from '@ant-design/icons'
 
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
-
+import * as faceapi from 'face-api.js'
 import { CameraOutlined } from '@ant-design/icons'
 import { useRef, useEffect } from 'react'
 import webLocalStorage from '@/utils/webLocalStorage'
 
 export default function PersonalProfile() {
-    const videoRef = useRef<HTMLVideoElement>(null)
-    const streamRef = useRef<MediaStream | null>(null)
+    var videoRef = useRef<HTMLVideoElement>(null)
     const [isModelLoaded, setIsModelLoaded] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const { user, updateIdentifier } = useAuth()
+    const [gender, setGender] = useState('')
+    const router = useRouter()
     const [capturedImage, setCapturedImage] = useState<string | null>(null)
     const [uploadedCCCDImageURL, setUploadedCCCDImageURL] = useState<
         string | null
     >(null)
-
-    const [gender, setGender] = useState('')
-    const { user, updateIdentifier } = useAuth()
-    const router = useRouter()
-
-    useEffect(() => {
-        const loadModels = async () => {
-            const faceapi = await import('face-api.js')
-            await Promise.all([
-                faceapi.nets.tinyFaceDetector.loadFromUri(
-                    '/models/tiny_face_detector',
-                ),
-                faceapi.nets.faceLandmark68Net.loadFromUri(
-                    '/models/face_landmark_68',
-                ),
-                faceapi.nets.faceRecognitionNet.loadFromUri(
-                    '/models/face_recognition',
-                ),
-            ])
-            setIsModelLoaded(true)
-        }
-
-        loadModels().catch((err) => {
-            console.error('Load face-api models error:', err)
-            message.error('Không thể tải model nhận diện khuôn mặt')
-        })
-    }, [])
+    const streamRef = useRef<MediaStream | null>(null)
 
     const handleFrontCCCDUpload = (info: any) => {
         if (info.file.status === 'done') {
@@ -77,10 +53,10 @@ export default function PersonalProfile() {
         }
     }
     const loadModels = async () => {
-        const faceapi = await import('face-api.js')
         await faceapi.nets.tinyFaceDetector.loadFromUri(
             '/models/tiny_face_detector',
         )
+
         await faceapi.nets.faceLandmark68Net.loadFromUri(
             '/models/face_landmark_68',
         )
@@ -127,48 +103,39 @@ export default function PersonalProfile() {
         }
     }
     const handleCaptureFace = async () => {
-        try {
-            if (!videoRef.current || !isModelLoaded) return
-            const faceapi = await import('face-api.js')
+        if (!videoRef.current || !isModelLoaded) return
 
-            const detection = await faceapi
-                .detectSingleFace(
+        const detection = await faceapi
+            .detectSingleFace(
+                videoRef.current,
+                new faceapi.TinyFaceDetectorOptions(),
+            )
+            .withFaceLandmarks()
+            .withFaceDescriptor()
+
+        if (detection) {
+            const descriptor = Array.from(detection.descriptor)
+            webLocalStorage.set('faceDescriptor', JSON.stringify(descriptor))
+
+            const canvas = document.createElement('canvas')
+            canvas.width = videoRef.current.videoWidth
+            canvas.height = videoRef.current.videoHeight
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+                ctx.drawImage(
                     videoRef.current,
-                    new faceapi.TinyFaceDetectorOptions(),
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height,
                 )
-                .withFaceLandmarks()
-                .withFaceDescriptor()
-
-            if (detection) {
-                const descriptor = Array.from(detection.descriptor)
-                webLocalStorage.set(
-                    'faceDescriptor',
-                    JSON.stringify(descriptor),
-                )
-
-                const canvas = document.createElement('canvas')
-                canvas.width = videoRef.current.videoWidth
-                canvas.height = videoRef.current.videoHeight
-                const ctx = canvas.getContext('2d')
-                if (ctx) {
-                    ctx.drawImage(
-                        videoRef.current,
-                        0,
-                        0,
-                        canvas.width,
-                        canvas.height,
-                    )
-                    const imageData = canvas.toDataURL('image/jpeg')
-                    setCapturedImage(imageData)
-                }
-
-                message.success('Đã lưu khuôn mặt để xác thực sau này!')
-            } else {
-                message.error('Không nhận diện được khuôn mặt. Hãy thử lại.')
+                const imageData = canvas.toDataURL('image/jpeg')
+                setCapturedImage(imageData)
             }
-        } catch (error) {
-            console.error('Lỗi khi nhận diện khuôn mặt:', error)
-            message.error('Đã xảy ra lỗi khi xử lý khuôn mặt.')
+
+            message.success('Đã lưu khuôn mặt để xác thực sau này!')
+        } else {
+            message.error('Không nhận diện được khuôn mặt. Hãy thử lại.')
         }
     }
 
@@ -177,7 +144,6 @@ export default function PersonalProfile() {
         router.push('/personal/verification')
     }
     const extractFaceFromImage = async (imageUrl: string) => {
-        const faceapi = await import('face-api.js')
         const img = await faceapi.fetchImage(imageUrl)
         const detection = await faceapi
             .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
@@ -187,11 +153,10 @@ export default function PersonalProfile() {
         return detection?.descriptor || null
     }
 
-    const compareDescriptors = async (
-        desc1: Float32Array,
-        desc2: Float32Array,
-    ) => {
-        const faceapi = await import('face-api.js')
+    const compareDescriptors = (desc1: Float32Array, desc2: Float32Array) => {
+        if (!desc1 || !desc2) {
+            return false
+        }
         const distance = faceapi.euclideanDistance(desc1, desc2)
         console.log(`Khoảng cách giữa các khuôn mặt: ${distance}`)
         return distance < 0.6
@@ -219,7 +184,7 @@ export default function PersonalProfile() {
             return
         }
 
-        const isMatch = await compareDescriptors(
+        const isMatch = compareDescriptors(
             new Float32Array(webcamDescriptor),
             new Float32Array(cccdDescriptor),
         )
@@ -592,7 +557,7 @@ export default function PersonalProfile() {
                 <h2 className="mb-4 text-lg font-bold">
                     Thông tin người cho thuê
                 </h2>
-                {!user?.registeredLessor ? (
+                {!user?.registeredLessorr ? (
                     <Card className="flex items-center">
                         <div className="flex flex-row items-center gap-5">
                             <Avatar

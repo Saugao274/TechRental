@@ -1,81 +1,73 @@
 'use client'
-
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-    type ReactNode,
-} from 'react'
-import { useRouter } from 'next/navigation'
 import { User } from '@/data/authData'
+import { useRouter } from 'next/navigation'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 
 interface AuthContextType {
     user: User | null
-    loading: boolean
     login: (userData: User) => void
     logout: () => void
     updateIdentifier: () => void
     registeredLessor: () => void
-    updateUser: (newUser: User) => void
-    setUser: React.Dispatch<React.SetStateAction<User | null>>
+
+    updateUser: (userData: User) => void
 }
 
+// Tạo context mặc định
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const router = useRouter()
-
     const [user, setUser] = useState<User | null>(null)
-    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const saved = localStorage.getItem('user')
-        if (saved) setUser(JSON.parse(saved))
-        setLoading(false)
+        const storedUser = localStorage.getItem('user')
+        if (storedUser) {
+            setUser(JSON.parse(storedUser))
+        }
     }, [])
-
-    const persist = (u: User | null) =>
-        u
-            ? localStorage.setItem('user', JSON.stringify(u))
-            : localStorage.removeItem('user')
 
     const login = (userData: User) => {
         setUser(userData)
-        persist(userData)
+        localStorage.setItem('user', JSON.stringify(userData))
     }
 
     const logout = () => {
         setUser(null)
-        persist(null)
+        localStorage.removeItem('user')
         router.push('/')
     }
 
-
+    const updateIdentifier = () => {
+        if (user) {
+            const updatedUser = { ...user, isVerified: true }
+            console.log('IÊ', updateUser)
+            setUser(updatedUser)
+            localStorage.setItem('user', JSON.stringify(updatedUser))
+        }
+    }
     const updateUser = (newUser: User) => {
         setUser(newUser)
-        persist(newUser)
+        localStorage.setItem('user', JSON.stringify(newUser))
     }
-
-    const updateIdentifier = () => {
-        if (user) updateUser({ ...user, isVerified: true })
-    }
-
     const registeredLessor = () => {
-        if (user) updateUser({ ...user, registeredLessor: true })
+        if (user) {
+            const updatedUser = { ...user, registeredLessorr: true }
+            setUser(updatedUser)
+            localStorage.setItem('user', JSON.stringify(updatedUser))
+        }
     }
-
     return (
         <AuthContext.Provider
             value={{
                 user,
-                loading,
                 login,
                 logout,
                 updateIdentifier,
-                registeredLessor,
                 updateUser,
-                setUser,
+                registeredLessor,
             }}
         >
             {children}
@@ -84,7 +76,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 }
 
 export const useAuth = () => {
-    const ctx = useContext(AuthContext)
-    if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-    return ctx
+    const context = useContext(AuthContext)
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider')
+    }
+    return context
 }
