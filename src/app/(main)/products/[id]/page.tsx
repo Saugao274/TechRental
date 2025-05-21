@@ -16,6 +16,7 @@ import {
     Checkbox,
     Radio,
     message,
+    RadioChangeEvent,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
@@ -36,9 +37,12 @@ import webLocalStorage from '@/utils/webLocalStorage'
 import { getRequest } from '@/request'
 import { productEndpoint } from '@/settings/endpoints'
 
+import { useCart } from '@/context/CartContext'
+
 export default function ProductDetail() {
     const params = useParams<{ id: string }>()
     const router = useRouter()
+    const { addItem } = useCart()
     const [productsData, setProductsData] = useState<ProductDetail[]>([])
     const [productDetail, setProductDetail] = useState<ProductDetail>()
     useEffect(() => {
@@ -124,8 +128,15 @@ export default function ProductDetail() {
             (price * selectedDays * (100 - discountValue)) / 100
         return discountedPrice
     }
+    const handleDaysChange = (e: RadioChangeEvent) => {
+        const val = e.target.value as string
+        setSelectedDays(val)
 
-    const onChange = (e: any) => {
+        const found = discountRates.find((d) => d.days === val)
+        setDiscountNumber(found ? found.value : 0)
+    }
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedValue = e.target.value
         console.log('Ngày đã chọn:', selectedValue)
 
@@ -170,10 +181,21 @@ export default function ProductDetail() {
         if (!user) {
             message.warning('Vui lòng đăng nhập để thêm vào giỏ hàng')
             router.push('/signIn')
+            return
         }
-    }
-    if (!productDetail) {
-        return <NotFound />
+        if (!productDetail) return
+
+        addItem(
+            {
+                id: productDetail.idProduct,
+                name: productDetail.title,
+                price: productDetail.price,
+                image: productDetail.images?.[0] ?? '/placeholder.svg',
+                shop: productDetail.idShop?.name ?? '',
+            },
+            quantity,
+            parseInt(selectedDays),
+        )
     }
     return (
         <SectionCommon className="mx-auto flex flex-col gap-24 !pb-4 md:max-w-[1440px]">
@@ -183,7 +205,7 @@ export default function ProductDetail() {
                     <div className="relative aspect-square rounded-lg bg-white">
                         <Image
                             src={currentImageTemp[currentImage]}
-                            alt={productDetail.title}
+                            alt={productDetail?.title ?? ''}
                             fill
                             className="object-cover"
                         />
@@ -241,7 +263,7 @@ export default function ProductDetail() {
                     <div>
                         <div className="flex items-center gap-5">
                             <h1 className="text-2xl font-bold">
-                                {productDetail.title}
+                                {productDetail?.title}
                             </h1>
                         </div>
                         <div className="mt-1 flex w-full flex-col items-start justify-start gap-2">
@@ -271,7 +293,7 @@ export default function ProductDetail() {
                             </span>
                             <span className="ml-2 text-gray-500 line-through">
                                 {(
-                                    productDetail?.price *
+                                    (productDetail?.price ?? 0) *
                                     parseInt(selectedDays)
                                 ).toLocaleString('vi-VN')}
                             </span>
@@ -284,7 +306,7 @@ export default function ProductDetail() {
                         <Radio.Group
                             options={rentalOptions}
                             value={selectedDays}
-                            onChange={onChange}
+                            onChange={handleDaysChange} // 👈 dùng handler mới
                             className="grid grid-cols-5 gap-2"
                         />
                     </div>
@@ -427,13 +449,13 @@ export default function ProductDetail() {
                     <Table
                         className="!rounded-3x overflow-hidden"
                         columns={columns}
-                        dataSource={productDetail.parameter}
+                        dataSource={productDetail?.parameter}
                         pagination={false}
                         showHeader={false}
                     />
                 </Card>
             </div>
-            {productDetail.reviews.length > 0 && (
+            {(productDetail?.reviews?.length ?? 0) > 0 && (
                 <div className="flex flex-col gap-8">
                     <PageHader title={'Đánh giá sản phẩm'} unDivider />
                     <div className="space-y-6 p-4">
@@ -470,7 +492,7 @@ export default function ProductDetail() {
                         </div>
                         <div className="rounded-lg bg-white p-5">
                             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                                {productDetail.reviews.map(
+                                {productDetail?.reviews?.map(
                                     (review: ReviewsType) => (
                                         <Card
                                             key={review.id}

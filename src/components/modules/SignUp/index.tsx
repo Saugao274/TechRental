@@ -1,5 +1,7 @@
 'use client'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
+import axios from '@/utils/axiosInstance'
+
 import { Form, Input, Checkbox } from 'antd'
 import { Lock, Phone, Mail } from 'lucide-react'
 import Image from 'next/image'
@@ -15,17 +17,24 @@ export default function SignUpModule() {
     const handleSubmit = async () => {
         try {
             setLoading(true)
-            await form.validateFields() // Kiểm tra tất cả các trường
-            console.log('Dữ liệu hợp lệ:', form.getFieldsValue())
+            await form.validateFields()
+            const values = form.getFieldsValue()
 
-            // Thực hiện đăng ký (API call hoặc xử lý khác)
-            setTimeout(() => {
-                setLoading(false)
-                alert('Đăng ký thành công!')
-                router.push('/signIn')
-            }, 1000)
-        } catch (error) {
-            console.log('Lỗi:', error)
+            const response = await axios.post('/auth/register', {
+                username: values.email.split('@')[0],
+                email: values.email,
+                password: values.password,
+                phoneNumber: values.phone,
+                address: 'None',
+            })
+
+            alert('Đăng ký thành công. Vui lòng kiểm tra email để xác minh.')
+            router.push('/signIn')
+        } catch (error: any) {
+            console.error('Đăng ký lỗi:', error)
+            const msg = error.response?.data?.message || 'Có lỗi xảy ra'
+            alert('Đăng ký thất bại: ' + msg)
+        } finally {
             setLoading(false)
         }
     }
