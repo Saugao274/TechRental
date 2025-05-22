@@ -1,6 +1,3 @@
-/* -------------------------------------------------
-   CartPage – logic thật + UI bản fake
---------------------------------------------------*/
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'

@@ -27,6 +27,7 @@ import _ from 'lodash'
 import { usePathname, useRouter } from 'next/navigation'
 import NotificationModal from '@/components/modules/NotificationModal'
 import { useAuth } from '@/context/AuthContext'
+import { useCart } from '@/context/CartContext'
 
 export default function Header() {
     const { user, logout } = useAuth()
@@ -39,6 +40,7 @@ export default function Header() {
     const buttonRef = useRef<HTMLButtonElement>(null)
     const headerRef = useRef<HTMLElement>(null)
     const searchInputRef = useRef<HTMLInputElement>(null)
+    const { items: cartItems } = useCart()
 
     const router = useRouter()
     const { scrollY } = useScroll()
@@ -46,6 +48,8 @@ export default function Header() {
     const handleBellClose = () => {
         setBellVisible(false)
     }
+
+    const totalCount = cartItems.reduce((sum, i) => sum + i.quantity, 0)
     useMotionValueEvent(scrollY, 'change', (latest) => {
         if (latest < 10) {
             setIsVisible(true)
@@ -448,14 +452,23 @@ export default function Header() {
                                 </div>
                             )}
                         </div>
-                        <div
+                        {/* <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
+                            onClick={() => router.push('/shopcart')}
+                        > */}
+                        <div
+                            className="relative cursor-pointer rounded p-2 text-primary hover:bg-gray-200"
                             onClick={() => router.push('/shopcart')}
                         >
                             <ShoppingCart />
-                            {user && (
+                            {/* {user && (
                                 <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                     <p className="text-[10px] text-white">4</p>
+                                </div>
+                            )} */}
+                            {user && totalCount > 0 && (
+                                <div className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                                    {totalCount}
                                 </div>
                             )}
                         </div>

@@ -96,26 +96,6 @@ export default function SignUpModule() {
                             </Form.Item>
 
                             {/* Số điện thoại */}
-                            <Form.Item
-                                label="Số điện thoại"
-                                name="phone"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Vui lòng nhập số điện thoại',
-                                    },
-                                    {
-                                        pattern: /^[0-9]{10,11}$/,
-                                        message: 'Số điện thoại không hợp lệ!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    prefix={<Phone />}
-                                    placeholder="Nhập số điện thoại"
-                                    className="items-center rounded-lg"
-                                />
-                            </Form.Item>
 
                             {/* Mật khẩu */}
                             <Form.Item
