@@ -1,5 +1,4 @@
 export interface User {
-    id?: string
     _id: string
     fullname?: string //sau khi định danh
     name: string

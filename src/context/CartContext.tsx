@@ -1,5 +1,6 @@
 'use client'
 
+import { message } from 'antd'
 import {
     createContext,
     useContext,
@@ -7,7 +8,6 @@ import {
     useState,
     type ReactNode,
 } from 'react'
-import { toast } from 'react-toastify'
 
 export interface CartItem {
     id: string // idProduct
@@ -64,7 +64,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             }
             return [...prev, { ...base, quantity: qty, days }]
         })
-        toast.success('Đã thêm vào giỏ hàng!')
+        message.success('Đã thêm vào giỏ hàng!')
     }
 
     const updateItem: CartCtx['updateItem'] = (id, data) =>

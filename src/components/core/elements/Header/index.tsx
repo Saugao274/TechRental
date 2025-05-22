@@ -598,7 +598,9 @@ export default function Header() {
                                         />
                                         <p
                                             onClick={() => {
-                                                router.push(`/personal`)
+                                                router.push(
+                                                    `/personal/${user._id}`,
+                                                )
                                                 setMobileMenuOpen(false)
                                             }}
                                             className="cursor-pointer text-[16px] font-semibold text-primary"

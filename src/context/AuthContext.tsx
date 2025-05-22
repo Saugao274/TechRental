@@ -51,7 +51,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         router.push('/')
     }
 
-
     const updateUser = (newUser: User) => {
         setUser(newUser)
         persist(newUser)
@@ -60,7 +59,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const updateIdentifier = () => {
         if (user) updateUser({ ...user, isVerified: true })
     }
-
     const registeredLessor = () => {
         if (user) updateUser({ ...user, registeredLessor: true })
     }
@@ -84,7 +82,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 }
 
 export const useAuth = () => {
-    const ctx = useContext(AuthContext)
-    if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-    return ctx
+    const context = useContext(AuthContext)
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider')
+    }
+    return context
 }

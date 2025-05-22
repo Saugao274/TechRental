@@ -8,8 +8,6 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { store } from '@/store'
 import { AuthProvider } from '@/context/AuthContext'
 import { CartProvider } from '@/context/CartContext'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 
 export default function AppProvider({
     children,
@@ -43,14 +41,7 @@ export default function AppProvider({
                 <AntApp>
                     <ReduxProvider store={store}>
                         <AuthProvider>
-                            <CartProvider>
-                                {children}
-
-                                <ToastContainer
-                                    position="top-right"
-                                    autoClose={3000}
-                                />
-                            </CartProvider>
+                            <CartProvider>{children}</CartProvider>
                         </AuthProvider>
                     </ReduxProvider>
                 </AntApp>
