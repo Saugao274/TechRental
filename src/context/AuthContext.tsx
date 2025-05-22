@@ -1,73 +1,79 @@
 'use client'
-import { User } from '@/data/authData'
+
+import React, {
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+    type ReactNode,
+} from 'react'
 import { useRouter } from 'next/navigation'
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import { User } from '@/data/authData'
 
 interface AuthContextType {
     user: User | null
+    loading: boolean
     login: (userData: User) => void
     logout: () => void
     updateIdentifier: () => void
     registeredLessor: () => void
-
-    updateUser: (userData: User) => void
+    updateUser: (newUser: User) => void
+    setUser: React.Dispatch<React.SetStateAction<User | null>>
 }
 
-// Tạo context mặc định
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const router = useRouter()
+
     const [user, setUser] = useState<User | null>(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user')
-        if (storedUser) {
-            setUser(JSON.parse(storedUser))
-        }
+        const saved = localStorage.getItem('user')
+        if (saved) setUser(JSON.parse(saved))
+        setLoading(false)
     }, [])
+
+    const persist = (u: User | null) =>
+        u
+            ? localStorage.setItem('user', JSON.stringify(u))
+            : localStorage.removeItem('user')
 
     const login = (userData: User) => {
         setUser(userData)
-        localStorage.setItem('user', JSON.stringify(userData))
+        persist(userData)
     }
 
     const logout = () => {
         setUser(null)
-        localStorage.removeItem('user')
+        persist(null)
         router.push('/')
     }
 
-    const updateIdentifier = () => {
-        if (user) {
-            const updatedUser = { ...user, isVerified: true }
-            console.log('IÊ', updateUser)
-            setUser(updatedUser)
-            localStorage.setItem('user', JSON.stringify(updatedUser))
-        }
-    }
     const updateUser = (newUser: User) => {
         setUser(newUser)
-        localStorage.setItem('user', JSON.stringify(newUser))
+        persist(newUser)
+    }
+
+    const updateIdentifier = () => {
+        if (user) updateUser({ ...user, isVerified: true })
     }
     const registeredLessor = () => {
-        if (user) {
-            const updatedUser = { ...user, registeredLessorr: true }
-            setUser(updatedUser)
-            localStorage.setItem('user', JSON.stringify(updatedUser))
-        }
+        if (user) updateUser({ ...user, registeredLessor: true })
     }
+
     return (
         <AuthContext.Provider
             value={{
                 user,
+                loading,
                 login,
                 logout,
                 updateIdentifier,
-                updateUser,
                 registeredLessor,
+                updateUser,
+                setUser,
             }}
         >
             {children}

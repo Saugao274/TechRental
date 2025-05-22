@@ -27,6 +27,7 @@ import _ from 'lodash'
 import { usePathname, useRouter } from 'next/navigation'
 import NotificationModal from '@/components/modules/NotificationModal'
 import { useAuth } from '@/context/AuthContext'
+import { useCart } from '@/context/CartContext'
 
 export default function Header() {
     const { user, logout } = useAuth()
@@ -39,6 +40,7 @@ export default function Header() {
     const buttonRef = useRef<HTMLButtonElement>(null)
     const headerRef = useRef<HTMLElement>(null)
     const searchInputRef = useRef<HTMLInputElement>(null)
+    const { items: cartItems } = useCart()
 
     const router = useRouter()
     const { scrollY } = useScroll()
@@ -46,6 +48,8 @@ export default function Header() {
     const handleBellClose = () => {
         setBellVisible(false)
     }
+
+    const totalCount = cartItems.reduce((sum, i) => sum + i.quantity, 0)
     useMotionValueEvent(scrollY, 'change', (latest) => {
         if (latest < 10) {
             setIsVisible(true)
@@ -65,107 +69,126 @@ export default function Header() {
         setLastScrollY(latest)
     })
 
-    const items: MenuProps['items'] = [
-        {
-            key: '1',
-            label: (
-                <p
-                    className="block cursor-pointer text-[14px] text-primary"
-                    onClick={() => {
-                        router.push(`/personal/update-info`)
-                        setMobileMenuOpen(false)
-                    }}
-                >
-                    Cập nhật thông tin cá nhân
-                </p>
-            ),
-        },
-        // {
-        //     key: '2',
-        //     label: (
-        //         <p
-        //             className="block cursor-pointer text-[14px] text-primary"
-        //             onClick={() => {
-        //                 router.push(`/personal/payment`)
-        //                 setMobileMenuOpen(false)
-        //             }}
-        //         >
-        //             Thanh toán
-        //         </p>
-        //     ),
-        // },
-        {
-            key: '3',
-            label: (
-                <p
-                    className="block cursor-pointer text-[14px] text-primary"
-                    onClick={() => {
-                        router.push(`/personal/rented-history`)
-                        setMobileMenuOpen(false)
-                    }}
-                >
-                    Lịch sử thuê
-                </p>
-            ),
-        },
-        {
-            key: '4',
-
-            label: (
-                <p
-                    className="block cursor-pointer text-[14px] text-primary"
-                    onClick={() => {
-                        router.push(`/personal/rental-registry`)
-                        setMobileMenuOpen(false)
-                    }}
-                >
-                    Đăng ký làm người cho thuê
-                </p>
-            ),
-        },
-        {
-            key: '5',
-            label: (
-                <p
-                    className="block cursor-pointer text-[14px] text-primary"
-                    onClick={() => {
-                        router.push(`/personal/orders`)
-                        setMobileMenuOpen(false)
-                    }}
-                >
-                    Đơn hàng của tôi
-                </p>
-            ),
-        },
-        {
-            key: '6',
-            label: (
-                <p
-                    className="block cursor-pointer text-[14px] text-primary"
-                    onClick={() => {
-                        router.push(`/personal/password`)
-                        setMobileMenuOpen(false)
-                    }}
-                >
-                    Thay đổi mật khẩu
-                </p>
-            ),
-        },
-        {
-            key: '7',
-            label: (
-                <p
-                    className="block cursor-pointer text-[14px] text-primary"
-                    onClick={() => {
-                        router.push(`/rental`)
-                        setMobileMenuOpen(false)
-                    }}
-                >
-                    Chế độ người cho thuê
-                </p>
-            ),
-        },
-    ]
+    const items: MenuProps['items'] = user
+        ? [
+              {
+                  key: '1',
+                  label: (
+                      <span
+                          onClick={() => router.push(`/personal/${user._id}`)}
+                      >
+                          Trang cá nhân
+                      </span>
+                  ),
+              },
+              // {
+              //     key: '2',
+              //     label: (
+              //         <p
+              //             className="block cursor-pointer text-[14px] text-primary"
+              //             onClick={() => {
+              //                 router.push(`/personal/payment`)
+              //                 setMobileMenuOpen(false)
+              //             }}
+              //         >
+              //             Thanh toán
+              //         </p>
+              //     ),
+              // },
+              {
+                  key: '3',
+                  label: <span onClick={logout}>Đăng xuất</span>,
+              },
+              {
+                  key: 'update',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(`/personal/${user._id}/update-info`)
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Cập nhật thông tin cá nhân
+                      </p>
+                  ),
+              },
+              {
+                  key: '4',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(
+                                  `/personal/${user._id}/rented-history`,
+                              )
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Lịch sử thuê
+                      </p>
+                  ),
+              },
+              {
+                  key: '5',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(
+                                  `/personal/${user._id}/rental-registry`,
+                              )
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Đăng ký làm người cho thuê
+                      </p>
+                  ),
+              },
+              {
+                  key: '6',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(`/personal/${user._id}/orders`)
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Đơn hàng của tôi
+                      </p>
+                  ),
+              },
+              {
+                  key: '7',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(`/personal/${user._id}/password`)
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Thay đổi mật khẩu
+                      </p>
+                  ),
+              },
+              {
+                  key: '8',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push('/rental')
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Chế độ người cho thuê
+                      </p>
+                  ),
+              },
+          ]
+        : []
     const itemsRental: MenuProps['items'] = [
         {
             key: '1',
@@ -429,14 +452,23 @@ export default function Header() {
                                 </div>
                             )}
                         </div>
-                        <div
+                        {/* <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
+                            onClick={() => router.push('/shopcart')}
+                        > */}
+                        <div
+                            className="relative cursor-pointer rounded p-2 text-primary hover:bg-gray-200"
                             onClick={() => router.push('/shopcart')}
                         >
                             <ShoppingCart />
-                            {user && (
+                            {/* {user && (
                                 <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                     <p className="text-[10px] text-white">4</p>
+                                </div>
+                            )} */}
+                            {user && totalCount > 0 && (
+                                <div className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                                    {totalCount}
                                 </div>
                             )}
                         </div>
@@ -566,7 +598,9 @@ export default function Header() {
                                         />
                                         <p
                                             onClick={() => {
-                                                router.push(`/personal`)
+                                                router.push(
+                                                    `/personal/${user._id}`,
+                                                )
                                                 setMobileMenuOpen(false)
                                             }}
                                             className="cursor-pointer text-[16px] font-semibold text-primary"
@@ -942,12 +976,15 @@ export default function Header() {
 const DropdownProfile = () => {
     const router = useRouter()
     const { user, logout } = useAuth()
+
+    if (!user) return null // ẩn dropdown khi chưa đăng nhập
+
     const items: MenuProps['items'] = [
         {
-            key: '1',
+            key: 'personal',
             label: (
                 <p
-                    onClick={() => router.push(`/personal`)}
+                    onClick={() => router.push(`/personal/${user._id}`)}
                     className="text-[16px]"
                 >
                     Trang cá nhân
@@ -955,16 +992,22 @@ const DropdownProfile = () => {
             ),
         },
         {
-            key: '2',
-            label: <p className="text-[16px]">Lịch sử thuê</p>,
+            key: 'history',
+            label: (
+                <p
+                    onClick={() =>
+                        router.push(`/personal/${user._id}/rented-history`)
+                    }
+                    className="text-[16px]"
+                >
+                    Lịch sử thuê
+                </p>
+            ),
         },
         {
-            key: '3',
+            key: 'logout',
             label: (
-                <div
-                    className="flex flex-row items-center gap-2"
-                    onClick={logout}
-                >
+                <div className="flex items-center gap-2" onClick={logout}>
                     <p className="text-[16px]">Đăng xuất</p>
                     <LogOut size={18} />
                 </div>
@@ -973,21 +1016,15 @@ const DropdownProfile = () => {
     ]
 
     return (
-        <div>
-            <Dropdown menu={{ items }} trigger={['click']}>
-                <a onClick={(e) => e.preventDefault()}>
-                    <Space>
-                        <div className="flex cursor-pointer flex-row items-center gap-2 rounded p-2 text-primary">
-                            <CircleUserRound />
-                            <div className="w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                <p className="text-[16px] font-semibold">
-                                    {user?.name}
-                                </p>
-                            </div>
-                        </div>
-                    </Space>
-                </a>
-            </Dropdown>
-        </div>
+        <Dropdown menu={{ items }} trigger={['click']}>
+            <a onClick={(e) => e.preventDefault()}>
+                <Space className="flex cursor-pointer items-center gap-2 p-2 text-primary">
+                    <CircleUserRound />
+                    <span className="w-[120px] overflow-hidden text-ellipsis whitespace-nowrap text-[16px] font-semibold">
+                        {user.name}
+                    </span>
+                </Space>
+            </a>
+        </Dropdown>
     )
 }

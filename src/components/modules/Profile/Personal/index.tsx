@@ -141,7 +141,7 @@ export default function PersonalProfile() {
 
     const handleVerificationClick = () => {
         // setIsModalOpen(true)
-        router.push('/personal/verification')
+        router.push(`/personal/${user?._id}/verification`)
     }
     const extractFaceFromImage = async (imageUrl: string) => {
         const img = await faceapi.fetchImage(imageUrl)
@@ -486,7 +486,7 @@ export default function PersonalProfile() {
                 <div
                     className="mt-4 flex justify-end"
                     onClick={() => {
-                        router.push('/personal/update-info')
+                        router.push(`/personal/${user?._id}/update-info`)
                     }}
                 >
                     <ButtonCommon type="primary" className="bg-blue-500">
@@ -557,7 +557,7 @@ export default function PersonalProfile() {
                 <h2 className="mb-4 text-lg font-bold">
                     Thông tin người cho thuê
                 </h2>
-                {!user?.registeredLessorr ? (
+                {!user?.registeredLessor ? (
                     <Card className="flex items-center">
                         <div className="flex flex-row items-center gap-5">
                             <Avatar
