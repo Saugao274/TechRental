@@ -27,7 +27,11 @@ import {
     X,
 } from 'lucide-react'
 import TextArea from 'antd/es/input/TextArea'
-import { categoryEndpoint, productEndpoint } from '@/settings/endpoints'
+import {
+    categoryEndpoint,
+    cloudinaryEndpoint,
+    productEndpoint,
+} from '@/settings/endpoints'
 import { getRequest, postRequest } from '@/request'
 import { CategoryType } from '@/data/products'
 import { useAuth } from '@/context/AuthContext'
@@ -108,22 +112,48 @@ export default function ProductCreateForm() {
         // Thêm các loại khác: drone, light, lens
     }
     const handleSubmit = async (values: any) => {
-        const detailUrls = detailImages.map((file) => URL.createObjectURL(file))
-        const realUrls = realImages.map((file) => URL.createObjectURL(file))
-        const images = [...detailUrls, ...realUrls]
-
-        const categoryKey = values?.category?.label || values?.category?.key
-        const attributeList = productAttributes[categoryKey] || []
-
-        const parameter = attributeList
-            .filter((a) => values?.[a.key] !== undefined)
-            .map((attr) => ({
-                key: attr.key,
-                label: attr.label,
-                value: values[attr.key] ?? '',
-            }))
-
         try {
+            const detailUrls = await Promise.all(
+                detailImages?.map(async (file) => {
+                    const formData = new FormData()
+                    formData.append('my_file', file)
+
+                    const res = await postRequest(
+                        cloudinaryEndpoint.UPLOAD,
+                        { data: formData },
+                        true,
+                    )
+                    return res.secure_url
+                }) || [],
+            )
+
+            const realUrls = await Promise.all(
+                realImages?.map(async (file) => {
+                    const formData = new FormData()
+                    formData.append('my_file', file)
+
+                    const res = await postRequest(
+                        cloudinaryEndpoint.UPLOAD,
+                        { data: formData },
+                        true,
+                    )
+                    return res.secure_url
+                }) || [],
+            )
+
+            const images = [...realUrls, ...detailUrls]
+
+            const categoryKey = values?.category?.label || values?.category?.key
+            const attributeList = productAttributes[categoryKey] || []
+
+            const parameter = attributeList
+                .filter((a) => values?.[a.key] !== undefined)
+                .map((attr) => ({
+                    key: attr.key,
+                    label: attr.label,
+                    value: values[attr.key] ?? '',
+                }))
+
             const res = await postRequest(productEndpoint.CREATE, {
                 data: {
                     title: values?.title?.trim(),
@@ -344,7 +374,7 @@ export default function ProductCreateForm() {
                         >
                             <ImageUploadPreview
                                 value={detailImages}
-                                onChange={(newFiles) => {
+                                onChange={async (newFiles) => {
                                     setDetailImages(newFiles)
                                 }}
                             />

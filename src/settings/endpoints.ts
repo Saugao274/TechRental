@@ -42,6 +42,10 @@ const productReviewEndpoint = {
         `${prefixBase}/productReview/product/${id}`,
     CREATE: `${prefixBase}/shopDetail`,
 }
+const cloudinaryEndpoint = {
+    UPLOAD: `${prefixBase}/cloudinary`,
+}
+
 export {
     authEndpoint,
     userEndpoint,
@@ -49,4 +53,5 @@ export {
     storeEndpoint,
     productReviewEndpoint,
     categoryEndpoint,
+    cloudinaryEndpoint,
 }
