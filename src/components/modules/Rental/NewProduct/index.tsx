@@ -12,25 +12,26 @@ import {
     Switch,
     InputNumber,
     Typography,
-    Divider,
-    Card,
     Collapse,
     Progress,
     Col,
     Row,
 } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
-import { UploadFile } from 'antd/es/upload/interface'
 import {
     ChevronDown,
     ChevronUp,
-    Lightbulb,
     RotateCw,
     TriangleAlert,
     UploadCloud,
     X,
 } from 'lucide-react'
 import TextArea from 'antd/es/input/TextArea'
+import { categoryEndpoint, productEndpoint } from '@/settings/endpoints'
+import { getRequest, postRequest } from '@/request'
+import { CategoryType } from '@/data/products'
+import { useAuth } from '@/context/AuthContext'
+import { useRouter } from 'next/navigation'
 
 const { Panel } = Collapse
 const { Title, Text } = Typography
@@ -51,6 +52,8 @@ const priceFields: PriceField[] = [
 
 export default function ProductCreateForm() {
     const [form] = Form.useForm()
+    const { user } = useAuth()
+    const router = useRouter()
 
     const validateVideo = (file: File) => {
         const isMp4 = file.type === 'video/mp4'
@@ -64,35 +67,146 @@ export default function ProductCreateForm() {
 
         return isMp4 && isLt100MB
     }
+    const [category, setCategory] = useState('')
     const [collapsed, setCollapsed] = useState(true)
-    const handleSubmit = (values: any) => {
-        //todo: submit form data to server
-        console.log('Form values:', values)
+    const productAttributes: Record<
+        string,
+        { key: string; label: string; required?: boolean }[]
+    > = {
+        Camera: [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            { key: 'cameraType', label: 'Loại máy ảnh', required: true },
+            { key: 'productCode', label: 'Mã sản phẩm', required: true },
+            { key: 'sensorSize', label: 'Kích thước cảm biến' },
+            { key: 'resolution', label: 'Độ phân giải (MP)' },
+            { key: 'lensSupport', label: 'Hệ lens (Canon EF, Sony E,...)' },
+            { key: 'burstSpeed', label: 'Tốc độ chụp liên tiếp' },
+            { key: 'videoFormat', label: 'Định Dạng Quay Video' },
+            { key: 'opticalZoom', label: 'Zoom quang học' },
+            { key: 'iso', label: 'Chỉ số ISO' },
+            { key: 'storage', label: 'Ổ cứng lưu trữ (nếu tích hợp)' },
+            { key: 'screen', label: 'Màn hình xoay / cảm ứng' },
+            { key: 'accessories', label: 'Phụ kiện đi kèm' },
+            { key: 'mic', label: 'Input mic / tai nghe' },
+        ],
+        laptop: [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            { key: 'cpu', label: 'Loại bộ vi xử lý', required: true },
+            { key: 'displayResolution', label: 'Độ phân giải màn hình' },
+            { key: 'gpuRam', label: 'Bộ nhớ đồ họa (RAM)' },
+            { key: 'vram', label: 'Hệ thống bộ nhớ (VRAM)' },
+            { key: 'screenSize', label: 'Kích thước màn hình' },
+            { key: 'graphicCard', label: 'Card đồ họa' },
+            { key: 'ports', label: 'Cổng kết nối (USB-C, HDMI,...)' },
+            { key: 'weight', label: 'Khối lượng' },
+            { key: 'iso', label: 'Chỉ số ISO' },
+            { key: 'storage', label: 'Ổ cứng lưu trữ (nếu tích hợp)' },
+            { key: 'accessories', label: 'Phụ kiện đi kèm' },
+        ],
+        // Thêm các loại khác: drone, light, lens
     }
-    const getContentScore = (values: any, priceFields: any[]): number => {
+    const handleSubmit = async (values: any) => {
+        const detailUrls = detailImages.map((file) => URL.createObjectURL(file))
+        const realUrls = realImages.map((file) => URL.createObjectURL(file))
+        const images = [...detailUrls, ...realUrls]
+
+        const categoryKey = values?.category?.label || values?.category?.key
+        const attributeList = productAttributes[categoryKey] || []
+
+        const parameter = attributeList
+            .filter((a) => values?.[a.key] !== undefined)
+            .map((attr) => ({
+                key: attr.key,
+                label: attr.label,
+                value: values[attr.key] ?? '',
+            }))
+
+        try {
+            const res = await postRequest(productEndpoint.CREATE, {
+                data: {
+                    title: values?.title?.trim(),
+                    brand: values?.brand?.trim(),
+                    category: values?.category?.key,
+
+                    price: values?.dailyPrice,
+                    priceWeek: values?.weeklyPrice,
+                    priceMonth: values?.monthlyPrice,
+
+                    parameter,
+                    images,
+                    idShop: user?._id,
+                    details: values?.description,
+                    shortDetails: values?.description
+                        ? values.description.length > 100
+                            ? values.description.substring(0, 100) + '...'
+                            : values.description
+                        : '',
+
+                    location: values?.location,
+                    discount: values?.discount,
+                    stock: values?.stock,
+                },
+            })
+
+            if (!res?.metadata?._id) {
+                message.error('Tạo sản phẩm thất bại')
+                return
+            }
+
+            message.success('Tạo sản phẩm thành công')
+            router.push(`/products/${res.metadata._id}`)
+        } catch (error) {
+            console.error('Error while creating product:', error)
+            message.error('Đã xảy ra lỗi khi tạo sản phẩm')
+        }
+    }
+
+    const [categoryData, setCategoryData] = useState<CategoryType[]>()
+    useEffect(() => {
+        const getCategoryData = async () => {
+            const res = await getRequest(categoryEndpoint.GET_ALL)
+            setCategoryData(res?.metadata)
+        }
+        getCategoryData()
+    }, [])
+    const getContentScore = (values: any): number => {
         let score = 0
-        const detailImages = values.detailImage || []
+        const detailImages = values.detailImages || []
+
         if (detailImages.length >= 3) score += 1
 
         const description = values.description || ''
         if (description.trim().length >= 30) score += 1
 
-        priceFields.forEach((field) => {
-            const price = values[`${field.name}Price`]
-            const stock = values[`${field.name}Stock`]
-            const enabled = values[`${field.name}Enabled`]
+        const price = values?.dailyPrice
+        const stock = values?.stock
+        if (price > 0 && stock > 0) {
+            score += 1
+        }
+        if (values.title?.trim()) score += 0.5
 
-            if (enabled && price > 0 && stock > 0) {
-                score += 1
-            }
-        })
-        console.log(score)
+        const categoryKey = values?.category?.label || values?.category?.name
+        if (categoryKey) score += 0.5
+        if (values?.location) score += 0.5
+        const requiredAttrs =
+            productAttributes[categoryKey]?.filter((a) => a.required) || []
+
+        if (
+            requiredAttrs.length > 0 &&
+            requiredAttrs.every((attr) => values[attr.key])
+        ) {
+            score += 0.5
+        }
+
         return score
     }
 
     const [contentScore, setContentScore] = useState(0)
     const [detailImages, setDetailImages] = useState<File[]>([])
     const [realImages, setRealImages] = useState<File[]>([])
+    const locationData = ['Hồ Chí Minh', 'Đà Nẵng', 'Hà Nội']
 
     function getContentRank(score: number): string {
         if (score === 0) return 'Poor'
@@ -114,18 +228,25 @@ export default function ProductCreateForm() {
                     form={form}
                     onValuesChange={() => {
                         const values = form.getFieldsValue()
-                        console.log('first', values)
-                        const score = getContentScore(values, priceFields)
+
+                        if (values?.category) {
+                            setCategory(values.category.label)
+                        }
+
+                        const score = getContentScore(values)
                         setContentScore(score)
                     }}
                     onFinish={handleSubmit}
+                    onFinishFailed={({ errorFields }) => {
+                        if (errorFields.length > 0) {
+                            message.error(
+                                'Vui lòng điền đầy đủ thông tin bắt buộc!',
+                            )
+                        }
+                    }}
                     className="mx-auto flex max-w-2xl flex-col gap-5 rounded-xl"
                     initialValues={{
-                        dailyPrice: 0,
                         dailyStock: '',
-                        dailyEnabled: true,
-                        weeklyEnabled: true,
-                        monthlyEnabled: true,
                     }}
                 >
                     <div className="rounded-2xl bg-white p-4">
@@ -134,7 +255,7 @@ export default function ProductCreateForm() {
                         </h3>
 
                         <Form.Item
-                            name="productName"
+                            name="title"
                             label="Tên sản phẩm"
                             rules={[
                                 {
@@ -163,21 +284,33 @@ export default function ProductCreateForm() {
                                 },
                             ]}
                         >
-                            <Select placeholder="Chọn thể loại">
-                                <Select.Option value="camera">
-                                    Máy ảnh
-                                </Select.Option>
-                                <Select.Option value="laptop">
-                                    Laptop
-                                </Select.Option>
-                                <Select.Option value="phone">
-                                    Điện thoại
-                                </Select.Option>
+                            <Select placeholder="Chọn thể loại" labelInValue>
+                                {categoryData?.map((c) => (
+                                    <Select.Option key={c._id} value={c._id}>
+                                        {c.name}
+                                    </Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
 
                         <Form.Item
-                            name="realImage"
+                            name="location"
+                            label="Vị trí"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn danh mục',
+                                },
+                            ]}
+                        >
+                            <Select placeholder="Chọn thể loại">
+                                {locationData?.map((c) => (
+                                    <Select.Option value={c}>{c}</Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name={'realImages'}
                             label="Ảnh thực tế của sản phẩm (Chụp chung với chủ shop)"
                             valuePropName="fileList"
                             getValueFromEvent={(e) =>
@@ -190,7 +323,7 @@ export default function ProductCreateForm() {
                                 },
                             ]}
                         >
-                           <ImageUploadPreview
+                            <ImageUploadPreview
                                 value={realImages}
                                 onChange={(newFiles) => {
                                     setRealImages(newFiles)
@@ -199,7 +332,7 @@ export default function ProductCreateForm() {
                         </Form.Item>
 
                         <Form.Item
-                            name="detailImage"
+                            name={'detailImages'}
                             label="Ảnh chi tiết của sản phẩm"
                             rules={[
                                 {
@@ -245,251 +378,89 @@ export default function ProductCreateForm() {
                             </Dragger>
                         </Form.Item>
                     </div>
-                    <div className="rounded-2xl bg-white p-4">
-                        <h3 className="text-lg font-bold text-primary">
-                            Đặc tính sản phẩm
-                        </h3>
-                        <h4>
-                            Cung cấp đầy đủ đặc tính sản phẩm để tối ưu kết quả
-                            tìm kiếm sản phẩm.
-                        </h4>
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item
-                                    name="brand"
-                                    label="Thương hiệu"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message:
-                                                'Vui lòng nhập thương hiệu',
-                                        },
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item
-                                    name="status"
-                                    label="Tình trạng"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Vui lòng nhập tình trạng',
-                                        },
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                            </Col>
+                    {category != '' && (
+                        <>
+                            <div className="rounded-2xl bg-white p-4">
+                                <h3 className="text-lg font-bold text-primary">
+                                    Đặc tính sản phẩm
+                                </h3>
+                                <h4>
+                                    Cung cấp đầy đủ đặc tính sản phẩm để tối ưu
+                                    kết quả tìm kiếm sản phẩm.
+                                </h4>
+                                <Row gutter={16}>
+                                    {/* Hiển thị luôn các trường bắt buộc */}
+                                    {productAttributes[category]
+                                        ?.filter((f) => f.required)
+                                        .map((field) => (
+                                            <Col span={12} key={field.key}>
+                                                <Form.Item
+                                                    name={field.key}
+                                                    label={field.label}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: `Vui lòng nhập ${field.label.toLowerCase()}`,
+                                                        },
+                                                    ]}
+                                                >
+                                                    <Input />
+                                                </Form.Item>
+                                            </Col>
+                                        ))}
 
-                            <Col span={12}>
-                                <Form.Item
-                                    name="cameraType"
-                                    label="Loại máy ảnh"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message:
-                                                'Vui lòng nhập loại máy ảnh',
-                                        },
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item
-                                    name="productCode"
-                                    label="Mã sản phẩm"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message:
-                                                'Vui lòng nhập mã sản phẩm',
-                                        },
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                            </Col>
+                                    {!collapsed &&
+                                        productAttributes[category]
+                                            ?.filter((f) => !f.required)
+                                            .map((field) => (
+                                                <Col span={12} key={field.key}>
+                                                    <Form.Item
+                                                        name={field.key}
+                                                        label={field.label}
+                                                        rules={[]} // Không bắt buộc
+                                                    >
+                                                        <Input />
+                                                    </Form.Item>
+                                                </Col>
+                                            ))}
+                                </Row>
 
-                            <Col span={12}>
-                                <Form.Item
-                                    name="sensorSize"
-                                    label="Kích thước cảm biến"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message:
-                                                'Vui lòng nhập kích thước cảm biến',
-                                        },
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item
-                                    name="resolution"
-                                    label="Độ phân giải (MP)"
-                                >
-                                    <Input />
-                                </Form.Item>
-                            </Col>
-
-                            {/* Các trường có thể ẩn/hiện */}
-                            {!collapsed && (
-                                <>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="lensSupport"
-                                            label="Hệ lens (Canon EF, Sony E,...)"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="burstSpeed"
-                                            label="Tốc độ chụp liên tiếp"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="videoFormat"
-                                            label="Định Dạng Quay Video"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="opticalZoom"
-                                            label="Zoom quang học"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="iso"
-                                            label="Chỉ số ISO"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="storage"
-                                            label="Ổ cứng lưu trữ (nếu tích hợp)"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="screen"
-                                            label="Màn hình xoay / cảm ứng"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="accessories"
-                                            label="Phụ kiện đi kèm"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col span={12}>
-                                        <Form.Item
-                                            name="mic"
-                                            label="Input mic / tai nghe"
-                                        >
-                                            <Input />
-                                        </Form.Item>
-                                    </Col>
-                                </>
-                            )}
-                        </Row>
-
-                        <div className="mt-4 flex justify-start">
-                            <Button
-                                type="link"
-                                icon={
-                                    collapsed ? (
-                                        <ChevronDown size={16} />
-                                    ) : (
-                                        <ChevronUp size={16} />
-                                    )
-                                }
-                                onClick={() => setCollapsed(!collapsed)}
-                                className="font-medium text-blue-600"
-                            >
-                                {collapsed ? 'Mở rộng' : 'Thu gọn'}
-                            </Button>
-                        </div>
-                    </div>
-                    <Form.Item name={'description'}>
-                        <div className="rounded-2xl bg-white p-4">
-                            <h3 className="text-lg font-bold text-primary">
-                                Mô tả sản phẩm
-                            </h3>
-                            <h4>
-                                Cung cấp đầy đủ đặc tính sản phẩm để tối ưu kết
-                                quả tìm kiếm sản phẩm.
-                            </h4>
-                            <TextArea className="" rows={6}></TextArea>
-                        </div>
-                    </Form.Item>
-                    <div className="rounded-2xl bg-white p-4">
-                        <h3 className="text-lg font-bold text-primary">
-                            Giá bán và kho hàng
-                        </h3>
-                        {priceFields.map((field) => (
-                            <div
-                                key={field.name}
-                                className="mb-4 rounded-xl border px-4 py-3"
-                            >
-                                <Text strong className="text-base text-black">
-                                    * {field.label}
-                                </Text>
-
-                                <div className="mt-3 grid grid-cols-3 items-center gap-4">
-                                    <Form.Item
-                                        name={`${field.name}Price`}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng nhập giá',
-                                            },
-                                        ]}
-                                        label={
-                                            <span className="text-xs text-gray-600">
-                                                Giá
-                                            </span>
+                                <div className="mt-4 flex justify-start">
+                                    <Button
+                                        type="link"
+                                        icon={
+                                            collapsed ? (
+                                                <ChevronDown size={16} />
+                                            ) : (
+                                                <ChevronUp size={16} />
+                                            )
                                         }
+                                        onClick={() => setCollapsed(!collapsed)}
+                                        className="font-medium text-blue-600"
                                     >
-                                        <InputNumber
-                                            size="large"
-                                            addonAfter="đ"
-                                            min={0}
-                                            className="w-full"
-                                            placeholder="Nhập giá"
-                                        />
-                                    </Form.Item>
-
+                                        {collapsed ? 'Mở rộng' : 'Thu gọn'}
+                                    </Button>
+                                </div>
+                            </div>
+                            <Form.Item name={'description'}>
+                                <div className="rounded-2xl bg-white p-4">
+                                    <h3 className="text-lg font-bold text-primary">
+                                        Mô tả sản phẩm
+                                    </h3>
+                                    <h4>
+                                        Cung cấp đầy đủ đặc tính sản phẩm để tối
+                                        ưu kết quả tìm kiếm sản phẩm.
+                                    </h4>
+                                    <TextArea className="" rows={6}></TextArea>
+                                </div>
+                            </Form.Item>
+                            <div className="rounded-2xl bg-white p-4">
+                                <h3 className="text-lg font-bold text-primary">
+                                    Giá bán và kho hàng
+                                </h3>
+                                <div className="my-4 rounded-xl border px-4 py-3">
                                     <Form.Item
-                                        name={`${field.name}Stock`}
+                                        name={`stock`}
                                         rules={[
                                             {
                                                 required: true,
@@ -505,49 +476,75 @@ export default function ProductCreateForm() {
                                     >
                                         <Input placeholder="Số lượng" />
                                     </Form.Item>
-
-                                    <Form.Item
-                                        name={`${field.name}Enabled`}
-                                        valuePropName="checked"
-                                        label={
-                                            <span className="text-xs text-gray-600">
-                                                Mở cho thuê
-                                            </span>
-                                        }
+                                </div>
+                                {priceFields.map((field) => (
+                                    <div
+                                        key={field.name}
+                                        className="mb-4 rounded-xl border px-4 py-3"
                                     >
-                                        <CustomSwitch />
+                                        <div className="mt-3 grid items-center gap-4">
+                                            <Form.Item
+                                                name={`${field.name}Price`}
+                                                rules={[
+                                                    {
+                                                        required:
+                                                            field.name ===
+                                                            'daily',
+                                                        message:
+                                                            'Vui lòng nhập giá',
+                                                    },
+                                                ]}
+                                                label={
+                                                    <span className="text-red text-xs">
+                                                        {field.label}
+                                                    </span>
+                                                }
+                                            >
+                                                <InputNumber
+                                                    size="large"
+                                                    addonAfter="đ"
+                                                    min={0}
+                                                    className="w-full"
+                                                    placeholder="Nhập giá"
+                                                />
+                                            </Form.Item>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="grid grid-cols-5 rounded-2xl bg-white p-4">
+                                <div className="col-span-3 flex flex-row items-center gap-2 font-medium text-primary">
+                                    <div className="flex h-[50px] w-[50px] items-center">
+                                        <TriangleAlert className="text-[#F9AC2A]" />
+                                    </div>
+                                    <p>
+                                        Danh mục sản phẩm là bằng tay lựa chọn.
+                                        Sản phẩm với sai danh mục sẽ bị đình
+                                        chỉ.
+                                    </p>
+                                </div>
+                                <div className="col-span-2 flex flex-row items-center gap-2">
+                                    <Form.Item className="!mb-0">
+                                        <Button
+                                            htmlType="submit"
+                                            variant="outlined"
+                                            className="border-primary"
+                                        >
+                                            Lưu bản nháp
+                                        </Button>
+                                    </Form.Item>
+                                    <Form.Item className="!mb-0">
+                                        <Button
+                                            htmlType="submit"
+                                            type="primary"
+                                        >
+                                            Gửi đi
+                                        </Button>
                                     </Form.Item>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                    <div className="grid grid-cols-5 rounded-2xl bg-white p-4">
-                        <div className="col-span-3 flex flex-row items-center gap-2 font-medium text-primary">
-                            <div className="flex h-[50px] w-[50px] items-center">
-                                <TriangleAlert className="text-[#F9AC2A]" />
-                            </div>
-                            <p>
-                                Danh mục sản phẩm là bằng tay lựa chọn. Sản phẩm
-                                với sai danh mục sẽ bị đình chỉ.
-                            </p>
-                        </div>
-                        <div className="col-span-2 flex flex-row items-center gap-2">
-                            <Form.Item className="!mb-0">
-                                <Button
-                                    htmlType="submit"
-                                    variant="outlined"
-                                    className="border-primary"
-                                >
-                                    Lưu bản nháp
-                                </Button>
-                            </Form.Item>
-                            <Form.Item className="!mb-0">
-                                <Button htmlType="submit" type="primary">
-                                    Gửi đi
-                                </Button>
-                            </Form.Item>
-                        </div>
-                    </div>
+                        </>
+                    )}
                 </Form>
             </div>
             <div className="col-span-2">
@@ -582,7 +579,7 @@ export default function ProductCreateForm() {
                                     }
                                 />
                                 <span className="text-lg font-bold">
-                                    { (contentScore/5)*100 }%
+                                    {(contentScore / 5) * 100}%
                                 </span>
                             </div>
                             <Text
@@ -723,22 +720,6 @@ export default function ProductCreateForm() {
     )
 }
 
-const CustomSwitch = () => {
-    const [checked, setChecked] = useState(true)
-
-    return (
-        <Switch
-            checked={checked}
-            onChange={(value) => setChecked(value)}
-            checkedChildren="cho thuê"
-            unCheckedChildren="không"
-            style={{
-                backgroundColor: checked ? '#22C55E' : '#EF4444', // xanh khi ON, đỏ khi OFF
-            }}
-        />
-    )
-}
-
 interface ImageUploadPreviewProps {
     value?: File[]
     onChange?: (value: File[]) => void
@@ -791,9 +772,9 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
 
             <div
                 onClick={handleClick}
-                className="mb-2 flex h-32 cursor-pointer items-center justify-center rounded-md border border-dashed flex-col"
+                className="mb-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-md border border-dashed"
             >
-                <UploadCloud className="h-5 w-5" size={40}/>
+                <UploadCloud className="h-5 w-5" size={40} />
                 <span className="text-gray-500">Tải ảnh lên</span>
             </div>
 

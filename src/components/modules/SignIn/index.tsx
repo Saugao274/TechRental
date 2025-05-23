@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { postRequest } from '@/request'
+import constants from '@/settings/constants'
 
 const SignIn = () => {
     const router = useRouter()
@@ -44,7 +45,8 @@ const SignIn = () => {
             const role = user.roles?.[0] ?? 'guest'
 
             login(user)
-            localStorage.setItem('access_token', token)
+
+            localStorage.setItem(constants.ACCESS_TOKEN, token)
             localStorage.setItem('role', role)
             localStorage.setItem('userId', user._id)
 

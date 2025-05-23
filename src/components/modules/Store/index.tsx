@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     Typography,
     Card,
@@ -15,7 +15,6 @@ import {
     Space,
     Avatar,
     Badge,
-    Breadcrumb,
     Radio,
     Slider,
     Empty,
@@ -37,244 +36,82 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useParams, useRouter } from 'next/navigation'
-import NotFound from '@/app/not-found'
-import { getRandomFallbackImage, shopDetails } from '@/data/products'
+import { useParams } from 'next/navigation'
+import { type ProductDetail, type ShopDetail } from '@/data/products'
+import { getRequest } from '@/request'
+import { productEndpoint, storeEndpoint } from '@/settings/endpoints'
 
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
 const { Search: SearchInput } = Input
-
-// Dữ liệu mẫu cho cửa hàng
-const storeData = {
-    id: 'store123',
-    name: 'Tech Store',
-    avatar: '/images/Intro/avt1.png',
-    cover: '/images/Slider/Slider0.png',
-    rating: 4.8,
-    followers: 2568,
-    responseRate: 98,
-    responseTime: 'Trong vòng 1 giờ',
-    joinedDate: '01/2020',
-    productsCount: 156,
-    description:
-        'Chuyên cung cấp các thiết bị nhiếp ảnh chuyên nghiệp chính hãng với giá cả hợp lý. Cam kết hàng chính hãng 100%, bảo hành đầy đủ.',
-    location: 'TP. Hồ Chí Minh',
-    contact: {
-        phone: '0987654321',
-        email: 'photo.gear@example.com',
-    },
-    operatingHours: '08:00 - 20:00 (Thứ 2 - Chủ nhật)',
-    categories: [
-        'Máy ảnh',
-        'Ống kính',
-        'Phụ kiện',
-        'Thiết bị quay phim',
-        'Đèn flash',
-        'Chân máy',
-        'Túi máy ảnh',
-    ],
-    totalReviews: 280,
-
-    lastActive: '3 giờ trước',
+type StoreModuleProps = {
+    id?: string
 }
 
-// Dữ liệu mẫu cho sản phẩm
-const productsData = [
-    {
-        id: 'p1',
-        name: 'Máy ảnh Canon EOS 5D Mark IV',
-        image: getRandomFallbackImage(),
-        price: 2500000,
-        originalPrice: 2800000,
-        rating: 4.9,
-        reviewCount: 120,
-        soldCount: 89,
-        discount: 10,
-        isNew: false,
-        category: 'Máy ảnh',
-    },
-    {
-        id: 'p2',
-        name: 'Ống kính Sony 24-70mm f/2.8 GM',
-        image: getRandomFallbackImage(),
-        price: 1800000,
-        originalPrice: 2000000,
-        rating: 4.8,
-        reviewCount: 95,
-        soldCount: 76,
-        discount: 10,
-        isNew: false,
-        category: 'Ống kính',
-    },
-    {
-        id: 'p3',
-        name: 'Máy quay GoPro Hero 10 Black',
-        image: getRandomFallbackImage(),
-        price: 950000,
-        originalPrice: 1000000,
-        rating: 4.7,
-        reviewCount: 85,
-        soldCount: 62,
-        discount: 5,
-        isNew: true,
-        category: 'Thiết bị quay phim',
-    },
-    {
-        id: 'p4',
-        name: 'Chân máy Manfrotto Befree Advanced',
-        image: getRandomFallbackImage(),
-        price: 350000,
-        originalPrice: 400000,
-        rating: 4.6,
-        reviewCount: 72,
-        soldCount: 58,
-        discount: 12,
-        isNew: false,
-        category: 'Chân máy',
-    },
-    {
-        id: 'p5',
-        name: 'Đèn flash Godox V1',
-        image: getRandomFallbackImage(),
-        price: 280000,
-        originalPrice: 320000,
-        rating: 4.5,
-        reviewCount: 65,
-        soldCount: 49,
-        discount: 12,
-        isNew: false,
-        category: 'Đèn flash',
-    },
-    {
-        id: 'p6',
-        name: 'Túi máy ảnh Peak Design Everyday Sling',
-        image: getRandomFallbackImage(),
-        price: 180000,
-        originalPrice: 200000,
-        rating: 4.7,
-        reviewCount: 58,
-        soldCount: 45,
-        discount: 10,
-        isNew: true,
-        category: 'Túi máy ảnh',
-    },
-    {
-        id: 'p7',
-        name: 'Ống kính Canon 70-200mm f/2.8L IS III USM',
-        image: getRandomFallbackImage(),
-        price: 2200000,
-        originalPrice: 2500000,
-        rating: 4.9,
-        reviewCount: 48,
-        soldCount: 32,
-        discount: 12,
-        isNew: false,
-        category: 'Ống kính',
-    },
-    {
-        id: 'p8',
-        name: 'Máy ảnh Sony Alpha A7 III',
-        image: getRandomFallbackImage(),
+export function StoreModule({ id }: StoreModuleProps) {
+    const [productsData, setProductsData] = useState<ProductDetail[]>([])
+    const [storeData, setStoreData] = useState<ShopDetail>()
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await getRequest(
+                    storeEndpoint.GET_BY_ID(id || ''),
+                )
+                const responseAllProductById = await getRequest(
+                    productEndpoint.GET_BY_IDSHOP(id || ''),
+                )
+                setProductsData(responseAllProductById.metadata)
+                setStoreData(response.metadata)
+            } catch (error) {
+                console.error('Error fetching products:', error)
+            }
+        }
 
-        price: 2100000,
-        originalPrice: 2300000,
-        rating: 4.8,
-        reviewCount: 42,
-        soldCount: 29,
-        discount: 8,
-        isNew: false,
-        category: 'Máy ảnh',
-    },
-    {
-        id: 'p9',
-        name: 'Microphone Rode VideoMic Pro+',
-        image: getRandomFallbackImage(),
-
-        price: 420000,
-        originalPrice: 450000,
-        rating: 4.6,
-        reviewCount: 38,
-        soldCount: 25,
-        discount: 6,
-        isNew: true,
-        category: 'Phụ kiện',
-    },
-    {
-        id: 'p10',
-        name: 'Gimbal DJI Ronin-SC',
-        image: getRandomFallbackImage(),
-
-        price: 850000,
-        originalPrice: 900000,
-        rating: 4.7,
-        reviewCount: 35,
-        soldCount: 22,
-        discount: 5,
-        isNew: false,
-        category: 'Phụ kiện',
-    },
-    {
-        id: 'p11',
-        name: 'Đèn LED Godox SL-60W',
-        image: getRandomFallbackImage(),
-
-        price: 320000,
-        originalPrice: 350000,
-        rating: 4.5,
-        reviewCount: 32,
-        soldCount: 20,
-        discount: 8,
-        isNew: false,
-        category: 'Đèn flash',
-    },
-    {
-        id: 'p12',
-        name: 'Thẻ nhớ SanDisk Extreme Pro 128GB',
-        image: getRandomFallbackImage(),
-        price: 120000,
-        originalPrice: 150000,
-        rating: 4.8,
-        reviewCount: 28,
-        soldCount: 120,
-        discount: 20,
-        isNew: false,
-        category: 'Phụ kiện',
-    },
-]
-
-export default function StoreModule() {
-    const params = useParams()
-    const { id } = params
-
-    const router = useRouter()
-
+        fetchProducts()
+    }, [])
     const [activeCategory, setActiveCategory] = useState<string>('all')
     const [sortBy, setSortBy] = useState<string>('popular')
-    const [priceRange, setPriceRange] = useState<[number, number]>([0, 3000000])
+    const [priceRange, setPriceRange] = useState<[number, number]>([
+        0, 30000000,
+    ])
     const [searchValue, setSearchValue] = useState<string>('')
 
-    // Lọc sản phẩm theo danh mục, giá và tìm kiếm
-    const filteredProducts = productsData.filter((product) => {
-        const matchCategory =
-            activeCategory === 'all' || product.category === activeCategory
-        const matchPrice =
-            product.price >= priceRange[0] && product.price <= priceRange[1]
-        const matchSearch =
-            searchValue === '' ||
-            product.name.toLowerCase().includes(searchValue.toLowerCase())
+    const filteredProducts = useMemo(() => {
+        const normalizedCategory = (activeCategory ?? 'all')
+            .toLowerCase()
+            .trim()
+        return (productsData ?? []).filter((product) => {
+            const matchCategory =
+                normalizedCategory === 'all' ||
+                product?.category?.name?.toLowerCase() === normalizedCategory
 
-        return matchCategory && matchPrice && matchSearch
-    })
+            const matchPrice = (() => {
+                console.log('product.price.pricece', product.price)
 
-    // Sắp xếp sản phẩm
+                return (
+                    product.price >= priceRange[0] &&
+                    product.price <= priceRange[1]
+                )
+            })()
+            const matchSearch =
+                searchValue === '' ||
+                (product.title ?? '')
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase())
+
+            return matchPrice && matchSearch && matchCategory
+        })
+    }, [productsData, activeCategory, priceRange, searchValue])
+
     const sortedProducts = [...filteredProducts].sort((a, b) => {
         if (sortBy === 'popular') {
-            return b.reviewCount - a.reviewCount
+            return (b.reviews?.length || 0) - (a.reviews?.length || 0)
         } else if (sortBy === 'newest') {
-            return b.isNew ? 1 : -1
+            return (
+                (Number(b?.isNewProduct) || 0) - (Number(a?.isNewProduct) || 0)
+            )
         } else if (sortBy === 'bestselling') {
-            return b.soldCount - a.soldCount
+            return (b.soldCount || 0) - (a.soldCount || 0)
         } else if (sortBy === 'priceLowToHigh') {
             return a.price - b.price
         } else if (sortBy === 'priceHighToLow') {
@@ -329,8 +166,8 @@ export default function StoreModule() {
                 }}
             >
                 <Image
-                    src={storeData.cover || '/placeholder.svg'}
-                    alt={storeData.name}
+                    src={storeData?.avatar || '/placeholder.svg'}
+                    alt={storeData?.name || ''}
                     fill
                     style={{ objectFit: 'cover' }}
                 />
@@ -348,7 +185,7 @@ export default function StoreModule() {
                 >
                     <Avatar
                         size={80}
-                        src={storeData.avatar}
+                        src={storeData?.avatar}
                         style={{ flexShrink: 0 }}
                     />
 
@@ -364,7 +201,7 @@ export default function StoreModule() {
                         >
                             <div>
                                 <Title level={3} style={{ margin: 0 }}>
-                                    {storeData.name}
+                                    {storeData?.name}
                                 </Title>
                                 <div
                                     style={{
@@ -379,25 +216,28 @@ export default function StoreModule() {
                                     <Divider type="vertical" />
                                     <Clock size={14} />
                                     <Text type="secondary">
-                                        Tham gia từ {storeData.joinedDate}
+                                        Tham gia từ{' '}
+                                        {storeData?.createdAt
+                                            ?.getDay?.()
+                                            .toString()}
                                     </Text>
                                 </div>
                                 <Space size="large">
                                     <Space>
                                         <Star size={16} color="#fadb14" />
-                                        <Text>{storeData.rating}/5</Text>
+                                        <Text>{storeData?.rating}/5</Text>
                                     </Space>
                                     <Space>
                                         <User size={16} />
                                         <Text>
-                                            {storeData.followers.toLocaleString()}{' '}
-                                            người theo dõi
+                                            {storeData?.followers} người theo
+                                            dõi
                                         </Text>
                                     </Space>
                                     <Space>
                                         <Package size={16} />
                                         <Text>
-                                            {storeData.productsCount} sản phẩm
+                                            {storeData?.productsCount} sản phẩm
                                         </Text>
                                     </Space>
                                 </Space>
@@ -424,30 +264,35 @@ export default function StoreModule() {
                                     <Space>
                                         <MapPin size={16} />
                                         <Text>
-                                            Địa chỉ: {storeData.location}
+                                            Địa chỉ: {storeData?.location}
                                         </Text>
                                     </Space>
-                                    <Space>
-                                        <Phone size={16} />
-                                        <Text>
-                                            SĐT: {storeData.contact.phone}
-                                        </Text>
-                                    </Space>
+                                    {storeData?.contact?.phone && (
+                                        <Space>
+                                            <Phone size={16} />
+                                            <Text>
+                                                SĐT: {storeData?.contact?.phone}
+                                            </Text>
+                                        </Space>
+                                    )}
                                 </Space>
                             </Col>
                             <Col xs={24} md={8}>
                                 <Space direction="vertical" size="small">
-                                    <Space>
-                                        <Mail size={16} />
-                                        <Text>
-                                            Email: {storeData.contact.email}
-                                        </Text>
-                                    </Space>
+                                    {storeData?.contact?.email && (
+                                        <Space>
+                                            <Mail size={16} />
+                                            <Text>
+                                                Email:{' '}
+                                                {storeData?.contact?.email}
+                                            </Text>
+                                        </Space>
+                                    )}
                                     <Space>
                                         <Calendar size={16} />
                                         <Text>
                                             Giờ hoạt động:{' '}
-                                            {storeData.operatingHours}
+                                            {storeData?.operatingHours}
                                         </Text>
                                     </Space>
                                 </Space>
@@ -458,14 +303,14 @@ export default function StoreModule() {
                                         <CheckCircle size={16} />
                                         <Text>
                                             Tỷ lệ phản hồi:{' '}
-                                            {storeData.responseRate}%
+                                            {storeData?.responseRate}%
                                         </Text>
                                     </Space>
                                     <Space>
                                         <AlertCircle size={16} />
                                         <Text>
                                             Thời gian phản hồi:{' '}
-                                            {storeData.responseTime}
+                                            {storeData?.responseTime}
                                         </Text>
                                     </Space>
                                 </Space>
@@ -477,7 +322,7 @@ export default function StoreModule() {
 
             {/* Store description */}
             <Card title="Giới thiệu cửa hàng" style={{ marginBottom: '24px' }}>
-                <Paragraph>{storeData.description}</Paragraph>
+                <Paragraph>{storeData?.description}</Paragraph>
             </Card>
 
             {/* Products section */}
@@ -496,25 +341,36 @@ export default function StoreModule() {
                                 <div>
                                     <Select
                                         value={activeCategory}
-                                        onChange={(value) =>
+                                        onChange={(value) => {
+                                            console.log('first', value)
                                             setActiveCategory(value)
-                                        }
+                                        }}
                                         className="w-full"
                                     >
                                         <Select.Option value="all">
                                             {' '}
                                             Tất cả
                                         </Select.Option>
-                                        {storeData.categories.map(
-                                            (category) => (
-                                                <Select.Option
-                                                    key={category}
-                                                    value={category}
-                                                >
-                                                    {category}
-                                                </Select.Option>
+                                        {Array.from(
+                                            new Set(
+                                                productsData
+                                                    .map(
+                                                        (p) =>
+                                                            p?.category?.name,
+                                                    )
+                                                    .filter(
+                                                        (name) =>
+                                                            name != undefined,
+                                                    ),
                                             ),
-                                        )}
+                                        ).map((name) => (
+                                            <Select.Option
+                                                key={name}
+                                                value={name}
+                                            >
+                                                {name}
+                                            </Select.Option>
+                                        ))}
                                     </Select>
                                 </div>
                             ) : (
@@ -527,24 +383,35 @@ export default function StoreModule() {
                                 >
                                     <Radio.Group
                                         value={activeCategory}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            console.log('first', e)
                                             setActiveCategory(e.target.value)
-                                        }
+                                        }}
                                         buttonStyle="solid"
                                     >
                                         <Radio.Button value="all">
                                             Tất cả
                                         </Radio.Button>
-                                        {storeData.categories.map(
-                                            (category) => (
-                                                <Radio.Button
-                                                    key={category}
-                                                    value={category}
-                                                >
-                                                    {category}
-                                                </Radio.Button>
+                                        {Array.from(
+                                            new Set(
+                                                productsData
+                                                    ?.map(
+                                                        (p) =>
+                                                            p?.category?.name,
+                                                    )
+                                                    .filter(
+                                                        (name) =>
+                                                            name != undefined,
+                                                    ),
                                             ),
-                                        )}
+                                        ).map((name) => (
+                                            <Radio.Button
+                                                key={name}
+                                                value={name}
+                                            >
+                                                {name}
+                                            </Radio.Button>
+                                        ))}
                                     </Radio.Group>
                                 </div>
                             )}
@@ -606,9 +473,9 @@ export default function StoreModule() {
                                                 <Slider
                                                     range
                                                     min={0}
-                                                    max={3000000}
+                                                    max={30000000}
                                                     step={100000}
-                                                    defaultValue={priceRange}
+                                                    value={priceRange}
                                                     onChange={(value) =>
                                                         setPriceRange(
                                                             value as [
@@ -660,10 +527,10 @@ export default function StoreModule() {
                                             sm={12}
                                             md={8}
                                             lg={6}
-                                            key={product.id}
+                                            key={product._id}
                                         >
                                             <Link
-                                                href={`/products/${product.id}`}
+                                                href={`/products/${product._id}`}
                                                 style={{
                                                     textDecoration: 'none',
                                                 }}
@@ -680,11 +547,12 @@ export default function StoreModule() {
                                                         >
                                                             <Image
                                                                 src={
-                                                                    product.image ||
+                                                                    product
+                                                                        ?.images?.[0] ||
                                                                     '/placeholder.svg'
                                                                 }
                                                                 alt={
-                                                                    product.name
+                                                                    product.title
                                                                 }
                                                                 fill
                                                                 style={{
@@ -693,7 +561,7 @@ export default function StoreModule() {
                                                                 }}
                                                             />
 
-                                                            {product.discount >
+                                                            {product?.discount >
                                                                 0 && (
                                                                 <div
                                                                     style={{
@@ -714,12 +582,12 @@ export default function StoreModule() {
                                                                 >
                                                                     -
                                                                     {
-                                                                        product.discount
+                                                                        product?.discount
                                                                     }
                                                                     %
                                                                 </div>
                                                             )}
-                                                            {product.isNew && (
+                                                            {product.isNewProduct && (
                                                                 <div
                                                                     style={{
                                                                         position:
@@ -766,7 +634,7 @@ export default function StoreModule() {
                                                                     'ellipsis',
                                                             }}
                                                         >
-                                                            {product.name}
+                                                            {product.title}
                                                         </Text>
                                                     </div>
 
@@ -796,7 +664,7 @@ export default function StoreModule() {
                                                                 }}
                                                             >
                                                                 {formatPrice(
-                                                                    product.originalPrice,
+                                                                    product.price,
                                                                 )}
                                                             </Text>
                                                         )}
@@ -807,35 +675,94 @@ export default function StoreModule() {
                                                             display: 'flex',
                                                             justifyContent:
                                                                 'space-between',
-                                                            marginTop: '8px',
+                                                            alignItems:
+                                                                'center',
+                                                            marginTop: 8,
+                                                            flexWrap: 'nowrap',
+                                                            width: '100%',
                                                         }}
                                                     >
-                                                        <Space>
-                                                            <Rate
-                                                                disabled
-                                                                defaultValue={
-                                                                    product.rating
-                                                                }
-                                                                style={{
-                                                                    fontSize:
-                                                                        '12px',
-                                                                }}
-                                                            />
-                                                            <Text
-                                                                type="secondary"
-                                                                style={{
-                                                                    fontSize:
-                                                                        '12px',
-                                                                }}
-                                                            >
-                                                                {product.rating}
-                                                            </Text>
-                                                        </Space>
+                                                        {product.reviews
+                                                            .length > 0 &&
+                                                            (() => {
+                                                                const avgRating =
+                                                                    product.reviews.reduce(
+                                                                        (
+                                                                            acc,
+                                                                            cur,
+                                                                        ) =>
+                                                                            acc +
+                                                                            cur.rating,
+                                                                        0,
+                                                                    ) /
+                                                                    product
+                                                                        .reviews
+                                                                        .length
+                                                                const avgRatingFixed =
+                                                                    Number(
+                                                                        avgRating.toFixed(
+                                                                            1,
+                                                                        ),
+                                                                    )
+                                                                const reviewCount =
+                                                                    product
+                                                                        .reviews
+                                                                        .length
+
+                                                                return (
+                                                                    <div
+                                                                        style={{
+                                                                            display:
+                                                                                'flex',
+
+                                                                            flexDirection:
+                                                                                'column',
+                                                                            justifyContent:
+                                                                                'center',
+                                                                            alignItems:
+                                                                                'center',
+                                                                        }}
+                                                                    >
+                                                                        <Rate
+                                                                            disabled
+                                                                            allowHalf
+                                                                            defaultValue={
+                                                                                avgRatingFixed
+                                                                            }
+                                                                            style={{
+                                                                                fontSize: 10,
+                                                                            }}
+                                                                        />
+                                                                        <Text
+                                                                            type="secondary"
+                                                                            style={{
+                                                                                fontSize: 10,
+                                                                                whiteSpace:
+                                                                                    'nowrap',
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                avgRatingFixed
+                                                                            }{' '}
+                                                                            (
+                                                                            {
+                                                                                reviewCount
+                                                                            }{' '}
+                                                                            đánh
+                                                                            giá)
+                                                                        </Text>
+                                                                    </div>
+                                                                )
+                                                            })()}
+
                                                         <Text
                                                             type="secondary"
                                                             style={{
-                                                                fontSize:
-                                                                    '12px',
+                                                                fontSize: 10,
+                                                                marginLeft: 8,
+                                                                whiteSpace:
+                                                                    'nowrap',
+                                                                flexShrink: 0,
                                                             }}
                                                         >
                                                             Đã thuê{' '}
@@ -862,7 +789,7 @@ export default function StoreModule() {
                         <div style={{ maxWidth: '800px' }}>
                             <Paragraph>
                                 <Title level={4}>Giới thiệu</Title>
-                                <Text>{storeData.description}</Text>
+                                <Text>{storeData?.description}</Text>
                             </Paragraph>
 
                             <Divider />
@@ -874,33 +801,39 @@ export default function StoreModule() {
                                         <Space>
                                             <MapPin size={16} />
                                             <Text strong>Địa chỉ:</Text>
-                                            <Text>{storeData.location}</Text>
+                                            <Text>{storeData?.location}</Text>
                                         </Space>
                                     </li>
-                                    <li style={{ marginBottom: '12px' }}>
-                                        <Space>
-                                            <Phone size={16} />
-                                            <Text strong>Số điện thoại:</Text>
-                                            <Text>
-                                                {storeData.contact.phone}
-                                            </Text>
-                                        </Space>
-                                    </li>
-                                    <li style={{ marginBottom: '12px' }}>
-                                        <Space>
-                                            <Mail size={16} />
-                                            <Text strong>Email:</Text>
-                                            <Text>
-                                                {storeData.contact.email}
-                                            </Text>
-                                        </Space>
-                                    </li>
+                                    {storeData?.contact?.phone && (
+                                        <li style={{ marginBottom: '12px' }}>
+                                            <Space>
+                                                <Phone size={16} />
+                                                <Text strong>
+                                                    Số điện thoại:
+                                                </Text>
+                                                <Text>
+                                                    {storeData?.contact?.phone}
+                                                </Text>
+                                            </Space>
+                                        </li>
+                                    )}
+                                    {storeData?.contact?.email && (
+                                        <li style={{ marginBottom: '12px' }}>
+                                            <Space>
+                                                <Mail size={16} />
+                                                <Text strong>Email:</Text>
+                                                <Text>
+                                                    {storeData.contact.email}
+                                                </Text>
+                                            </Space>
+                                        </li>
+                                    )}
                                     <li style={{ marginBottom: '12px' }}>
                                         <Space>
                                             <Calendar size={16} />
                                             <Text strong>Giờ hoạt động:</Text>
                                             <Text>
-                                                {storeData.operatingHours}
+                                                {storeData?.operatingHours}
                                             </Text>
                                         </Space>
                                     </li>

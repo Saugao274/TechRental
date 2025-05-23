@@ -58,10 +58,7 @@ const RecommentProduct = () => {
                 {!loading ? (
                     <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-3">
                         {currentProducts.map((product) => (
-                            <ProductCard
-                                key={product.idProduct}
-                                product={product}
-                            />
+                            <ProductCard key={product._id} product={product} />
                         ))}
                     </div>
                 ) : (
@@ -73,7 +70,7 @@ const RecommentProduct = () => {
                         <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-3">
                             {currentProducts.map((product) => (
                                 <ProductCard
-                                    key={product.idProduct}
+                                    key={product._id}
                                     product={product}
                                 />
                             ))}

@@ -16,7 +16,7 @@ const NewsDetail = () => {
         return <NotFound />
     }
 
-    return <NewsModule article={article}/>
+    return <NewsModule article={article} />
 }
 
 export default NewsDetail

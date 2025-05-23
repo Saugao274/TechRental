@@ -1,5 +1,5 @@
 export type ordersType = {
-    idOrder: string
+    _id: string
     idProduct: string[]
     dateOrder: string
     duration: string
@@ -37,7 +37,7 @@ export const statusColors = {
 }
 export const orders: ordersType[] = [
     {
-        idOrder: 'OR01',
+        _id: 'OR01',
         idProduct: ['p001', 'DJI_Osmo_Pocket_3'],
         dateOrder: '01/01/2023',
         duration: '5 ngày',
@@ -46,7 +46,7 @@ export const orders: ordersType[] = [
         nameCustomer: 'Viết Thông',
     },
     {
-        idOrder: 'OR01',
+        _id: 'OR01',
         idProduct: ['chan_may_001'],
         dateOrder: '15/02/2023',
         duration: '7 ngày',
@@ -55,7 +55,7 @@ export const orders: ordersType[] = [
         nameCustomer: 'Nguyên',
     },
     {
-        idOrder: 'Or03',
+        _id: 'Or03',
         idProduct: ['chan_may_001'],
         dateOrder: '05/04/2023',
         duration: '3 ngày',
@@ -64,7 +64,7 @@ export const orders: ordersType[] = [
         nameCustomer: 'Duyên',
     },
     {
-        idOrder: 'Or03',
+        _id: 'Or03',
         idProduct: ['chan_may_001'],
         dateOrder: '05/04/2023',
         duration: '3 ngày',
@@ -73,7 +73,7 @@ export const orders: ordersType[] = [
         nameCustomer: 'Duyên',
     },
     {
-        idOrder: 'OR_003',
+        _id: 'OR_003',
         idProduct: ['fpv_001'],
         dateOrder: '10/04/2023',
         duration: '10 ngày',
@@ -82,7 +82,7 @@ export const orders: ordersType[] = [
         nameCustomer: 'Đức Ánh',
     },
     {
-        idOrder: 'OR_003',
+        _id: 'OR_003',
         idProduct: ['fpv_001'],
         dateOrder: '10/04/2023',
         duration: '10 ngày',

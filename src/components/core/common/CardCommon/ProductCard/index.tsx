@@ -28,7 +28,7 @@ export default function ProductCard({
     const [currentImage, setCurrentImage] = useState<string>(initialImage || '')
 
     const handleClick = () => {
-        router.push(`/products/${product.idProduct}`)
+        router.push(`/products/${product._id}`)
     }
 
     const handleMouseEnter = () => {

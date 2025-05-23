@@ -19,11 +19,13 @@ export interface CategoryType {
 }
 
 export type ProductDetail = {
-    idProduct: string
+    _id: string
     title: string
     brand?: string
     category: CategoryType
     price: number
+    priceWeek: number
+    priceMonth: number
     images?: string[]
     view: number
     idShop: ShopDetail
@@ -38,9 +40,13 @@ export type ProductDetail = {
     isHotProduct: boolean
     isNewProduct: boolean
     location: string
+    soldCount: number
+    discount: number | 0
+    rate: number | 0
+    storage: number | 0
 }
 export interface ShopDetail {
-    idShop: string
+    _id: string
     name: string
     avatar?: string
     cover?: string
@@ -59,14 +65,13 @@ export interface ShopDetail {
         email?: string
     }
     operatingHours?: string
-    categories?: string[]
     createdAt?: Date
     updatedAt?: Date
 }
 
 export const shopDetails: ShopDetail[] = [
     {
-        idShop: 's001',
+        _id: 's001',
         name: 'Tech Store',
         avatar: '/images/Intro/avt1.png',
         responseRate: 95,
@@ -77,7 +82,7 @@ export const shopDetails: ShopDetail[] = [
         location: 'Hồ Chí Minh',
     },
     {
-        idShop: ' shopDetails[1]',
+        _id: ' shopDetails[1]',
         name: 'Mobile World',
         avatar: '/images/Intro/avt2.png',
         responseRate: 90,
@@ -88,7 +93,7 @@ export const shopDetails: ShopDetail[] = [
         location: 'Hà Nội',
     },
     {
-        idShop: 's003',
+        _id: 's003',
         name: 'Gadget Hub',
         avatar: '/images/Intro/avt3.png',
         responseRate: 92,
@@ -99,7 +104,7 @@ export const shopDetails: ShopDetail[] = [
         location: 'Đà Nẵng',
     },
     {
-        idShop: 's004',
+        _id: 's004',
         name: 'Creative Zone',
         avatar: '/images/Intro/avt4.png',
         responseRate: 88,

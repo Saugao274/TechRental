@@ -69,21 +69,21 @@ export default function ManageProducts() {
         }
 
         fetchProducts()
-    }, [productsData])
+    }, [])
     const [search, setSearch] = useState('')
-    const findProductById = (idProduct: string) => {
-        return productsData.find((product) => product.idProduct === idProduct)
+    const findProductById = (_id: string) => {
+        return productsData.find((product) => product._id === _id)
     }
 
     const filteredOrders = orders.filter(
         (order) =>
             order.idProduct?.length > 0 &&
             order.idProduct.some(
-                (idProduct) =>
-                    findProductById(idProduct)
+                (_id) =>
+                    findProductById(_id)
                         ?.title.toLowerCase()
                         .includes(search.toLowerCase()) ||
-                    idProduct.toLowerCase().includes(search.toLowerCase()),
+                    _id.toLowerCase().includes(search.toLowerCase()),
             ),
     )
 
@@ -216,7 +216,7 @@ export default function ManageProducts() {
                     <Card bordered={false} className="p-4 shadow-md">
                         <p>
                             <strong>Mã đơn hàng:</strong>{' '}
-                            {selectedOrder.idOrder}
+                            {selectedOrder.idProduct}
                         </p>
                         <p>
                             <strong>Khách hàng:</strong>{' '}
@@ -233,21 +233,18 @@ export default function ManageProducts() {
                         </p>
                         <p>
                             <strong>Tên sản phẩm:</strong>
-                            {selectedOrder.idProduct.map((idProduct, index) => {
-                                const product = findProductById(idProduct)
+                            {selectedOrder.idProduct.map((_id, index) => {
+                                const product = findProductById(_id)
                                 return (
                                     <span
-                                        key={idProduct}
+                                        key={_id}
                                         className="flex cursor-pointer flex-col text-blue-500 underline"
                                         onClick={() =>
-                                            router.push(
-                                                `/products/${idProduct}`,
-                                            )
+                                            router.push(`/products/${_id}`)
                                         }
                                     >
                                         {product?.title || 'Không tìm thấy'}
-                                        {index !==
-                                            selectedOrder.idProduct.length - 1}
+                                        {index !== selectedOrder._id.length - 1}
                                     </span>
                                 )
                             })}
