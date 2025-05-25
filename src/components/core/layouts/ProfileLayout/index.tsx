@@ -179,12 +179,7 @@ export function ProfileOptionsNavigation({
         //   icon: CreditCard,
         //   active: pathname === `/personal/${userId}/payment`,
         // },
-        {
-            href: `/personal/${userId}/rented-history`,
-            label: 'Lịch sử thuê',
-            icon: Clock,
-            active: pathname === `/personal/${userId}/rented-history`,
-        },
+
         {
             href: `/personal/${userId}/rental-registry`,
             label: 'Đăng ký làm người cho thuê',

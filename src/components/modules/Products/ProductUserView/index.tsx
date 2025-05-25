@@ -26,7 +26,7 @@ export default function ProductUserView() {
                 author: 'Alice Nguyen',
                 avatar: 'https://i.pravatar.cc/150?img=1',
                 content:
-                    'Sản phẩm tuyệt vời, giao hàng nhanh chóng và chất lượng rất tốt.',
+                    'Hồng Nguyên rất đúng giờ và sử dụng thiết bị cẩn thận. Rất vui khi làm việc với bạn!',
                 date: '2024-09-10',
                 rating: 5,
             },
@@ -35,7 +35,7 @@ export default function ProductUserView() {
                 author: 'John Trần',
                 avatar: 'https://i.pravatar.cc/150?img=2',
                 content:
-                    'Chất lượng ổn, nhưng đóng gói chưa thật sự chắc chắn.',
+                    'Người thuê uy tín, hoàn trả thiết bị đúng hạn, tình trạng như mới. Sẽ ưu tiên cho thuê lần sau',
                 date: '2024-09-12',
                 rating: 4,
             },
@@ -43,7 +43,8 @@ export default function ProductUserView() {
                 id: 'r3',
                 author: 'Linh Phạm',
                 avatar: 'https://i.pravatar.cc/150?img=3',
-                content: 'Không hài lòng lắm vì sản phẩm khác với mô tả.',
+                content:
+                    'Thiết bị được trả về sạch sẽ, nguyên vẹn, cực kỳ hài lòng!',
                 date: '2024-09-14',
                 rating: 2,
             },
@@ -60,7 +61,7 @@ export default function ProductUserView() {
                                 <div className="flex flex-col items-center">
                                     <div>
                                         <Avatar
-                                            src={'/images/Intro/avt4.png'}
+                                            src={'/images/Intro/avt2.png'}
                                             size={118}
                                             className="!border-[2px] !border-white"
                                         />
@@ -194,7 +195,7 @@ export default function ProductUserView() {
                     <Static />
                 </div>
                 <div className="px-24">
-                    <div className="flex flex-col gap-8">
+                    <div className="mt-20 flex flex-col gap-8">
                         <PageHader
                             title={'Đánh giá từ người cho thuê'}
                             unDivider
