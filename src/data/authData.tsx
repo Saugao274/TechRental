@@ -23,9 +23,9 @@ export const user = {
     email: 'example@example.com',
     phone: '0123456789',
     address: 'Hà Nội, Việt Nam',
-    isVerified: false,
+    isVerified: true,
     ownedProducts: 5,
     rentingProducts: 2,
     rentedProducts: 10,
-    registeredLessorr: false,
+    registeredLessor: true,
 }

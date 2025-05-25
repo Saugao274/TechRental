@@ -15,7 +15,7 @@ import {
     X,
 } from 'lucide-react'
 import Image from 'next/image'
-import { Button, Dropdown, type MenuProps, Space } from 'antd'
+import { Button, Dropdown, type MenuProps, Space, message } from 'antd'
 import ButtonCommon from '../../common/ButtonCommon'
 import {
     motion,
@@ -68,6 +68,31 @@ export default function Header() {
 
         setLastScrollY(latest)
     })
+    const [shopId, setShopId] = useState<string | null>(null)
+
+    useEffect(() => {
+        const fetchShopId = async () => {
+            if (!user || user.roles?.includes('owner') === false) return
+
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/shopDetail/me`,
+                    {
+                        credentials: 'include',
+                    },
+                )
+                const data = await res.json()
+
+                if (res.ok) {
+                    setShopId(data.metadata._id)
+                }
+            } catch (err) {
+                console.error('Lỗi lấy shop:', err)
+            }
+        }
+
+        fetchShopId()
+    }, [user])
 
     const items: MenuProps['items'] = user
         ? [
@@ -179,7 +204,7 @@ export default function Header() {
                       <p
                           className="block cursor-pointer text-[14px] text-primary"
                           onClick={() => {
-                              router.push('/rental')
+                              router.push(`/rental/${shopId}`)
                               setMobileMenuOpen(false)
                           }}
                       >
@@ -196,7 +221,11 @@ export default function Header() {
                 <p
                     className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
-                        router.push(`/rental`)
+                        if (shopId) {
+                            router.push(`/rental/${shopId}`)
+                        } else {
+                            message.error('Không tìm thấy shop')
+                        }
                         setMobileMenuOpen(false)
                     }}
                 >
@@ -210,7 +239,11 @@ export default function Header() {
                 <p
                     className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
-                        router.push(`/rental/manage-orders`)
+                        if (shopId) {
+                            router.push(`/rental/${shopId}/manage-orders`)
+                        } else {
+                            message.error('Không tìm thấy shop')
+                        }
                         setMobileMenuOpen(false)
                     }}
                 >
@@ -224,7 +257,11 @@ export default function Header() {
                 <p
                     className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
-                        router.push(`/rental/transactions`)
+                        if (shopId) {
+                            router.push(`/rental/${shopId}/transactions`)
+                        } else {
+                            message.error('Không tìm thấy shop')
+                        }
                         setMobileMenuOpen(false)
                     }}
                 >
@@ -234,12 +271,15 @@ export default function Header() {
         },
         {
             key: '4',
-
             label: (
                 <p
                     className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
-                        router.push(`/rental/feedback`)
+                        if (shopId) {
+                            router.push(`/rental/${shopId}/feedback`)
+                        } else {
+                            message.error('Không tìm thấy shop')
+                        }
                         setMobileMenuOpen(false)
                     }}
                 >
@@ -253,7 +293,11 @@ export default function Header() {
                 <p
                     className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
-                        router.push(`/rental/policy`)
+                        if (shopId) {
+                            router.push(`/rental/${shopId}/policy`)
+                        } else {
+                            message.error('Không tìm thấy shop')
+                        }
                         setMobileMenuOpen(false)
                     }}
                 >
@@ -267,7 +311,11 @@ export default function Header() {
                 <p
                     className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
-                        router.push(`/rental/information`)
+                        if (shopId) {
+                            router.push(`/rental/${shopId}/information`)
+                        } else {
+                            message.error('Không tìm thấy shop')
+                        }
                         setMobileMenuOpen(false)
                     }}
                 >

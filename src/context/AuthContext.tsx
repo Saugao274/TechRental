@@ -9,11 +9,13 @@ import React, {
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { User } from '@/data/authData'
+import webStorageClient from '@/utils/webStorageClient'
+import constants from '@/settings/constants'
 
 interface AuthContextType {
     user: User | null
     loading: boolean
-    login: (userData: User) => void
+    login: (userData: User, token: string) => void
     logout: () => void
     updateIdentifier: () => void
     registeredLessor: () => void
@@ -40,9 +42,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             ? localStorage.setItem('user', JSON.stringify(u))
             : localStorage.removeItem('user')
 
-    const login = (userData: User) => {
+    const login = (userData: User, token: string) => {
         setUser(userData)
         persist(userData)
+        webStorageClient.set(constants.ACCESS_TOKEN, token)
     }
 
     const logout = () => {

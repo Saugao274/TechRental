@@ -1,209 +1,213 @@
-"use client"
-import { cn } from "@/libs/utils"
-import { Divider, Layout, Drawer, Button } from "antd"
-import { Contact, FileCog, HandCoins, BadgeIcon as IdCard, Menu, Package, ShoppingCart, X } from "lucide-react"
-import { usePathname, useRouter } from "next/navigation"
-import type React from "react"
-import { useState, useEffect } from "react"
-import SectionCommon from "../../common/SectionCommon"
-import { type HTMLMotionProps, motion } from "framer-motion"
+'use client'
 
-export default function RentalRootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+import React, { useEffect, useState } from 'react'
+import { useParams, usePathname, useRouter } from 'next/navigation'
+import { Layout, Divider, Drawer, Button, message } from 'antd'
+import {
+    Contact,
+    FileCog,
+    HandCoins,
+    BadgeIcon as IdCard,
+    Menu,
+    Package,
+    ShoppingCart,
+    X,
+} from 'lucide-react'
+import { type HTMLMotionProps, motion } from 'framer-motion'
+import { cn } from '@/libs/utils'
+import SectionCommon from '../../common/SectionCommon'
 
-  // Check if screen is mobile
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
+interface RentalRootLayoutProps {
+    children: React.ReactNode
+}
 
-    // Initial check
-    checkIfMobile()
+export default function RentalRootLayout({ children }: RentalRootLayoutProps) {
+    const { id: shopId } = useParams() as { id: string }
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const [isMobile, setIsMobile] = useState(false)
 
-    // Add event listener
-    window.addEventListener("resize", checkIfMobile)
+    // responsive check
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768)
+        handleResize()
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
 
-    // Cleanup
-    return () => window.removeEventListener("resize", checkIfMobile)
-  }, [])
+    return (
+        <Layout className="mx-auto max-w-[1440px] !bg-transparent !font-vietnam">
+            <SectionCommon>
+                {isMobile && (
+                    <div className="mb-4 flex items-center justify-between">
+                        <div>
+                            <h3 className="text-xl font-bold text-primary">
+                                Chế độ người cho thuê
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                                Quản lý sản phẩm và đơn hàng cho thuê
+                            </p>
+                        </div>
+                        <Button
+                            type="text"
+                            icon={<Menu size={24} />}
+                            onClick={() => setIsMobileMenuOpen(true)}
+                        />
+                    </div>
+                )}
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+                <Drawer
+                    title={
+                        <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-primary">
+                                Chế độ người cho thuê
+                            </span>
+                            <Button
+                                type="text"
+                                icon={<X size={18} />}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            />
+                        </div>
+                    }
+                    placement="left"
+                    open={isMobileMenuOpen}
+                    width={280}
+                    onClose={() => setIsMobileMenuOpen(false)}
+                    bodyStyle={{ padding: 16 }}
+                    headerStyle={{
+                        padding: 16,
+                        borderBottom: '1px solid #f0f0f0',
+                    }}
+                >
+                    <RentalProfileOptionsNavigation
+                        shopId={shopId}
+                        className="mt-2"
+                        onItemClick={() => setIsMobileMenuOpen(false)}
+                    />
+                </Drawer>
 
-  return (
-    <Layout className="mx-auto max-w-[1440px] !bg-transparent !font-vietnam">
-      <SectionCommon>
-        {/* Mobile Menu Button */}
-        {isMobile && (
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-bold text-primary">Chế độ người cho thuê</h3>
-              <p className="text-sm text-gray-600">Quản lý sản phẩm và đơn hàng cho thuê</p>
-            </div>
-            <Button
-              type="text"
-              icon={<Menu size={24} />}
-              onClick={toggleMobileMenu}
-              className="flex items-center justify-center"
-            />
-          </div>
-        )}
+                <div className="flex flex-col gap-[20px] md:flex-row">
+                    <LeftSideBarElement shopId={shopId} />
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="w-full md:w-4/5"
+                    >
+                        {children}
+                    </motion.div>
+                </div>
+            </SectionCommon>
+        </Layout>
+    )
+}
 
-        {/* Mobile Sidebar Drawer */}
-        <Drawer
-          title={
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-bold text-primary">Chế độ người cho thuê</span>
-              <Button
-                type="text"
-                icon={<X size={18} />}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex h-8 w-8 items-center justify-center p-0"
-              />
-            </div>
-          }
-          placement="left"
-          onClose={() => setIsMobileMenuOpen(false)}
-          open={isMobileMenuOpen}
-          width={280}
-          bodyStyle={{ padding: "16px" }}
-          headerStyle={{ padding: "16px", borderBottom: "1px solid #f0f0f0" }}
-        >
-          <RentalProfileOptionsNavigation className="mt-2" onItemClick={() => setIsMobileMenuOpen(false)} />
-        </Drawer>
-
-        <div className="flex flex-col md:flex-row gap-[20px]">
-          <LeftSideBarElement />
-          <motion.div
+function LeftSideBarElement({ shopId }: { shopId: string }) {
+    return (
+        <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full md:w-4/5"
-          >
-            {children}
-          </motion.div>
-        </div>
-      </SectionCommon>
-    </Layout>
-  )
+            className="hidden w-1/5 md:block"
+        >
+            <div className="flex flex-col p-5">
+                <div>
+                    <h3 className="text-2xl font-bold text-primary">
+                        Chế độ người cho thuê
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                        Quản lý sản phẩm và đơn hàng cho thuê
+                    </p>
+                </div>
+                <Divider />
+                <RentalProfileOptionsNavigation shopId={shopId} />
+            </div>
+        </motion.div>
+    )
 }
 
-export function LeftSideBarElement() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="hidden w-1/5 md:block"
-    >
-      <div className="flex flex-col p-5">
-        <div>
-          <h3 className="text-2xl font-bold text-primary">Chế độ người cho thuê</h3>
-          <p className="text-sm text-gray-600">Quản lý sản phẩm và đơn hàng cho thuê</p>
-        </div>
-        <Divider />
-        <RentalProfileOptionsNavigation />
-      </div>
-    </motion.div>
-  )
+interface SidebarNavProps extends HTMLMotionProps<'nav'> {
+    shopId: string
+    isLessor?: boolean
+    onItemClick?: () => void
 }
 
-interface SidebarNavProps extends HTMLMotionProps<"nav"> {
-  isLessor?: boolean
-  onItemClick?: () => void
-}
-
-export function RentalProfileOptionsNavigation({
-  className,
-  isLessor = false,
-  onItemClick,
-  ...props
+function RentalProfileOptionsNavigation({
+    shopId,
+    className,
+    isLessor = false,
+    onItemClick,
+    ...props
 }: SidebarNavProps) {
-  const pathname = usePathname()
-  const router = useRouter()
+    const pathname = usePathname()
+    const router = useRouter()
 
-  const routes = [
-    {
-      href: "/rental",
-      label: "Quản Lý Sản Phẩm",
-      icon: Package,
-      active: pathname === "/rental",
-    },
-    {
-      href: "/rental/manage-orders",
-      label: "Quản Lý Đơn Thuê",
-      icon: ShoppingCart,
-      active: pathname === "/rental/manage-orders",
-    },
-    {
-      href: "/rental/transactions",
-      label: "Thống Kê Giao Dịch",
-      icon: HandCoins,
-      active: pathname === "/rental/transactions",
-    },
-    {
-      href: "/rental/feedback",
-      label: "Đánh Giá & Phản Hồi",
-      icon: Contact,
-      active: pathname === "/rental/feedback",
-    },
-    {
-      href: "/rental/policy",
-      label: "Chính Sách Cho Thuê",
-      icon: FileCog,
-      active: pathname === "/rental/policy",
-    },
+    const routes = [
+        { href: `/rental/${shopId}`, label: 'Quản Lý Sản Phẩm', icon: Package },
+        {
+            href: `/rental/${shopId}/manage-orders`,
+            label: 'Quản Lý Đơn Thuê',
+            icon: ShoppingCart,
+        },
+        {
+            href: `/rental/${shopId}/transactions`,
+            label: 'Thống Kê Giao Dịch',
+            icon: HandCoins,
+        },
+        {
+            href: `/rental/${shopId}/feedback`,
+            label: 'Đánh Giá & Phản Hồi',
+            icon: Contact,
+        },
+        {
+            href: `/rental/${shopId}/policy`,
+            label: 'Chính Sách Cho Thuê',
+            icon: FileCog,
+        },
+        {
+            href: `/rental/${shopId}/information`,
+            label: 'Xác Minh Định Danh',
+            icon: IdCard,
+            hidden: isLessor,
+        },
+    ]
 
-    {
-      href: "/rental/information",
-      label: "Xác Minh Định Danh",
-      icon: IdCard,
-      active: pathname === "/rental/Information",
-      hidden: isLessor,
-    },
-  ]
-
-  const handleNavigation = (route: any) => {
-    router.push(route.href)
-
-    // Close mobile menu if onItemClick is provided
-    if (onItemClick) {
-      onItemClick()
+    const handleNavigation = (href: string) => {
+        if (!shopId) {
+            message.error('Không tìm thấy shop')
+            return
+        }
+        router.push(href)
+        onItemClick?.()
     }
-  }
 
-  return (
-    <motion.nav
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className={cn("flex flex-col space-y-2", className)}
-      {...props}
-    >
-      {routes.map((route) =>
-        route.hidden ? null : (
-          <motion.div
-            key={route.href}
-            onClick={() => handleNavigation(route)}
-            className={cn(
-              route.active ? "bg-blue-100 font-semibold text-blue-600" : "text-gray-800 hover:bg-gray-200",
-              "flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-all",
+    return (
+        <motion.nav
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={cn('flex flex-col space-y-2', className)}
+            {...props}
+        >
+            {routes.map(
+                (route) =>
+                    !route.hidden && (
+                        <motion.div
+                            key={route.href}
+                            onClick={() => handleNavigation(route.href)}
+                            className={cn(
+                                pathname === route.href
+                                    ? 'bg-blue-100 font-semibold text-blue-600'
+                                    : 'text-gray-800 hover:bg-gray-200',
+                                'flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-all',
+                            )}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <route.icon className="h-5 w-5" />
+                            {route.label}
+                        </motion.div>
+                    ),
             )}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <route.icon className="h-5 w-5" />
-            {route.label}
-          </motion.div>
-        ),
-      )}
-    </motion.nav>
-  )
+        </motion.nav>
+    )
 }
-

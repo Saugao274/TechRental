@@ -12,30 +12,49 @@ import {
 } from 'antd'
 import { ShieldCheck } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { postRequest } from '@/request'
+import constants from '@/settings/constants'
+import webStorageClient from '@/utils/webStorageClient'
 
 export default function PersonalRentalRegistryPage() {
     const { user, registeredLessor } = useAuth()
     const [showTermsModal, setShowTermsModal] = useState(false)
 
-    const onFinish = (values: any) => {
-        console.log('Form values:', values)
-        message.loading('Đang gửi thông tin đăng ký...', 3)
-        if (!user?.isVerified) {
-            setTimeout(() => {
-                message.success('Bạn phải xác minh tài khoản!')
-                registeredLessor()
-            }, 3000)
-            return
+    const onFinish = async (values: any) => {
+        if (!user) return
+
+        if (!user.isVerified) {
+            return message.warning('Bạn cần xác minh tài khoản trước!')
         }
-        setTimeout(() => {
-            message.success('Admin đã duyệt đơn đăng ký của bạn!')
+
+        const token = webStorageClient.getToken()
+        if (!token) {
+            return message.error(
+                'Không tìm thấy token đăng nhập. Vui lòng đăng nhập lại.',
+            )
+        }
+
+        try {
+            message.loading({ content: 'Đang gửi đăng ký...', key: 'reg' })
+
+            await postRequest('/api/users/become-owner', { data: values })
+
             registeredLessor()
-        }, 3000)
+
+            message.success({
+                content: 'Đăng ký thành công! Admin sẽ duyệt đơn sau.',
+                key: 'reg',
+            })
+        } catch (err: any) {
+            const msg =
+                err?.response?.data?.message ||
+                err?.message ||
+                'Đăng ký thất bại. Vui lòng thử lại'
+            message.error({ content: msg, key: 'reg' })
+        }
     }
 
-    const onFinishFailed = (errorInfo: any) => {
-        console.log('Form error:', errorInfo)
-    }
+    const onFinishFailed = (err: any) => console.log('Form error:', err)
 
     return (
         <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
@@ -106,20 +125,25 @@ export default function PersonalRentalRegistryPage() {
                     </Form.Item>
 
                     <Form.Item
-                        label="Khu vực hoạt động"
-                        name="operatingArea"
+                        label="Địa điểm kinh doanh"
+                        name="location"
                         rules={[
                             {
                                 required: true,
-                                message: 'Vui lòng nhập khu vực hoạt động!',
+                                message: 'Vui lòng chọn địa điểm!',
                             },
                         ]}
                         className="max-w-xs"
                     >
-                        <Input
-                            placeholder="VD: Hà Nội, TP.HCM..."
-                            className="h-12"
-                        />
+                        <Select placeholder="Chọn địa điểm">
+                            <Select.Option value="Hồ Chí Minh">
+                                Hồ Chí Minh
+                            </Select.Option>
+                            <Select.Option value="Đà Nẵng">
+                                Đà Nẵng
+                            </Select.Option>
+                            <Select.Option value="Hà Nội">Hà Nội</Select.Option>
+                        </Select>
                     </Form.Item>
 
                     <Form.Item

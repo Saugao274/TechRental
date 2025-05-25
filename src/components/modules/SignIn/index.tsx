@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { postRequest } from '@/request'
 import constants from '@/settings/constants'
+import webStorageClient from '@/utils/webStorageClient'
 
 const SignIn = () => {
     const router = useRouter()
@@ -44,15 +45,17 @@ const SignIn = () => {
             const token = response.token
             const role = user.roles?.[0] ?? 'guest'
 
-            login(user)
+            login(user, token)
+            webStorageClient.set(constants.ACCESS_TOKEN, token)
 
-            localStorage.setItem(constants.ACCESS_TOKEN, token)
             localStorage.setItem('role', role)
             localStorage.setItem('userId', user._id)
 
             const redirectUrl = role === 'admin' ? '/admin/dashboard' : `/`
             console.log('→ Redirecting to:', redirectUrl)
-            router.push(redirectUrl)
+            setTimeout(() => {
+                router.push(redirectUrl)
+            }, 100)
 
             message.success('Đăng nhập thành công!')
         } catch (error: any) {

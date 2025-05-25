@@ -19,6 +19,7 @@ import { cn } from '@/libs/utils'
 import { type HTMLMotionProps, motion } from 'framer-motion'
 import { useAuth } from '@/context/AuthContext'
 import SignIn from '@/components/modules/SignIn'
+import { useShopId } from '@/hooks/useShopId'
 
 export default function ProfileRootLayout({
     children,
@@ -26,6 +27,7 @@ export default function ProfileRootLayout({
     children: React.ReactNode
 }) {
     const { user } = useAuth()
+
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isMobile, setIsMobile] = useState(false)
 
@@ -160,6 +162,8 @@ export function ProfileOptionsNavigation({
     const { id: userId } = useParams()
     const pathname = usePathname()
     const router = useRouter()
+    const shopId = useShopId()
+    const rentalHref = shopId ? `/rental/${shopId}` : undefined
     const routes = [
         {
             href: `/personal/${userId}`,
@@ -205,24 +209,21 @@ export function ProfileOptionsNavigation({
             active: pathname === `/personal/${userId}/password`,
         },
         {
-            href: '/rental',
+            href: rentalHref,
             label: 'Chế độ người cho thuê',
             icon: ReplaceAll,
             active: false,
-            hidden: isLessor,
+            hidden: !user?.roles?.includes('owner'),
         },
     ]
 
     const handlePushRouter = (route: any) => {
         if (route.href === '/rental') {
-            console.log('ÍUDSDF1', user?.isVerified)
-            console.log('ÍUDSDF1', user?.registeredLessor)
-
-            if (user?.isVerified === true && user?.registeredLessor === true) {
+            if (user?.isVerified && user?.roles?.includes('owner')) {
                 router.push(route.href)
             } else {
                 message.error(
-                    'Vui lòng xác minh và đăng ký để truy cập chế độ người cho thuê',
+                    'Bạn cần xác minh và trở thành người cho thuê để truy cập',
                 )
                 return
             }
