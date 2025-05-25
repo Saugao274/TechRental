@@ -92,7 +92,7 @@ const UpdateProfile = () => {
     return (
         <div className="flex justify-center">
             <Card
-                className="w-full max-w-2xl !p-[58px] shadow-lg"
+                className="w-full max-w-2xl shadow-lg"
                 style={{ borderRadius: '16px' }}
             >
                 <Form

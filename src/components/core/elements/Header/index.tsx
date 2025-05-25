@@ -113,22 +113,7 @@ export default function Header() {
                       </p>
                   ),
               },
-              {
-                  key: '4',
-                  label: (
-                      <p
-                          className="block cursor-pointer text-[14px] text-primary"
-                          onClick={() => {
-                              router.push(
-                                  `/personal/${user._id}/rented-history`,
-                              )
-                              setMobileMenuOpen(false)
-                          }}
-                      >
-                          Lịch sử thuê
-                      </p>
-                  ),
-              },
+
               {
                   key: '5',
                   label: (
@@ -991,19 +976,7 @@ const DropdownProfile = () => {
                 </p>
             ),
         },
-        {
-            key: 'history',
-            label: (
-                <p
-                    onClick={() =>
-                        router.push(`/personal/${user._id}/rented-history`)
-                    }
-                    className="text-[16px]"
-                >
-                    Lịch sử thuê
-                </p>
-            ),
-        },
+
         {
             key: 'logout',
             label: (
