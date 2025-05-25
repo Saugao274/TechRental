@@ -9,5 +9,8 @@ export default function ProfileUserPage() {
     const params = useParams()
     const { id } = params
     const { user } = useAuth()
-    return user?._id === id ? <PersonalProfile /> : <ProductUserView />
+
+    if (!user) return null
+
+    return user._id === id ? <PersonalProfile /> : <ProductUserView />
 }

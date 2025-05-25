@@ -6,6 +6,20 @@ import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import { ArrowLeft } from 'lucide-react'
+import {
+    loadFaceApiModels,
+    getFaceDescriptorFromImageURL,
+    getFaceDescriptorFromVideo,
+    compareFaceDescriptors,
+} from '@/libs/face-verification'
+import {
+    FONT_INFO_IMAGE,
+    VERIFY_COUNTRY_KEY,
+    VERIFY_DOC_KEY,
+    VERIFY_INFO_KEY,
+} from '../VerifyCountry'
+import { useAuth } from '@/context/AuthContext'
+import { useRouter } from 'next/navigation'
 
 export default function FacialAuthentication1st({ setStep }: StepProps) {
     const [image, setImage] = useState<string | null>(null)
@@ -15,6 +29,8 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
     const [cameraOn, setCameraOn] = useState(false)
     const [rotation, setRotation] = useState(0)
     const streamRef = useRef<MediaStream | null>(null)
+    const { updateIdentifier, user } = useAuth()
+    const router = useRouter()
 
     const beforeUpload = (file: File) => {
         stopCamera()
@@ -41,7 +57,7 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
     }
 
     const stopCamera = () => {
-        streamRef.current?.getTracks().forEach(track => track.stop())
+        streamRef.current?.getTracks().forEach((track) => track.stop())
         setCameraOn(false)
     }
 
@@ -53,6 +69,8 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
             canvas.height = video.videoHeight
             const context = canvas.getContext('2d')
             if (context) {
+                context.translate(canvas.width, 0)
+                context.scale(-1, 1)
                 context.drawImage(video, 0, 0, canvas.width, canvas.height)
                 const dataUrl = canvas.toDataURL('image/png')
                 setImage(dataUrl)
@@ -62,7 +80,7 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
     }
 
     const rotateImage = () => {
-        setRotation(prev => (prev + 90) % 360)
+        setRotation((prev) => (prev + 90) % 360)
     }
 
     useEffect(() => {
@@ -106,8 +124,8 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
                 <div className="flex flex-wrap gap-2">
                     <Button
                         onClick={() => {
-                          startCamera();
-                          setPhase1st(true);
+                            startCamera()
+                            setPhase1st(true)
                         }}
                         disabled={cameraOn}
                         type="primary"
@@ -116,11 +134,11 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
                     </Button>
                 </div>
 
-                <p className="font-bold mt-2">
+                <p className="mt-2 font-bold">
                     Nhìn vào camera và giữ thẳng đầu
                 </p>
 
-                <ul className="mb-4 list-disc pl-5 text-sm text-gray-700 text-left">
+                <ul className="mb-4 list-disc pl-5 text-left text-sm text-gray-700">
                     <li>
                         Hệ thống sẽ quay một đoạn video ngắn để xác minh bạn là
                         người thật.
@@ -154,16 +172,59 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
                     type="primary"
                     className="w-1/3 rounded-lg bg-primary px-4 py-2 text-white hover:bg-blue-700"
                     htmlType="submit"
-                    onClick={() => {
-                        if (!phase1st) {
+                    onClick={async () => {
+                        if (!phase1st || !videoRef.current) {
                             message.warning('Vui lòng xác nhận khuôn mặt trước')
+                            return
+                        }
+
+                        await loadFaceApiModels()
+
+                        const webcamDesc = await getFaceDescriptorFromVideo(
+                            videoRef.current,
+                        )
+                        if (!webcamDesc) {
+                            message.error(
+                                'Không nhận diện được khuôn mặt từ camera.',
+                            )
+                            return
+                        }
+
+                        const cccdImageUrl =
+                            localStorage.getItem(FONT_INFO_IMAGE)
+                        if (!cccdImageUrl) {
+                            message.error('Không tìm thấy ảnh CCCD.')
+                            return
+                        }
+
+                        const cccdDesc =
+                            await getFaceDescriptorFromImageURL(cccdImageUrl)
+                        if (!cccdDesc) {
+                            message.error(
+                                'Không nhận diện được khuôn mặt từ CCCD.',
+                            )
+                            return
+                        }
+
+                        const isMatch = compareFaceDescriptors(
+                            webcamDesc,
+                            cccdDesc,
+                        )
+                        if (isMatch) {
+                            message.success('Xác minh khuôn mặt thành công!')
+                            updateIdentifier()
+                            localStorage.removeItem(VERIFY_COUNTRY_KEY)
+                            localStorage.removeItem(VERIFY_INFO_KEY)
+                            localStorage.removeItem(VERIFY_DOC_KEY)
+                            localStorage.removeItem(FONT_INFO_IMAGE)
+
+                            router.push(`/personal/${user?._id}`)
                         } else {
-                            // Gửi ảnh đi xác thực hoặc lưu vào state/context nếu cần
-                            setStep('facialAuthentication2nd')
+                            message.error('Khuôn mặt không khớp với ảnh CCCD.')
                         }
                     }}
                 >
-                    Tiếp tục
+                    Nhận diện gương mặt
                 </ButtonCommon>
             </div>
         </SectionCommon>

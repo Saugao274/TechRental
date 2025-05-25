@@ -11,9 +11,12 @@ import SectionCommon from '@/components/core/common/SectionCommon'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import { ArrowLeft } from 'lucide-react'
 import type { StepProps } from '@/components/modules/Profile/Personal/Verification'
+import { FONT_INFO_IMAGE } from '../VerifyCountry'
 
 const FontCCCD = ({ setStep }: StepProps) => {
-    const [image, setImage] = useState<string | null>(null)
+    const [image, setImage] = useState<string | null>(
+        localStorage.getItem(FONT_INFO_IMAGE),
+    )
     const videoRef = useRef<HTMLVideoElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [cameraOn, setCameraOn] = useState(false)
@@ -148,7 +151,14 @@ const FontCCCD = ({ setStep }: StepProps) => {
                     type="primary"
                     className="w-1/3 rounded-lg bg-primary px-4 py-2 text-white hover:bg-blue-700"
                     htmlType="submit"
-                    onClick={() => setStep('backCCCD')}
+                    onClick={() => {
+                        image && localStorage.setItem(FONT_INFO_IMAGE, image)
+                        image
+                            ? setStep('backCCCD')
+                            : message.warning(
+                                  'Vui lòng tải/ chụp căn cước công dân',
+                              )
+                    }}
                 >
                     Tiếp tục
                 </ButtonCommon>

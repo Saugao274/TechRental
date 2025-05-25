@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Button, Upload } from 'antd'
+import { Button, message, Upload } from 'antd'
 import {
     UploadOutlined,
     CameraOutlined,
@@ -147,7 +147,13 @@ const BackDriversLicense = ({ setStep }: StepProps) => {
                     type="primary"
                     className="w-1/3 rounded-lg bg-primary px-4 py-2 text-white hover:bg-blue-700"
                     htmlType="submit"
-                    // onClick={() => setStep('backCCCD')}
+                    onClick={() => {
+                        image
+                            ? setStep('facialAuthentication1st')
+                            : message.warning(
+                                  'Vui lòng tải/ chụp ảnh bằng lái xe',
+                              )
+                    }}
                 >
                     Tiếp tục
                 </ButtonCommon>
