@@ -11,6 +11,7 @@ import { useFormAutoSave } from '@/hooks/useFormAutoSave'
 export const VERIFY_COUNTRY_KEY = 'verify-country-step'
 export const VERIFY_INFO_KEY = 'verify-infomation-step'
 export const VERIFY_DOC_KEY = 'verify-document-step'
+export const FONT_INFO_IMAGE = 'verify-info-image'
 
 const VerifyCountry = ({ setStep }: StepProps) => {
     const [form] = Form.useForm()

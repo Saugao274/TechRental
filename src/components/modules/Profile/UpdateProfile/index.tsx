@@ -3,9 +3,15 @@ import {
     Avatar,
     Button,
     Card,
+    Col,
+    DatePicker,
     Form,
+    FormProps,
     Input,
     message,
+    Radio,
+    Row,
+    Select,
     Typography,
     Upload,
 } from 'antd'
@@ -19,8 +25,29 @@ import {
 } from '@ant-design/icons'
 import { useAuth } from '@/context/AuthContext'
 import type { User } from '@/data/authData'
+import {
+    Phone,
+    RefreshCw,
+    ThumbsUp,
+    Trophy,
+    User as UserIcon,
+    Users,
+} from 'lucide-react'
+import CountUp from 'react-countup'
 
 const { Text } = Typography
+
+interface ProfileFormValues {
+    fullName: string
+    gender: string
+    dateOfBirth: string
+    phoneNumber: string
+    email: string
+    currentAddress: string
+    ward: string
+    district: string
+    province: string
+}
 
 const UpdateProfile = () => {
     const [form] = Form.useForm()
@@ -49,149 +76,291 @@ const UpdateProfile = () => {
         }
     }
 
+    const onFinish: FormProps<ProfileFormValues>['onFinish'] = (values) => {
+        console.log('Form values:', values)
+    }
+
+    const provinces = [
+        { value: 'danang', label: 'Đà Nẵng' },
+        { value: 'hanoi', label: 'Hà Nội' },
+        { value: 'hcm', label: 'TP. Hồ Chí Minh' },
+        { value: 'haiphong', label: 'Hải Phòng' },
+    ]
+
+    const [isChangePassword, setIsChangePassword] = useState(false)
+
     return (
-        <main className="flex w-full justify-center bg-transparent">
-            <Card className="relative w-full max-w-3xl overflow-hidden rounded-2xl p-8 shadow-xl">
-                <motion.div
-                    className="absolute right-3 z-30 opacity-40 md:right-10 md:top-0"
-                    initial={{ x: 50, opacity: 0.5 }}
-                    animate={{ x: [40, 60, 40], opacity: [0.4, 0.6, 0.4] }}
-                    transition={{
-                        duration: 6,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                    }}
-                >
-                    <img
-                        src="/images/clound.png"
-                        alt="Cloud"
-                        className="w-36 opacity-60"
-                    />
-                </motion.div>
-                <motion.div
-                    className="absolute -left-16 z-30 opacity-40 md:hidden"
-                    initial={{ x: 50, opacity: 0.5 }}
-                    animate={{ x: [40, 60, 40], opacity: [0.4, 0.6, 0.4] }}
-                    transition={{
-                        duration: 6,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                    }}
-                >
-                    <img
-                        src="/images/clound.png"
-                        alt="Cloud"
-                        className="w-36 opacity-60"
-                    />
-                </motion.div>
-                {/* Avatar & Thông tin chính */}
-                <div className="relative grid grid-cols-[auto_1fr] items-center gap-6 border-b pb-6 md:flex md:items-start md:justify-start">
-                    <Upload
-                        showUploadList={false}
-                        beforeUpload={(file) => {
-                            const newAvatarUrl = URL.createObjectURL(file)
-                            setAvatar(newAvatarUrl)
-                            return false
-                        }}
-                    >
-                        <Avatar
-                            src={avatar}
-                            size={100}
-                            className="!mx-auto shrink-0 border-4 !border-indigo-500 shadow-xl shadow-indigo-300 md:!mx-0"
-                        />
-                    </Upload>
-
-                    <div className="flex w-[200px] flex-col gap-2 overflow-hidden">
-                        <h2 className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold text-[#1D3D85]">
-                            {user?.name}
-                        </h2>
-                        <Text className="mx-auto text-gray-500 md:mx-0">
-                            Thành viên từ 2024
-                        </Text>
-                        <div className="mx-auto flex items-center md:mx-0">
-                            {user?.isVerified ? (
-                                <Text type="success">✅ Đã xác thực</Text>
-                            ) : (
-                                <Text type="danger">⚠️ Chưa xác thực</Text>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Form cập nhật */}
+        <div className="flex justify-center">
+            <Card
+                className="w-full max-w-2xl shadow-lg"
+                style={{ borderRadius: '16px' }}
+            >
                 <Form
                     form={form}
                     layout="vertical"
-                    className="mt-6"
-                    onFinish={handleSubmit}
+                    onFinish={onFinish}
+                    initialValues={{
+                        gender: 'male',
+                        province: 'danang',
+                    }}
                 >
-                    <Form.Item
-                        label="Họ và tên"
-                        name="name"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Vui lòng nhập họ và tên',
-                            },
-                        ]}
-                    >
-                        <Input
-                            placeholder="Nhập họ và tên"
-                            className="rounded-lg border-gray-300 p-2"
-                        />
-                    </Form.Item>
-                    <Form.Item label="Số điện thoại" name="phone">
-                        <Input
-                            readOnly
-                            className="cursor-not-allowed rounded-lg border-gray-300 !bg-gray-200 p-2"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[
-                            { required: true, message: 'Vui lòng nhập email' },
-                        ]}
-                    >
-                        <Input
-                            placeholder="Nhập email"
-                            className="rounded-lg border-gray-300 p-2"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Địa chỉ"
-                        name="address"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Vui lòng nhập địa chỉ',
-                            },
-                        ]}
-                    >
-                        <Input
-                            placeholder="Nhập địa chỉ"
-                            className="rounded-lg border-gray-300 p-2"
-                        />
-                    </Form.Item>
-                    {/* Nút Lưu */}
-                    <div className="mt-4 flex justify-center">
-                        <Button
-                            htmlType="submit"
-                            type="primary"
-                            className="rounded-lg bg-indigo-600 px-6 py-2 text-lg font-semibold shadow-md transition hover:bg-indigo-700"
-                        >
-                            Lưu thay đổi
-                        </Button>
-                    </div>
-                </Form>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <div className="mb-6 flex flex-col items-center gap-4">
+                                <Avatar
+                                    src={avatar}
+                                    size={185}
+                                    icon={<UserIcon />}
+                                    className="mb-3 bg-gray-300"
+                                />
+                                <Upload
+                                    name="avatar"
+                                    listType="picture"
+                                    showUploadList={false}
+                                    beforeUpload={(file) => {
+                                        const isJpgOrPng =
+                                            file.type === 'image/jpeg' ||
+                                            file.type === 'image/png'
+                                        if (!isJpgOrPng) {
+                                            message.error(
+                                                'Chỉ có thể tải lên file JPG/PNG!',
+                                            )
+                                            return false
+                                        }
+                                        const isLt2M =
+                                            file.size / 1024 / 1024 < 2
+                                        if (!isLt2M) {
+                                            message.error(
+                                                'Ảnh phải nhỏ hơn 2MB!',
+                                            )
+                                            return false
+                                        }
 
-                <div className="mt-6 flex justify-center gap-4">
-                    <FacebookOutlined className="cursor-pointer text-2xl text-blue-600 hover:text-blue-700" />
-                    <TwitterOutlined className="cursor-pointer text-2xl text-sky-500 hover:text-sky-600" />
-                    <LinkedinOutlined className="cursor-pointer text-2xl text-blue-800 hover:text-blue-900" />
-                </div>
+                                        const newAvatarUrl =
+                                            URL.createObjectURL(file)
+                                        setAvatar(newAvatarUrl)
+                                        message.success(
+                                            'Đổi ảnh đại diện thành công!',
+                                        )
+                                        return false
+                                    }}
+                                >
+                                    <Button
+                                        type="primary"
+                                        size="middle"
+                                        style={{
+                                            backgroundColor: '#1e3a8a',
+                                            borderColor: '#1e3a8a',
+                                            borderRadius: '6px',
+                                            fontWeight: 'bold',
+                                        }}
+                                    >
+                                        Thay đổi
+                                    </Button>
+                                </Upload>
+                            </div>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                label={<Text strong>Họ và tên</Text>}
+                                name="fullName"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập họ và tên!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    placeholder="Nguyễn ABC"
+                                    size="large"
+                                    style={{ borderRadius: '6px' }}
+                                />
+                            </Form.Item>
+
+                            {/* Gender */}
+                            <Form.Item
+                                label={<Text strong>Giới tính</Text>}
+                                name="gender"
+                            >
+                                <Radio.Group>
+                                    <Radio value="male">Nam</Radio>
+                                    <Radio value="female">Nữ</Radio>
+                                    <Radio value="other">Khác</Radio>
+                                </Radio.Group>
+                            </Form.Item>
+
+                            {/* Date of Birth */}
+                            <Form.Item
+                                label={<Text strong>Ngày sinh</Text>}
+                                name="dateOfBirth"
+                            >
+                                <DatePicker
+                                    placeholder="dd/mm/yyyy"
+                                    format="DD/MM/YYYY"
+                                    size="large"
+                                    className="w-full"
+                                    style={{ borderRadius: '6px' }}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* Phone Number */}
+                    <div className="">
+                        <Row gutter={16} className="flex items-center">
+                            <Col span={12}>
+                                <Text className="font-medium">
+                                    Số điện thoại
+                                </Text>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item className="!mb-0">
+                                    {!isChangePassword && (
+                                        <div className="flex items-center rounded-md p-3">
+                                            <div className="flex items-center gap-2">
+                                                <Phone
+                                                    size={16}
+                                                    className="text-gray-500"
+                                                />
+                                                <Text>+84 012345678</Text>
+                                            </div>
+                                            <p className="ml-2">|</p>
+                                            <Button
+                                                type="link"
+                                                size="middle"
+                                                className="p-0 text-blue-600"
+                                                onClick={() =>
+                                                    setIsChangePassword(true)
+                                                }
+                                            >
+                                                Thay đổi
+                                            </Button>
+                                        </div>
+                                    )}
+                                    {isChangePassword && (
+                                        <div className="flex flex-row items-center gap-2">
+                                            <Input
+                                                placeholder="Nhập số điện thoại"
+                                                size="large"
+                                                style={{ borderRadius: '6px' }}
+                                            />
+                                            <Button type="default" className="">
+                                                Hủy bỏ
+                                            </Button>
+                                        </div>
+                                    )}
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </div>
+
+                    <div className="mt-6">
+                        <Row gutter={16} className="flex items-center">
+                            <Col span={12}>
+                                <Text className="font-medium">Email</Text>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    className="!mb-0"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập email!',
+                                        },
+                                        {
+                                            type: 'email',
+                                            message: 'Email không hợp lệ!',
+                                        },
+                                    ]}
+                                >
+                                    <div className="flex flex-row items-center gap-2">
+                                        <Input
+                                            placeholder="nguyenabc@gmail.com"
+                                            size="large"
+                                            style={{ borderRadius: '6px' }}
+                                        />
+                                    </div>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </div>
+
+                    {/* Current Address */}
+                    <Form.Item
+                        label={<Text strong>Địa chỉ hiện tại</Text>}
+                        name="currentAddress"
+                        className="!mt-6"
+                    >
+                        <Input
+                            placeholder="123 Đường ABC"
+                            size="large"
+                            style={{ borderRadius: '6px' }}
+                        />
+                    </Form.Item>
+
+                    {/* Ward and District */}
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                label={<Text strong>Phường/ Xã</Text>}
+                                name="ward"
+                            >
+                                <Input
+                                    placeholder="Phường Hải Châu"
+                                    size="large"
+                                    style={{ borderRadius: '6px' }}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                label={<Text strong>Quận/ Huyện</Text>}
+                                name="district"
+                            >
+                                <Input
+                                    placeholder="Quận Hải Châu"
+                                    size="large"
+                                    style={{ borderRadius: '6px' }}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* Province/City */}
+                    <Form.Item
+                        label={<Text strong>Tỉnh/ Thành Phố</Text>}
+                        name="province"
+                    >
+                        <Select
+                            placeholder="Chọn tỉnh/thành phố"
+                            size="large"
+                            style={{ borderRadius: '6px' }}
+                            options={provinces}
+                        />
+                    </Form.Item>
+
+                    {/* Save Button */}
+                    <Form.Item className="mb-0 mt-6">
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            size="large"
+                            block
+                            style={{
+                                backgroundColor: '#1e3a8a',
+                                borderColor: '#1e3a8a',
+                                borderRadius: '6px',
+                                fontWeight: 'bold',
+                                height: '48px',
+                            }}
+                        >
+                            LƯU THAY ĐỔI
+                        </Button>
+                    </Form.Item>
+                </Form>
             </Card>
-        </main>
+        </div>
     )
 }
 

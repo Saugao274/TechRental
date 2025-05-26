@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Button, Upload } from 'antd'
+import { Button, message, Upload } from 'antd'
 import {
     UploadOutlined,
     CameraOutlined,
@@ -10,6 +10,7 @@ import SectionCommon from '@/components/core/common/SectionCommon'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import { ArrowLeft } from 'lucide-react'
 import type { StepProps } from '@/components/modules/Profile/Personal/Verification'
+import { useAuth } from '@/context/AuthContext'
 
 const Passport = ({ setStep }: StepProps) => {
     const [image, setImage] = useState<string | null>(null)
@@ -147,6 +148,11 @@ const Passport = ({ setStep }: StepProps) => {
                     type="primary"
                     className="w-1/3 rounded-lg bg-primary px-4 py-2 text-white hover:bg-blue-700"
                     htmlType="submit"
+                    onClick={() => {
+                        image
+                            ? setStep('facialAuthentication1st')
+                            : message.warning('Vui lòng tải/ chụp ảnh hộ chiếu')
+                    }}
                 >
                     Tiếp tục
                 </ButtonCommon>
