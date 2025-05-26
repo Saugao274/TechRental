@@ -15,12 +15,25 @@ import { useAuth } from '@/context/AuthContext'
 import { postRequest } from '@/request'
 import constants from '@/settings/constants'
 import webStorageClient from '@/utils/webStorageClient'
+import { useRouter, useParams } from 'next/navigation'
+import { getRequest } from '@/request'
 
 export default function PersonalRentalRegistryPage() {
     const { user, registeredLessor } = useAuth()
     const [showTermsModal, setShowTermsModal] = useState(false)
+    const router = useRouter()
 
     const onFinish = async (values: any) => {
+        const res = await postRequest('/api/users/become-owner', {
+            data: values,
+        })
+        const shopRes = await getRequest('/api/shopDetail/me')
+        const shopId = shopRes?.metadata?._id
+
+        if (!shopId) {
+            return message.error('Không tìm thấy shopId sau khi đăng ký')
+        }
+
         if (!user) return
 
         if (!user.isVerified) {
@@ -42,9 +55,10 @@ export default function PersonalRentalRegistryPage() {
             registeredLessor()
 
             message.success({
-                content: 'Đăng ký thành công! Admin sẽ duyệt đơn sau.',
+                content: 'Đăng ký thành công! Đang chuyển hướng...',
                 key: 'reg',
             })
+            router.push(`/rental/${shopId}`)
         } catch (err: any) {
             const msg =
                 err?.response?.data?.message ||

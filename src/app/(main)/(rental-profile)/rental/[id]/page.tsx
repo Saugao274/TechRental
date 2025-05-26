@@ -19,7 +19,8 @@ import { useState, useEffect } from 'react'
 import { Image, Badge, Rate } from 'antd'
 import type { UploadFile, UploadProps } from 'antd'
 import { useRouter, useParams } from 'next/navigation'
-
+import AddProductModal from '@/app/(main)/(rental-profile)//rental/[id]/new/page'
+import { getRequest } from '@/request'
 const { Panel } = Collapse
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
@@ -70,6 +71,7 @@ export default function ProductManagement() {
     const [productRequests, setProductRequests] = useState<ProductRequest[]>(
         initialProductRequests,
     )
+
     const [form] = Form.useForm()
     const pageSize = 5
     const [isMobile, setIsMobile] = useState(false)
@@ -82,15 +84,14 @@ export default function ProductManagement() {
     useEffect(() => {
         const fetchShop = async () => {
             try {
-                const res = await fetch(`/api/shopDetail/store/${shopId}`)
-                const data = await res.json()
-                if (res.ok) setShop(data.metadata)
-                else message.error(data.message || 'Không tìm thấy shop')
+                const res = await getRequest(`/api/shopDetail/${shopId}`)
+                setShop(res)
             } catch (err) {
-                message.error('Không tìm thấy shop')
+                console.error('Lỗi lấy shop:', err)
             }
         }
-        fetchShop()
+
+        if (shopId) fetchShop()
     }, [shopId])
 
     const filteredProducts = products.filter((product) =>
@@ -512,15 +513,56 @@ export default function ProductManagement() {
                         onChange={(e) => setSearch(e.target.value)}
                         style={{ width: '100%', maxWidth: '300px' }}
                     />
-                    <Space>
+                    {/* <Space>
                         <Avatar
                             src={shop?.avatar || '/placeholder.svg'}
                             size={40}
                         />
-                        <span style={{ fontSize: 16, color: '#0052cc' }}>
-                            {shop?.name || 'Đang tải...'}
-                        </span>
-                    </Space>
+                        
+                        {shop ? (
+                            <>
+                                <Avatar
+                                    src={shop.avatar || '/placeholder.svg'}
+                                    size={40}
+                                />
+                                <span
+                                    style={{ fontSize: 16, color: '#0052cc' }}
+                                >
+                                    {shop.name}
+                                </span>
+                            </>
+                        ) : (
+                            <span style={{ fontSize: 16, color: '#0052cc' }}>
+                                Đang tải...
+                            </span>
+                        )}
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={() => setIsModalOpen(true)}
+                        >
+                            Thêm sản phẩm mới
+                        </Button>
+                    </Space> */}
+                    {shop ? (
+                        <Space>
+                            <Avatar src={shop.avatar} size={40} />
+                            <span
+                                style={{ fontSize: '16px', color: '#0052cc' }}
+                            >
+                                {shop.name}
+                            </span>
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={() => router.push('rental/new')}
+                            >
+                                Thêm sản phẩm mới
+                            </Button>
+                        </Space>
+                    ) : (
+                        <p>Đang tải thông tin cửa hàng...</p>
+                    )}
                 </div>
                 <Table
                     columns={columns}

@@ -16,6 +16,7 @@ import {
 import { type HTMLMotionProps, motion } from 'framer-motion'
 import { cn } from '@/libs/utils'
 import SectionCommon from '../../common/SectionCommon'
+import { useAuth } from '@/context/AuthContext'
 
 interface RentalRootLayoutProps {
     children: React.ReactNode
@@ -25,7 +26,16 @@ export default function RentalRootLayout({ children }: RentalRootLayoutProps) {
     const { id: shopId } = useParams() as { id: string }
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isMobile, setIsMobile] = useState(false)
+    const { user } = useAuth()
+    const router = useRouter()
+    useEffect(() => {
+        if (!user) return
 
+        if (!user.isVerified || !user.roles?.includes('owner')) {
+            message.warning('Bạn không có quyền truy cập.')
+            router.replace('/')
+        }
+    }, [user])
     // responsive check
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768)
