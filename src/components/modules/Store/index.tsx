@@ -18,6 +18,7 @@ import {
     Radio,
     Slider,
     Empty,
+    message,
 } from 'antd'
 import {
     MessageCircle,
@@ -38,9 +39,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { type ProductDetail, type ShopDetail } from '@/data/products'
-import { getRequest } from '@/request'
+import { getRequest, postRequest } from '@/request'
 import { productEndpoint, storeEndpoint } from '@/settings/endpoints'
-
+import { useRouter } from 'next/navigation'
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
 const { Search: SearchInput } = Input
@@ -51,24 +52,45 @@ type StoreModuleProps = {
 export function StoreModule({ id }: StoreModuleProps) {
     const [productsData, setProductsData] = useState<ProductDetail[]>([])
     const [storeData, setStoreData] = useState<ShopDetail>()
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await getRequest(
-                    storeEndpoint.GET_BY_ID(id || ''),
-                )
-                const responseAllProductById = await getRequest(
-                    productEndpoint.GET_BY_IDSHOP(id || ''),
-                )
-                setProductsData(responseAllProductById.metadata)
-                setStoreData(response.metadata)
-            } catch (error) {
-                console.error('Error fetching products:', error)
-            }
-        }
+    const router = useRouter()
+    console.log('shopId sẽ gửi lên BE:', id)
+    const handleChatClick = async () => {
+        try {
+            const allRooms = await getRequest('/api/chatrooms')
+            // tìm xem đã có room chưa
+            const existingRoom = allRooms.find(
+                (room: any) => String(room.shopId?._id || room.shopId) === id,
+            )
 
-        fetchProducts()
-    }, [])
+            if (existingRoom) {
+                router.push(`/chat/${existingRoom._id}`)
+            } else {
+                // tạo room mới
+                const newRoom = await postRequest('/api/chatrooms', {
+                    data: { shopId: id },
+                })
+                router.push(`/chat/${newRoom._id}`)
+            }
+        } catch (err) {
+            message.error('Không thể mở phòng chat')
+        }
+    }
+
+    useEffect(() => {
+        if (!id) return
+        ;(async () => {
+            try {
+                const respStore = await getRequest(storeEndpoint.GET_BY_ID(id))
+                const respProducts = await getRequest(
+                    productEndpoint.GET_BY_IDSHOP(id),
+                )
+                setStoreData(respStore.metadata)
+                setProductsData(respProducts.metadata)
+            } catch (e) {
+                console.error(e)
+            }
+        })()
+    }, [id])
     const [activeCategory, setActiveCategory] = useState<string>('all')
     const [sortBy, setSortBy] = useState<string>('popular')
     const [priceRange, setPriceRange] = useState<[number, number]>([
@@ -250,9 +272,7 @@ export function StoreModule({ id }: StoreModuleProps) {
                                 >
                                     Theo dõi
                                 </Button>
-                                <Button icon={<MessageCircle size={16} />}>
-                                    Chat
-                                </Button>
+                                <Button onClick={handleChatClick}>Chat</Button>
                             </Space>
                         </div>
 

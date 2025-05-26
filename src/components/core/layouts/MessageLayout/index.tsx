@@ -1,11 +1,15 @@
 'use client'
-import { Avatar, Image, Layout, Typography } from 'antd'
-import React from 'react'
+
+import { Avatar, Layout, Typography, message } from 'antd'
+import React, { useEffect, useState } from 'react'
 import SectionCommon from '../../common/SectionCommon'
-import { Contact, Search } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { Search } from 'lucide-react'
+import { useRouter, useSearchParams, useParams } from 'next/navigation'
+import { getRequest, postRequest } from '@/request'
 import { useAuth } from '@/context/AuthContext'
-import SignIn from '@/components/modules/SignIn'
+import { chatEndpoint } from '@/settings/endpoints'
+
+const { Text } = Typography
 
 export default function MessageLayout({
     children,
@@ -13,7 +17,6 @@ export default function MessageLayout({
     children: React.ReactNode
 }) {
     const { user } = useAuth()
-
     return user ? (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
@@ -23,65 +26,57 @@ export default function MessageLayout({
                 </div>
             </SectionCommon>
         </Layout>
-    ) : (
-        <SignIn />
-    )
+    ) : null
 }
 
 export const PersonSideBar = () => {
-    const messageUserData = [
-        {
-            chatId: 1,
-            avatar: '/images/Message/image1.png',
-            name: 'Thanh Thủy',
-            title: 'Freelancer chụp ảnh sự kiện',
-            time: 'Hoạt động 3 giờ trước',
-        },
-        {
-            chatId: 2,
-            avatar: '/images/Message/image2.png',
-            name: 'Viết Thông',
-            title: 'Doanh nhân',
-            time: 'Hoạt động 2 giờ trước',
-        },
-        {
-            chatId: 3,
-            avatar: '/images/Message/image3.png',
-            name: 'Thế Anh',
-            title: 'Nhà thiết kế đồ họa',
-            time: 'Hoạt động 4 giờ trước',
-        },
-        {
-            chatId: 4,
-            avatar: '/images/Message/image4.png',
-            name: 'Dương Đức Anh',
-            title: 'Người lập trình',
-            time: 'Hoạt động 3 giờ trước',
-        },
-        {
-            chatId: 5,
-            avatar: '/images/Message/image5.png',
-            name: 'Phạm Hồng Nguyên',
-            title: 'Nhiếp ảnh gia',
-            time: 'Hoạt động 3 giờ trước',
-        },
-        {
-            chatId: 6,
-            avatar: '/images/Message/image6.png',
-            name: 'Trần lê Mỹ Duyên',
-            title: 'Nhiếp ảnh gia',
-            time: 'Hoạt động 3 giờ trước',
-        },
-        {
-            chatId: 7,
-            avatar: '/images/Message/image7.png',
-            name: 'Trần Trung Kiên',
-            title: 'Sinh Viên',
-            time: 'Hoạt động 3 giờ trước',
-        },
-    ]
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const [rooms, setRooms] = useState<any[]>([])
+    const [search, setSearch] = useState('')
+    const params = useParams()
+    const currentRoomId = params?.roomId
+
+    useEffect(() => {
+        const fetchRooms = async () => {
+            try {
+                const res = await getRequest(chatEndpoint.GET_ROOMS())
+                setRooms(res)
+
+                const shopId = searchParams.get('shopId')
+                if (shopId) {
+                    const existed = res.find((r: any) => {
+                        const roomShopId = String(r.shopId?._id || r.shopId)
+                        return roomShopId === shopId
+                    })
+                    if (existed) {
+                        router.push(`/chat/${existed._id}`)
+                    } else {
+                        const created = await postRequest(
+                            chatEndpoint.CREATE_ROOM(),
+                            { data: { shopId } },
+                        )
+                        router.push(`/chat/${created._id}`)
+                    }
+                }
+            } catch (err) {
+                message.error('Không thể tải danh sách phòng')
+            }
+        }
+        fetchRooms()
+    }, [])
+
+    const filtered = rooms.filter((r) => {
+        const name = (r.shopId?.name ?? '').toLowerCase()
+        const idRoom = String(r._id).toLowerCase()
+        const idShop = String(r.shopId?._id || r.shopId).toLowerCase()
+        const kw = search.toLowerCase()
+
+        return name.includes(kw) || idRoom.includes(kw) || idShop.includes(kw)
+    })
+
     return (
-        <div className="flex w-full flex-col gap-5 rounded-[10px] bg-white bg-opacity-80 p-5 md:w-1/4">
+        <div className="flex w-full flex-col gap-4 rounded-[10px] bg-white bg-opacity-80 p-5 md:w-1/4">
             <div>
                 <p className="!text-2xl font-bold text-primary">RentChat</p>
                 <p className="!text-[16px] font-bold">
@@ -90,47 +85,43 @@ export const PersonSideBar = () => {
             </div>
 
             <div className="flex flex-row items-center gap-2 font-semibold">
-                <Contact />
-                <p>Người liên hệ gần nhất</p>
+                <Search size={18} />
+                <input
+                    placeholder="Tìm theo tên shop hoặc ID phòng/ID shop"
+                    className="w-full rounded border px-2 py-1 text-sm outline-none"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
             </div>
-            <div>
-                <div className="flex flex-row items-center gap-2 rounded-lg border border-gray-300 bg-white p-2">
-                    <Search size={16} />
-                    <input
-                        placeholder="Tìm kiếm bạn bè"
-                        className="bg-transparent outline-none"
-                    />
-                </div>
-            </div>
-            <div className="flex flex-col gap-2">
-                {messageUserData.map((item) => (
-                    <AvatarMessage item={item} key={item.chatId} />
-                ))}
+
+            <div className="flex flex-col gap-3">
+                {filtered.length === 0 ? (
+                    <Text type="secondary">Không tìm thấy phòng nào</Text>
+                ) : (
+                    filtered.map((item) => (
+                        <AvatarMessage item={item} key={item._id} />
+                    ))
+                )}
             </div>
         </div>
     )
 }
 
-export const AvatarMessage = ({ item }: any) => {
+export const AvatarMessage = ({ item }: { item: any }) => {
     const router = useRouter()
+    const shop = item.shopId
+
     return (
         <div
-            className="flex cursor-pointer flex-row items-center gap-2 rounded transition-all hover:bg-gray-100"
-            onClick={() => {
-                router.push(`/chat/${item?.chatId}`)
-            }}
+            className="flex cursor-pointer items-center gap-2 rounded p-2 transition-all hover:bg-gray-100"
+            onClick={() => router.push(`/chat/${item._id}`)}
         >
-            <Avatar
-                size={60}
-                src={item?.avatar}
-                className="object-cover"
-            ></Avatar>
-            <div>
-                <p className="text-[16px] font-bold text-primary">
-                    {item?.name}
+            <Avatar size={50} src={shop?.avatar || '/placeholder.svg'} />
+            <div className="truncate">
+                <p className="truncate font-bold text-primary">
+                    {shop?.name || 'Shop'}
                 </p>
-                <p className="font-semibold">{item?.title}</p>
-                <p className="text-gray-500">{item?.time}</p>
+                <p className="truncate text-xs text-gray-500">{item._id}</p>
             </div>
         </div>
     )

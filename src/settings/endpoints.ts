@@ -46,6 +46,13 @@ const cloudinaryEndpoint = {
     UPLOAD: `${prefixBase}/cloudinary`,
 }
 
+export const chatEndpoint = {
+  GET_ROOMS: () => '/api/chatrooms',
+  CREATE_ROOM: () => '/api/chatrooms',
+  GET_MESSAGES: (roomId: string) => `/api/chatrooms/${roomId}/messages`,
+  POST_MESSAGE: (roomId: string) => `/api/chatrooms/${roomId}/messages`,
+}
+
 export {
     authEndpoint,
     userEndpoint,
