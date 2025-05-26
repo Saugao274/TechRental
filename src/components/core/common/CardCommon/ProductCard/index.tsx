@@ -61,11 +61,11 @@ export default function ProductCard({
     return (
         <div
             onClick={handleClick}
-            className={`cursor-pointer ${style}`}
+            className={`cursor-pointer bg-white p-2 ${style}`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <div className="flex flex-col gap-3 hover:scale-105 hover:border-2 hover:shadow-md hover:shadow-blue-300">
+            <div className="hover:border- flex flex-col gap-3 hover:scale-105 hover:border-2 hover:shadow-md">
                 <Image
                     src={currentImage}
                     alt={product.title}

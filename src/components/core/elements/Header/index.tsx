@@ -252,6 +252,20 @@ export default function Header() {
                 <p
                     className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
+                        router.push(`/rental/package`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
+                    Gói đăng tin
+                </p>
+            ),
+        },
+        {
+            key: '7',
+            label: (
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
                         router.push(`/rental/information`)
                         setMobileMenuOpen(false)
                     }}

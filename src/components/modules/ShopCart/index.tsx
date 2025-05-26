@@ -335,7 +335,7 @@ export default function CartPage() {
                                 className="flex h-10 w-full items-center justify-center gap-2 rounded-none bg-green-500 py-2 text-xs font-semibold text-white disabled:opacity-60 md:h-12 md:py-3 md:text-sm"
                                 onClick={() =>
                                     router.push(
-                                        `/personal/payment?total=${total}&products=${encodeURIComponent(
+                                        `/personal/${user._id}/payment?total=${total}&products=${encodeURIComponent(
                                             JSON.stringify(
                                                 items.filter((i) =>
                                                     selectedIds.includes(i.id),
