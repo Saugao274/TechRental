@@ -30,6 +30,7 @@ import {
     X,
 } from 'lucide-react'
 import SectionCommon from '@/components/core/common/SectionCommon'
+import { useRouter } from 'next/navigation'
 
 interface PriorityPackage {
     type: 'Basic' | 'Premium' | 'Vip'
@@ -119,17 +120,25 @@ export default function PackageNews() {
             ],
         },
     ]
-
+    const router = useRouter()
     const handlePurchasePriority = (
         packageType: 'Basic' | 'Professional' | 'Vip',
+        price: number,
     ) => {
-        const packagePrice = packageType === 'Basic' ? 50000 : 10000
-
         message.success(
-            `Đã mua gói ${packageType === 'Basic' ? 'Ưu tiên cơ bản ' : 'Ưu tiên cao cấp'} cho sản phẩm `,
+            `Đã mua ${
+                packageType === 'Basic'
+                    ? 'Gói cơ bản'
+                    : packageType === 'Professional'
+                      ? 'Gói Chuyên nghiệp'
+                      : 'Gói VIP'
+            }`,
+        )
+        router.push(
+            `/rental/package/payment?price=${price.toLocaleString('vi-VN')}&type=${packageType}`,
         )
     }
-    
+
     return (
         <div className="pt-14">
             <h1 className="flex items-center justify-center text-3xl font-bold text-blue-950">
@@ -321,7 +330,10 @@ export default function PackageNews() {
                                         type="primary"
                                         block
                                         onClick={() =>
-                                            handlePurchasePriority(pkg.type)
+                                            handlePurchasePriority(
+                                                pkg.type,
+                                                pkg.price,
+                                            )
                                         }
                                         className={
                                             pkg.type === 'Professional'

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Card, Tabs, Button, Typography, Divider } from 'antd'
 import { AlertCircle, ArrowLeft, ChevronLeft, QrCode } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const { Title, Text } = Typography
 
@@ -16,7 +17,16 @@ const PaymentPackage = () => {
 
         return () => clearInterval(timer)
     }, [])
+    const router = useRouter()
+    const searchParams = useSearchParams()
 
+    const price = searchParams.get('price')
+    const type = searchParams.get('type')
+    useEffect(() => {
+        if (!price || !type) {
+            router.push('/rental/package')
+        }
+    }, [price, type, router])
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60)
         const secs = seconds % 60
@@ -50,10 +60,12 @@ const PaymentPackage = () => {
                 <Text className="mb-2 block !text-white">
                     Sử dụng ứng dụng ngân hàng
                 </Text>
-                <Text className="!text-white flex">
+                <Text className="flex !text-white">
                     có chức năng{' '}
-                    <span className="text-green-400 flex items-center mx-2"><QrCode size={16} /> QR Code</span> để thanh
-                    toán
+                    <span className="mx-2 flex items-center text-green-400">
+                        <QrCode size={16} /> QR Code
+                    </span>{' '}
+                    để thanh toán
                 </Text>
             </div>
         </div>
@@ -100,7 +112,7 @@ const PaymentPackage = () => {
                             type="link"
                             size="small"
                             onClick={() => copyToClipboard('0422 0300 2945')}
-                            className="!text-primary/90 !font-bold "
+                            className="!font-bold !text-primary/90"
                         >
                             Sao chép
                         </Button>
@@ -117,7 +129,7 @@ const PaymentPackage = () => {
                             type="link"
                             size="small"
                             onClick={() => copyToClipboard('315000')}
-                            className="!text-primary/90 !font-bold "
+                            className="!font-bold !text-primary/90"
                         >
                             Sao chép
                         </Button>
@@ -134,7 +146,7 @@ const PaymentPackage = () => {
                             type="link"
                             size="small"
                             onClick={() => copyToClipboard('5PP030')}
-                            className="!text-primary/90 !font-bold "
+                            className="!font-bold !text-primary/90"
                         >
                             Sao chép
                         </Button>
@@ -194,7 +206,7 @@ const PaymentPackage = () => {
                                     Thành tiền
                                 </Text>
                                 <Text className="text-xl font-bold text-blue-600">
-                                    315.000đ
+                                    {price} đ
                                 </Text>
                             </div>
                         </div>
@@ -210,7 +222,7 @@ const PaymentPackage = () => {
 
                     <div className="rounded-lg border border-red-300 bg-red-50 !px-[25px] py-[6px]">
                         <div className="flex items-center justify-between">
-                            <Text className="font-bold font-medium !text-red-600">
+                            <Text className="font-bold !text-red-600">
                                 Đơn hàng sẽ hết hạn sau:
                             </Text>
                             <Text className="text-lg !font-bold text-red-600">
