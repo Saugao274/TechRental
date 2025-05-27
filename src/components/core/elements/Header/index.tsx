@@ -252,6 +252,20 @@ export default function Header() {
                 <p
                     className="block cursor-pointer text-[14px] text-primary"
                     onClick={() => {
+                        router.push(`/rental/package`)
+                        setMobileMenuOpen(false)
+                    }}
+                >
+                    Gói đăng tin
+                </p>
+            ),
+        },
+        {
+            key: '7',
+            label: (
+                <p
+                    className="block cursor-pointer text-[14px] text-primary"
+                    onClick={() => {
                         router.push(`/rental/information`)
                         setMobileMenuOpen(false)
                     }}
@@ -465,14 +479,26 @@ export default function Header() {
                             <ButtonCommon
                                 type="text"
                                 className="!text-[16px]"
-                                onClick={() => router.push('/signIn')}
+                                onClick={() => (
+                                    localStorage.setItem(
+                                        'redirectAfterLogin',
+                                        window.location.pathname,
+                                    ),
+                                    router.push('/signIn')
+                                )}
                             >
                                 Đăng nhập
                             </ButtonCommon>
                             <ButtonCommon
                                 type="primary"
                                 className="!text-[16px]"
-                                onClick={() => router.push('/signUp')}
+                                onClick={() => (
+                                    localStorage.setItem(
+                                        'redirectAfterLogin',
+                                        window.location.pathname,
+                                    ),
+                                    router.push('/signUp')
+                                )}
                             >
                                 Đăng ký
                             </ButtonCommon>
@@ -604,6 +630,10 @@ export default function Header() {
                                             type="text"
                                             className="!text-[16px]"
                                             onClick={() => (
+                                                localStorage.setItem(
+                                                    'redirectAfterLogin',
+                                                    window.location.pathname,
+                                                ),
                                                 router.push('/signIn'),
                                                 setMobileMenuOpen(false)
                                             )}
@@ -614,6 +644,10 @@ export default function Header() {
                                             type="primary"
                                             className="!text-[16px]"
                                             onClick={() => (
+                                                localStorage.setItem(
+                                                    'redirectAfterLogin',
+                                                    window.location.pathname,
+                                                ),
                                                 router.push('/signUp'),
                                                 setMobileMenuOpen(false)
                                             )}

@@ -180,6 +180,7 @@ export default function ProductDetail() {
         const user = webLocalStorage.get('user')
         if (!user) {
             message.warning('Vui lòng đăng nhập để thêm vào giỏ hàng')
+            localStorage.setItem('redirectAfterLogin', window.location.pathname)
             router.push('/signIn')
             return
         }
