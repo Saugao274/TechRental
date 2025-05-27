@@ -58,7 +58,7 @@ const refreshAccessToken = async () => {
 
     return axios
         .post(
-            constants.API_SERVER + authEndpoint.REFRESH_TOKEN,
+            constants.SERVICE_API_SERVIER + authEndpoint.REFRESH_TOKEN,
             {},
             {
                 headers: {
