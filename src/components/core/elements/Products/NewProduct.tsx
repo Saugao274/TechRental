@@ -26,7 +26,7 @@ const NewProduct = () => {
 
         fetchProducts()
     }, [])
-    const newProductsData = productsData.filter(
+    const newProductsData = productsData?.filter(
         (product) => product.isNewProduct,
     )
     return (
@@ -36,9 +36,11 @@ const NewProduct = () => {
             </div>
             {!loading ? (
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-                    {newProductsData.slice(0, 4).map((product, index) => (
-                        <ProductCard product={product} key={index} />
-                    ))}
+                    {newProductsData
+                        ?.slice(0, 4)
+                        .map((product, index) => (
+                            <ProductCard product={product} key={index} />
+                        ))}
                 </div>
             ) : (
                 <Skeleton
