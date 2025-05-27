@@ -8,7 +8,7 @@ import constants from '@/settings/constants'
 import { authEndpoint } from '@/settings/endpoints'
 
 const axiosInstance = axios.create({
-    baseURL: constants.API_SERVER,
+    baseURL: constants.SERVICE_API_SERVIER,
     headers: {
         'Content-Type': 'application/json',
     },
