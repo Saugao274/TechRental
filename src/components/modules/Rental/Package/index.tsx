@@ -126,9 +126,10 @@ export default function PackageNews() {
         const packagePrice = packageType === 'Basic' ? 50000 : 10000
 
         message.success(
-            `Đã mua gói ${packageType === 'Basic' ? 'Ưu tiên cao cấp' : 'Ưu tiên cơ bản'} cho sản phẩm `,
+            `Đã mua gói ${packageType === 'Basic' ? 'Ưu tiên cơ bản ' : 'Ưu tiên cao cấp'} cho sản phẩm `,
         )
     }
+    
     return (
         <div className="pt-14">
             <h1 className="flex items-center justify-center text-3xl font-bold text-blue-950">
