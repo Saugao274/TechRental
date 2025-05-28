@@ -51,7 +51,12 @@ const SignIn = () => {
             localStorage.setItem('role', role)
             localStorage.setItem('userId', user._id)
 
-            const redirectUrl = role === 'admin' ? '/admin/dashboard' : `/`
+            const storedRedirect = localStorage.getItem('redirectAfterLogin')
+            localStorage.removeItem('redirectAfterLogin')
+
+            const redirectUrl =
+                storedRedirect || (role === 'admin' ? '/admin/dashboard' : '/')
+
             console.log('→ Redirecting to:', redirectUrl)
             setTimeout(() => {
                 router.push(redirectUrl)

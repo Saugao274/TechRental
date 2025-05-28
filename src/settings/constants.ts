@@ -4,12 +4,12 @@ const VNPAY_PAYMENT_URL = '_vnpay_payment_url'
 const ROLE = '_role'
 const USER = '_user'
 
-const API_SERVER = 'http://localhost:5000'
+const SERVICE_API_SERVIER = process.env.NEXT_PUBLIC_SERVICE_API_SERVER
 
 const constants = {
     ACCESS_TOKEN,
     REFRESH_TOKEN,
-    API_SERVER,
+    SERVICE_API_SERVIER,
     VNPAY_PAYMENT_URL,
     ROLE,
     USER,

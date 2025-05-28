@@ -27,7 +27,7 @@ const HotProducts = () => {
 
         fetchProducts()
     }, [])
-    const hotProductssData = productsData.filter(
+    const hotProductssData = productsData?.filter(
         (product) => product.isHotProduct,
     )
     return (
@@ -35,9 +35,11 @@ const HotProducts = () => {
             <PageHader title="Sản phẩm nổi bật" />
             {!loading ? (
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-                    {hotProductssData.slice(0, 4).map((product, index) => (
-                        <ProductCard product={product} key={index} />
-                    ))}
+                    {hotProductssData
+                        ?.slice(0, 4)
+                        .map((product, index) => (
+                            <ProductCard product={product} key={index} />
+                        ))}
                 </div>
             ) : (
                 <Skeleton

@@ -96,7 +96,7 @@ export default function RentalRootLayout({ children }: RentalRootLayoutProps) {
                 </Drawer>
 
                 <div className="flex flex-col gap-[20px] md:flex-row">
-                    <LeftSideBarElement shopId={shopId} />
+                    <LeftSideBarElement />
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -111,7 +111,7 @@ export default function RentalRootLayout({ children }: RentalRootLayoutProps) {
     )
 }
 
-function LeftSideBarElement({ shopId }: { shopId: string }) {
+export function LeftSideBarElement() {
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -129,20 +129,18 @@ function LeftSideBarElement({ shopId }: { shopId: string }) {
                     </p>
                 </div>
                 <Divider />
-                <RentalProfileOptionsNavigation shopId={shopId} />
+                <RentalProfileOptionsNavigation />
             </div>
         </motion.div>
     )
 }
 
 interface SidebarNavProps extends HTMLMotionProps<'nav'> {
-    shopId: string
     isLessor?: boolean
     onItemClick?: () => void
 }
 
-function RentalProfileOptionsNavigation({
-    shopId,
+export function RentalProfileOptionsNavigation({
     className,
     isLessor = false,
     onItemClick,
@@ -152,42 +150,53 @@ function RentalProfileOptionsNavigation({
     const router = useRouter()
 
     const routes = [
-        { href: `/rental/${shopId}`, label: 'Quản Lý Sản Phẩm', icon: Package },
         {
-            href: `/rental/${shopId}/manage-orders`,
+            href: '/rental',
+            label: 'Quản Lý Sản Phẩm',
+            icon: Package,
+            active: pathname === '/rental',
+        },
+        {
+            href: '/rental/manage-orders',
             label: 'Quản Lý Đơn Thuê',
             icon: ShoppingCart,
+            active: pathname === '/rental/manage-orders',
         },
         {
-            href: `/rental/${shopId}/transactions`,
+            href: '/rental/transactions',
             label: 'Thống Kê Giao Dịch',
             icon: HandCoins,
+            active: pathname === '/rental/transactions',
         },
         {
-            href: `/rental/${shopId}/feedback`,
+            href: '/rental/feedback',
             label: 'Đánh Giá & Phản Hồi',
             icon: Contact,
+            active: pathname === '/rental/feedback',
         },
         {
-            href: `/rental/${shopId}/policy`,
+            href: '/rental/policy',
             label: 'Chính Sách Cho Thuê',
             icon: FileCog,
+            active: pathname === '/rental/policy',
         },
+
         {
-            href: `/rental/${shopId}/information`,
+            href: '/rental/information',
             label: 'Xác Minh Định Danh',
             icon: IdCard,
+            active: pathname === '/rental/Information',
             hidden: isLessor,
         },
     ]
 
-    const handleNavigation = (href: string) => {
-        if (!shopId) {
-            message.error('Không tìm thấy shop')
-            return
+    const handleNavigation = (route: any) => {
+        router.push(route.href)
+
+        // Close mobile menu if onItemClick is provided
+        if (onItemClick) {
+            onItemClick()
         }
-        router.push(href)
-        onItemClick?.()
     }
 
     return (
@@ -198,25 +207,24 @@ function RentalProfileOptionsNavigation({
             className={cn('flex flex-col space-y-2', className)}
             {...props}
         >
-            {routes.map(
-                (route) =>
-                    !route.hidden && (
-                        <motion.div
-                            key={route.href}
-                            onClick={() => handleNavigation(route.href)}
-                            className={cn(
-                                pathname === route.href
-                                    ? 'bg-blue-100 font-semibold text-blue-600'
-                                    : 'text-gray-800 hover:bg-gray-200',
-                                'flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-all',
-                            )}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <route.icon className="h-5 w-5" />
-                            {route.label}
-                        </motion.div>
-                    ),
+            {routes.map((route) =>
+                route.hidden ? null : (
+                    <motion.div
+                        key={route.href}
+                        onClick={() => handleNavigation(route)}
+                        className={cn(
+                            route.active
+                                ? 'bg-blue-100 font-semibold text-blue-600'
+                                : 'text-gray-800 hover:bg-gray-200',
+                            'flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-all',
+                        )}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <route.icon className="h-5 w-5" />
+                        {route.label}
+                    </motion.div>
+                ),
             )}
         </motion.nav>
     )
