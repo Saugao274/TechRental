@@ -1,3 +1,5 @@
+'use client'
+
 import RentalRootLayout from '@/components/core/layouts/RentalLayout'
 import React from 'react'
 

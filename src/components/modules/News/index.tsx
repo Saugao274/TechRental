@@ -17,7 +17,6 @@ export default function NewsModule({ article }: TProps) {
     )
     const router = useRouter()
     const news = NewsData.sort()
-    console.log(news)
     const [currentPage, setCurrentPage] = useState(1)
     const pageSize = 4
     const startIndex = (currentPage - 1) * pageSize

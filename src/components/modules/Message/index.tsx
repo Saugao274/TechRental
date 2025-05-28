@@ -1,154 +1,160 @@
-import { Avatar, message } from 'antd'
-import { EllipsisVertical, PhoneCall, Send } from 'lucide-react'
-import React from 'react'
+// MessageModule.tsx – chat 1-1 giữa user và shop tại route /chat/[chat-id]
+'use client'
+
+import React, { useEffect, useRef, useState } from 'react'
+import {
+    Avatar,
+    Button,
+    Empty,
+    Input,
+    Typography,
+    message as antMessage,
+    Spin,
+} from 'antd'
+import { Send } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import { getRequest, postRequest } from '@/request'
+import { chatEndpoint } from '@/settings/endpoints'
+import { useAuth } from '@/context/AuthContext'
+
+const { Text } = Typography
 
 export default function MessageModule() {
-    return (
-        <div className="flex h-full flex-col gap-5">
-            <div className="h-fit">
-                <MessageStatus />
+    const { user } = useAuth()
+    const { 'chat-id': chatId } = useParams() as { 'chat-id': string }
+
+    const [room, setRoom] = useState<any>(null)
+    const [messages, setMessages] = useState<any[]>([])
+    const [text, setText] = useState('')
+    const [loading, setLoading] = useState(true)
+    const bottomRef = useRef<HTMLDivElement>(null)
+
+    // Fetch room info và messages
+    useEffect(() => {
+        if (!chatId) return
+        ;(async () => {
+            try {
+                // Lấy danh sách phòng, tìm room hiện tại
+                const rooms = await getRequest(chatEndpoint.GET_ROOMS())
+                const r = rooms.find((r: any) => r._id === chatId)
+                if (!r) {
+                    antMessage.error('Không tìm thấy phòng chat')
+                    setLoading(false)
+                    return
+                }
+                setRoom(r)
+
+                // Lấy messages của phòng
+                const msgs = await getRequest(chatEndpoint.GET_MESSAGES(chatId))
+                setMessages(msgs)
+            } catch (err) {
+                console.error(err)
+                antMessage.error('Không thể tải dữ liệu phòng chat')
+            } finally {
+                setLoading(false)
+            }
+        })()
+    }, [chatId])
+
+    // Cuộn xuống cuối khi có messages mới
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [messages])
+
+    // Gửi tin nhắn mới
+    const handleSend = async () => {
+        if (!text.trim()) return
+
+        try {
+            const msg = await postRequest(chatEndpoint.POST_MESSAGE(chatId), {
+                data: { content: text },
+            })
+            setMessages((prev) => [...prev, msg])
+            setText('')
+        } catch (err) {
+            console.error(err)
+            antMessage.error('Gửi tin nhắn thất bại')
+        }
+    }
+
+    // Nếu đang loading hoặc chưa auth thì không render gì
+    if (!user) return null
+    if (loading)
+        return (
+            <div className="flex h-full items-center justify-center">
+                <Spin tip="Đang tải..." />
             </div>
-            <div className="h-full">
-                <MessageBoxContent />
+        )
+
+    // Nếu không tìm thấy phòng
+    if (!room)
+        return (
+            <div className="flex h-full items-center justify-center rounded-lg bg-white bg-opacity-80 p-4">
+                <Text type="secondary">Không tìm thấy phòng chat</Text>
+            </div>
+        )
+
+    return (
+        <div className="flex h-full flex-col gap-4">
+            {/* Header */}
+            <div className="flex items-center gap-3 rounded-lg bg-white bg-opacity-80 p-4">
+                <Avatar src={room?.shopId?.avatar} size={50} />
+                <div>
+                    <p className="text-lg font-bold">{room?.shopId?.name}</p>
+                    <Text type="secondary" className="text-xs">
+                        Hoạt động gần đây
+                    </Text>
+                </div>
+            </div>
+
+            {/* Danh sách tin nhắn */}
+            <div className="flex-1 space-y-3 overflow-y-auto rounded-lg bg-white bg-opacity-80 p-4">
+                {messages.length === 0 && (
+                    <Empty description="Chưa có tin nhắn" />
+                )}
+                {messages.map((msg) => (
+                    <MsgBubble key={msg._id} msg={msg} selfId={user._id} />
+                ))}
+                <div ref={bottomRef} />
+            </div>
+
+            {/* Input gửi tin */}
+            <div className="flex items-center gap-2 rounded-lg bg-white p-3">
+                <Input
+                    placeholder="Viết tin nhắn..."
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    onPressEnter={handleSend}
+                />
+                <Button
+                    type="primary"
+                    icon={<Send size={18} />}
+                    onClick={handleSend}
+                />
             </div>
         </div>
     )
 }
 
-export const MessageStatus = () => {
+// Chat bubble
+function MsgBubble({ msg, selfId }: { msg: any; selfId: string }) {
+    const isSelf = msg.senderId === selfId
     return (
-        <div className="flex flex-row items-center justify-between rounded-[10px] bg-white px-6 py-2 opacity-80">
-            <div className="flex flex-row items-center gap-2">
-                <Avatar src="/images/Message/image5.png" size={50}></Avatar>
-                <div className="flex flex-col gap-1">
-                    <p className="text-[16px] font-bold text-primary">
-                        Phạm Hồng Nguyên
-                    </p>
-                    <p>Hoạt động 1 giờ trước</p>
-                </div>
-            </div>
-            <div className="flex flex-row gap-5">
-                <div>
-                    <PhoneCall />
-                </div>
-                <div>
-                    <EllipsisVertical />
-                </div>
-            </div>
-        </div>
-    )
-}
-
-export const MessageBoxContent = () => {
-    const messageUserData = [
-        {
-            messageId: 1,
-            message:
-                'Chào anh, bên mình đang thuê máy ảnh Sony A7 III đúng không ạ?',
-            time: '10:00',
-            type: 'right',
-        },
-        {
-            messageId: 2,
-            message:
-                'Chào chị Nguyên! Bên em có Sony A7 III cho thuê ạ. Chị cần thuê trong bao lâu ạ?',
-            time: '10:02',
-            type: 'left',
-        },
-        {
-            messageId: 3,
-            message: 'Mình thuê 2 ngày, có kèm lens 24-70mm F2.8 không anh?',
-            time: '10:04',
-            type: 'right',
-        },
-        {
-            messageId: 4,
-            message:
-                'Dạ có chị nhé. Giá thuê trọn bộ máy và lens là 600k/ngày, tổng 2 ngày là 1,2 triệu ạ',
-            time: '10:05',
-            type: 'left',
-        },
-        {
-            messageId: 5,
-            message: 'Ok. Thủ tục thế nào anh?',
-            time: '10:05',
-            type: 'right',
-        },
-        {
-            messageId: 6,
-            message:
-                'Bên em không cần cọc, không giữ giấy tờ. Chị qua điểm hẹn kiểm tra máy ạ',
-            time: '10:06',
-            type: 'left',
-        },
-    ]
-
-    return (
-        <div className="flex h-full w-full flex-col rounded-lg bg-white bg-opacity-80 p-5">
-            <div className="flex h-full flex-col gap-6 md:gap-6">
-                {/* message */}
-                {messageUserData.map((item) => {
-                    return (
-                        <>
-                            {item.type === 'right' && (
-                                <div
-                                    key={item.messageId}
-                                    className="flex flex-row md:gap-2"
-                                >
-                                    <div>
-                                        <Avatar
-                                            src="/images/Message/image5.png"
-                                            size={50}
-                                        ></Avatar>
-                                    </div>
-                                    <div className="relative flex flex-row items-center gap-2 md:max-w-[360px]">
-                                        <p className="rounded-lg bg-white px-3 py-2 font-semibold text-primary">
-                                            {' '}
-                                            {item?.message}
-                                        </p>
-                                        <div>
-                                            <EllipsisVertical size={20} />
-                                        </div>
-                                        <p className="absolute bottom-[-20px] text-xs text-gray-500">
-                                            {item?.time}
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-                            {item.type === 'left' && (
-                                <div
-                                    key={item.messageId}
-                                    className="flex w-full flex-row items-end justify-end gap-5"
-                                >
-                                    <div className="relative flex max-w-[340px] flex-row-reverse items-center gap-2">
-                                        <p className="rounded-lg bg-primary px-3 py-2 font-semibold text-white">
-                                            {' '}
-                                            {item?.message}
-                                        </p>
-                                        <div>
-                                            <EllipsisVertical size={20} />
-                                        </div>
-                                        <p className="absolute bottom-[-20px] text-xs text-gray-500">
-                                            {item.time}
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-                        </>
-                    )
-                })}
-            </div>
-            <div>
-                <div className="mt-5 flex flex-row justify-between gap-5 rounded-xl bg-white px-5 py-2">
-                    <input
-                        type="text"
-                        className="w-full outline-none"
-                        placeholder="Viết tin nhắn"
-                    />
-                    <div className="cursor-pointer rounded-md p-2 transition-all hover:bg-gray-200">
-                        <Send />
-                    </div>
-                </div>
+        <div className={`flex ${isSelf ? 'justify-end' : 'justify-start'}`}>
+            <div
+                className={`max-w-[60%] rounded-lg px-3 py-2 text-sm ${
+                    isSelf
+                        ? 'bg-primary text-white'
+                        : 'bg-white text-primary shadow'
+                }`}
+            >
+                {msg.content}
+                <span className="mt-1 block text-right text-[10px] text-gray-500">
+                    {new Date(msg.createdAt).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    })}
+                </span>
             </div>
         </div>
     )

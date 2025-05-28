@@ -30,7 +30,7 @@ import {
     X,
 } from 'lucide-react'
 import SectionCommon from '@/components/core/common/SectionCommon'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 interface PriorityPackage {
     type: 'Basic' | 'Premium' | 'Vip'
@@ -40,7 +40,11 @@ interface PriorityPackage {
     benefits: any
 }
 
-export default function PackageNews() {
+interface PackageNewsProps {
+    id: string
+}
+
+export default function PackageNews({ id }: PackageNewsProps) {
     const [isMobile, setIsMobile] = useState(false)
     // // Check if screen is mobile
     useEffect(() => {
@@ -121,6 +125,7 @@ export default function PackageNews() {
         },
     ]
     const router = useRouter()
+
     const handlePurchasePriority = (
         packageType: 'Basic' | 'Professional' | 'Vip',
         price: number,
@@ -135,7 +140,7 @@ export default function PackageNews() {
             }`,
         )
         router.push(
-            `/rental/package/payment?price=${price.toLocaleString('vi-VN')}&type=${packageType}`,
+            `/rental/${id}/package/payment?price=${price.toLocaleString('vi-VN')}&type=${packageType}`,
         )
     }
 

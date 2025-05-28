@@ -1,6 +1,8 @@
 'use client'
-import { cn } from '@/libs/utils'
-import { Divider, Layout, Drawer, Button } from 'antd'
+
+import React, { useEffect, useState } from 'react'
+import { useParams, usePathname, useRouter } from 'next/navigation'
+import { Layout, Divider, Drawer, Button, message } from 'antd'
 import {
     Contact,
     FileCog,
@@ -12,44 +14,40 @@ import {
     ShoppingCart,
     X,
 } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
-import type React from 'react'
-import { useState, useEffect } from 'react'
-import SectionCommon from '../../common/SectionCommon'
 import { type HTMLMotionProps, motion } from 'framer-motion'
+import { cn } from '@/libs/utils'
+import SectionCommon from '../../common/SectionCommon'
+import { useAuth } from '@/context/AuthContext'
 
-export default function RentalRootLayout({
-    children,
-}: {
+interface RentalRootLayoutProps {
     children: React.ReactNode
-}) {
+}
+
+export default function RentalRootLayout({ children }: RentalRootLayoutProps) {
+    const { id: shopId } = useParams() as { id: string }
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isMobile, setIsMobile] = useState(false)
-
-    // Check if screen is mobile
+    const { user } = useAuth()
+    const router = useRouter()
     useEffect(() => {
-        const checkIfMobile = () => {
-            setIsMobile(window.innerWidth < 768)
+        if (!user) return
+
+        if (!user.isVerified || !user.roles?.includes('owner')) {
+            message.warning('Bạn không có quyền truy cập.')
+            router.replace('/')
         }
-
-        // Initial check
-        checkIfMobile()
-
-        // Add event listener
-        window.addEventListener('resize', checkIfMobile)
-
-        // Cleanup
-        return () => window.removeEventListener('resize', checkIfMobile)
+    }, [user])
+    // responsive check
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768)
+        handleResize()
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
     }, [])
-
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen)
-    }
 
     return (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent !font-vietnam">
             <SectionCommon>
-                {/* Mobile Menu Button */}
                 {isMobile && (
                     <div className="mb-4 flex items-center justify-between">
                         <div>
@@ -63,13 +61,11 @@ export default function RentalRootLayout({
                         <Button
                             type="text"
                             icon={<Menu size={24} />}
-                            onClick={toggleMobileMenu}
-                            className="flex items-center justify-center"
+                            onClick={() => setIsMobileMenuOpen(true)}
                         />
                     </div>
                 )}
 
-                {/* Mobile Sidebar Drawer */}
                 <Drawer
                     title={
                         <div className="flex items-center justify-between">
@@ -80,17 +76,16 @@ export default function RentalRootLayout({
                                 type="text"
                                 icon={<X size={18} />}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="flex h-8 w-8 items-center justify-center p-0"
                             />
                         </div>
                     }
                     placement="left"
-                    onClose={() => setIsMobileMenuOpen(false)}
                     open={isMobileMenuOpen}
                     width={280}
-                    bodyStyle={{ padding: '16px' }}
+                    onClose={() => setIsMobileMenuOpen(false)}
+                    bodyStyle={{ padding: 16 }}
                     headerStyle={{
-                        padding: '16px',
+                        padding: 16,
                         borderBottom: '1px solid #f0f0f0',
                     }}
                 >
@@ -153,46 +148,48 @@ export function RentalProfileOptionsNavigation({
 }: SidebarNavProps) {
     const pathname = usePathname()
     const router = useRouter()
+    const { id: shopId } = useParams() as { id: string }
 
     const routes = [
         {
-            href: '/rental',
+            href: `/rental/${shopId}`,
             label: 'Quản Lý Sản Phẩm',
             icon: Package,
-            active: pathname === '/rental',
+            active: pathname === `/rental/${shopId}`,
         },
         {
-            href: '/rental/manage-orders',
+            href: `/rental/${shopId}/manage-orders`,
             label: 'Quản Lý Đơn Thuê',
             icon: ShoppingCart,
-            active: pathname === '/rental/manage-orders',
+            active: pathname === `/rental/${shopId}/manage-orders`,
         },
         {
-            href: '/rental/transactions',
+            href: `/rental/${shopId}/transactions`,
             label: 'Thống Kê Giao Dịch',
             icon: HandCoins,
             active: pathname === '/rental/transactions',
         },
         {
-            href: '/rental/feedback',
+            href: `/rental/${shopId}/feedback`,
             label: 'Đánh Giá & Phản Hồi',
             icon: Contact,
             active: pathname === '/rental/feedback',
         },
         {
-            href: '/rental/policy',
+            href: `/rental/${shopId}/policy`,
             label: 'Chính Sách Cho Thuê',
             icon: FileCog,
             active: pathname === '/rental/policy',
         },
         {
-            href: '/rental/package',
+            href: `/rental/${shopId}/package`,
             label: 'Chọn gói dịch vụ',
             icon: PackageCheck,
             active: pathname === '/rental/package',
         },
+
         {
-            href: '/rental/information',
+            href: `/rental/${shopId}/information`,
             label: 'Xác Minh Định Danh',
             icon: IdCard,
             active: pathname === '/rental/Information',

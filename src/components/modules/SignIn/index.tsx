@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { postRequest } from '@/request'
 import constants from '@/settings/constants'
+import webStorageClient from '@/utils/webStorageClient'
 
 const SignIn = () => {
     const router = useRouter()
@@ -20,8 +21,6 @@ const SignIn = () => {
     const onSubmit = async (values: { email: string; password: string }) => {
         try {
             setLoading(true)
-            console.log('[FORM VALUE]', values)
-
             const response: any = await postRequest(
                 '/api/auth/login',
                 {
@@ -33,9 +32,6 @@ const SignIn = () => {
                 false,
             )
 
-            console.log('[RESPONSE]', response)
-            console.log('USER payload', response.user)
-
             if (!response || !response.user) {
                 throw new Error('Dữ liệu phản hồi không hợp lệ từ máy chủ.')
             }
@@ -44,9 +40,9 @@ const SignIn = () => {
             const token = response.token
             const role = user.roles?.[0] ?? 'guest'
 
-            login(user)
+            login(user, token)
+            webStorageClient.set(constants.ACCESS_TOKEN, token)
 
-            localStorage.setItem(constants.ACCESS_TOKEN, token)
             localStorage.setItem('role', role)
             localStorage.setItem('userId', user._id)
 
@@ -56,8 +52,9 @@ const SignIn = () => {
             const redirectUrl =
                 storedRedirect || (role === 'admin' ? '/admin/dashboard' : '/')
 
-            console.log('→ Redirecting to:', redirectUrl)
-            router.push(redirectUrl)
+            setTimeout(() => {
+                router.push(redirectUrl)
+            }, 100)
 
             message.success('Đăng nhập thành công!')
         } catch (error: any) {
