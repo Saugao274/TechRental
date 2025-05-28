@@ -98,9 +98,9 @@ export default function MessageModule() {
         <div className="flex h-full flex-col gap-4">
             {/* Header */}
             <div className="flex items-center gap-3 rounded-lg bg-white bg-opacity-80 p-4">
-                <Avatar src={room.shopId.avatar} size={50} />
+                <Avatar src={room?.shopId?.avatar} size={50} />
                 <div>
-                    <p className="text-lg font-bold">{room.shopId.name}</p>
+                    <p className="text-lg font-bold">{room?.shopId?.name}</p>
                     <Text type="secondary" className="text-xs">
                         Hoạt động gần đây
                     </Text>
