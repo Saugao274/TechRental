@@ -87,7 +87,7 @@ export default function Header() {
                     setShopId(data.metadata._id)
                 }
             } catch (err) {
-                console.error('Lỗi lấy shop:', err)
+                console.error('Lỗi lấy shop từ header', err)
             }
         }
 

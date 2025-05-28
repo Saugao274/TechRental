@@ -51,8 +51,6 @@ export default function ProfileRootLayout({
         setIsMobileMenuOpen(!isMobileMenuOpen)
     }
 
-    console.log(isMobileMenuOpen)
-
     return user ? (
         <Layout className="mx-auto max-w-[1440px] !bg-transparent">
             <SectionCommon>
@@ -213,7 +211,7 @@ export function ProfileOptionsNavigation({
     ]
 
     const handlePushRouter = (route: any) => {
-        if (route.href === '/rental') {
+        if (route.href === router.push(`/rental/${shopId}`)) {
             if (user?.isVerified && user?.roles?.includes('owner')) {
                 router.push(route.href)
             } else {

@@ -89,7 +89,6 @@ export default function RentalRootLayout({ children }: RentalRootLayoutProps) {
                     }}
                 >
                     <RentalProfileOptionsNavigation
-                        shopId={shopId}
                         className="mt-2"
                         onItemClick={() => setIsMobileMenuOpen(false)}
                     />
@@ -148,41 +147,42 @@ export function RentalProfileOptionsNavigation({
 }: SidebarNavProps) {
     const pathname = usePathname()
     const router = useRouter()
+    const { id: shopId } = useParams() as { id: string }
 
     const routes = [
         {
-            href: '/rental',
+            href: `/rental/${shopId}`,
             label: 'Quản Lý Sản Phẩm',
             icon: Package,
-            active: pathname === '/rental',
+            active: pathname === `/rental/${shopId}`,
         },
         {
-            href: '/rental/manage-orders',
+            href: `/rental/${shopId}/manage-orders`,
             label: 'Quản Lý Đơn Thuê',
             icon: ShoppingCart,
-            active: pathname === '/rental/manage-orders',
+            active: pathname === `/rental/${shopId}/manage-orders`,
         },
         {
-            href: '/rental/transactions',
+            href: `/rental/${shopId}/transactions`,
             label: 'Thống Kê Giao Dịch',
             icon: HandCoins,
             active: pathname === '/rental/transactions',
         },
         {
-            href: '/rental/feedback',
+            href: `/rental/${shopId}/feedback`,
             label: 'Đánh Giá & Phản Hồi',
             icon: Contact,
             active: pathname === '/rental/feedback',
         },
         {
-            href: '/rental/policy',
+            href: `/rental/${shopId}/policy`,
             label: 'Chính Sách Cho Thuê',
             icon: FileCog,
             active: pathname === '/rental/policy',
         },
 
         {
-            href: '/rental/information',
+            href: `/rental/${shopId}/information`,
             label: 'Xác Minh Định Danh',
             icon: IdCard,
             active: pathname === '/rental/Information',

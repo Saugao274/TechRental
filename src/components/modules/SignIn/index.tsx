@@ -21,8 +21,6 @@ const SignIn = () => {
     const onSubmit = async (values: { email: string; password: string }) => {
         try {
             setLoading(true)
-            console.log('[FORM VALUE]', values)
-
             const response: any = await postRequest(
                 '/api/auth/login',
                 {
@@ -33,9 +31,6 @@ const SignIn = () => {
                 },
                 false,
             )
-
-            console.log('[RESPONSE]', response)
-            console.log('USER payload', response.user)
 
             if (!response || !response.user) {
                 throw new Error('Dữ liệu phản hồi không hợp lệ từ máy chủ.')
@@ -57,7 +52,6 @@ const SignIn = () => {
             const redirectUrl =
                 storedRedirect || (role === 'admin' ? '/admin/dashboard' : '/')
 
-            console.log('→ Redirecting to:', redirectUrl)
             setTimeout(() => {
                 router.push(redirectUrl)
             }, 100)

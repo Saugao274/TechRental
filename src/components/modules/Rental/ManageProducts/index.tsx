@@ -29,7 +29,7 @@ export default function ManageProducts() {
     const isMobile = useMediaQuery({ maxWidth: 768 })
     const getFooterButtons = (status: string | undefined) => {
         switch (status) {
-            case 'Cần xác nhận':
+            case 'Cần xác nhậlon':
                 return [
                     <Button key="confirm" type="primary">
                         Xác nhận

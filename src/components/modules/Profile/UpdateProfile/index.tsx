@@ -76,9 +76,7 @@ const UpdateProfile = () => {
         }
     }
 
-    const onFinish: FormProps<ProfileFormValues>['onFinish'] = (values) => {
-        console.log('Form values:', values)
-    }
+    const onFinish: FormProps<ProfileFormValues>['onFinish'] = (values) => {}
 
     const provinces = [
         { value: 'danang', label: 'Đà Nẵng' },

@@ -53,7 +53,6 @@ export function StoreModule({ id }: StoreModuleProps) {
     const [productsData, setProductsData] = useState<ProductDetail[]>([])
     const [storeData, setStoreData] = useState<ShopDetail>()
     const router = useRouter()
-    console.log('shopId sẽ gửi lên BE:', id)
     const handleChatClick = async () => {
         try {
             const allRooms = await getRequest('/api/chatrooms')
@@ -108,8 +107,6 @@ export function StoreModule({ id }: StoreModuleProps) {
                 product?.category?.name?.toLowerCase() === normalizedCategory
 
             const matchPrice = (() => {
-                console.log('product.price.pricece', product.price)
-
                 return (
                     product.price >= priceRange[0] &&
                     product.price <= priceRange[1]
@@ -362,7 +359,6 @@ export function StoreModule({ id }: StoreModuleProps) {
                                     <Select
                                         value={activeCategory}
                                         onChange={(value) => {
-                                            console.log('first', value)
                                             setActiveCategory(value)
                                         }}
                                         className="w-full"
@@ -404,7 +400,6 @@ export function StoreModule({ id }: StoreModuleProps) {
                                     <Radio.Group
                                         value={activeCategory}
                                         onChange={(e) => {
-                                            console.log('first', e)
                                             setActiveCategory(e.target.value)
                                         }}
                                         buttonStyle="solid"

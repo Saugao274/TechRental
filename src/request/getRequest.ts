@@ -11,13 +11,13 @@ const getRequest = async (
     let header = {}
 
     const params = options?.params
-    // const tokenClient = webStorageClient.get(constants.ACCESS_TOKEN)
+    const tokenClient = webStorageClient.get(constants.ACCESS_TOKEN)
     let headers: any = {
         'Content-Type': formData ? 'multipart/form-data' : 'application/json',
         ...header,
     }
 
-    // if (tokenClient) headers.Authorization = `Bearer ${tokenClient}`
+    if (tokenClient) headers.Authorization = `Bearer ${tokenClient}`
     return axiosInstance
         .get(url, {
             params: {

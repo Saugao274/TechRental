@@ -19,9 +19,6 @@ const postRequest = async (
     }
 
     if (tokenClient) headers.Authorization = `Bearer ${tokenClient}`
-   
-console.log('[FE DEBUG] headers sent to backend:', headers)
-console.log('[FE DEBUG] token from storage:', tokenClient)
 
     return axiosInstance
         .post(url, data, {
