@@ -16,6 +16,7 @@ export default function MessageLayout({
     children: React.ReactNode
 }) {
     const { user } = useAuth()
+
     const searchParams = useSearchParams()
     const isShopMode = searchParams.get('shopMode') === '1'
 

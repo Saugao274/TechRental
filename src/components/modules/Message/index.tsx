@@ -50,6 +50,7 @@ export default function MessageModule() {
         }
     }, [chatId, room])
 
+    // 2) Realtime newMessage
     useEffect(() => {
         socket.on('newMessage', (msg) => {
             if (msg.roomId === chatId) setMessages((prev) => [...prev, msg])
@@ -158,33 +159,43 @@ export default function MessageModule() {
                 <Button icon={<Send />} onClick={handleSend} type="primary" />
             </div>
 
+            {/* Custom Scrollbar Styles */}
             <style jsx>{`
                 .custom-scrollbar {
-                    scrollbar-width: thin;
-                    scrollbar-color: #888 #f1f1f1;
+                    scrollbar-width: auto;
+                    scrollbar-color: #4f46e5 #e5e7eb;
                 }
 
                 .custom-scrollbar::-webkit-scrollbar {
-                    width: 8px;
+                    width: 12px;
+                    background: #e5e7eb;
                 }
 
                 .custom-scrollbar::-webkit-scrollbar-track {
-                    background: #f1f1f1;
-                    border-radius: 10px;
+                    background: #e5e7eb;
+                    border-radius: 6px;
+                    margin: 4px 0;
                 }
 
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #888;
-                    border-radius: 10px;
+                    background: #4f46e5;
+                    border-radius: 6px;
                     cursor: pointer;
+                    border: 2px solid #e5e7eb;
+                    min-height: 20px;
                 }
 
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: #555;
+                    background: #3730a3;
+                    border: 2px solid #d1d5db;
                 }
 
                 .custom-scrollbar::-webkit-scrollbar-thumb:active {
-                    background: #333;
+                    background: #312e81;
+                }
+
+                .custom-scrollbar::-webkit-scrollbar-corner {
+                    background: #e5e7eb;
                 }
             `}</style>
         </div>

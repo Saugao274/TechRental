@@ -38,6 +38,7 @@ import { getRequest } from '@/request'
 import { productEndpoint } from '@/settings/endpoints'
 
 import { useCart } from '@/context/CartContext'
+import { useAuth } from '@/context/AuthContext'
 
 export default function ProductDetail() {
     const params = useParams<{ id: string }>()
@@ -113,7 +114,7 @@ export default function ProductDetail() {
         []
 
     const shopInfor = productDetail?.idShop
-
+    const { user } = useAuth()
     const [discountNumber, setDiscountNumber] = useState<number>(5)
 
     const calculateDiscountedPrice = (selectedDays: number) => {
@@ -177,9 +178,9 @@ export default function ProductDetail() {
             : getRandomFallbackImageArray(5)
 
     const handleAddToCart = () => {
-        const user = webLocalStorage.get('user')
         if (!user) {
             message.warning('Vui lòng đăng nhập để thêm vào giỏ hàng')
+            localStorage.setItem('redirectAfterLogin', window.location.pathname)
             router.push('/signIn')
             return
         }

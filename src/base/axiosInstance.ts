@@ -8,7 +8,7 @@ import constants from '@/settings/constants'
 import { authEndpoint } from '@/settings/endpoints'
 
 const axiosInstance = axios.create({
-    baseURL: constants.API_SERVER,
+    baseURL: constants.SERVICE_API_SERVIER,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -58,7 +58,7 @@ const refreshAccessToken = async () => {
 
     return axios
         .post(
-            constants.API_SERVER + authEndpoint.REFRESH_TOKEN,
+            constants.SERVICE_API_SERVIER + authEndpoint.REFRESH_TOKEN,
             {},
             {
                 headers: {

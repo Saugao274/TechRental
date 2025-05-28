@@ -24,6 +24,7 @@ export default function PersonalRentalRegistryPage() {
     const router = useRouter()
 
     const onFinish = async (values: any) => {
+<<<<<<< HEAD
         const res = await postRequest('/api/users/become-owner', {
             data: values,
         })
@@ -68,6 +69,45 @@ export default function PersonalRentalRegistryPage() {
         }
     }
 
+=======
+        try {
+            message.loading({ content: 'Đang gửi đăng ký...', key: 'reg' })
+
+            const shopId = await registeredLessor(values)
+
+            if (!shopId) {
+                return message.error('Không tìm thấy shopId sau khi đăng ký')
+            }
+
+            if (!user) {
+                return message.error('Không tìm thấy thông tin người dùng.')
+            }
+
+            if (!user.isVerified) {
+                return message.warning('Bạn cần xác minh tài khoản trước!')
+            }
+
+            const token = webStorageClient.getToken()
+            if (!token) {
+                return message.error(
+                    'Không tìm thấy token đăng nhập. Vui lòng đăng nhập lại.',
+                )
+            }
+
+            message.success({
+                content: 'Đăng ký thành công! Đang chuyển hướng...',
+                key: 'reg',
+            })
+            router.push(`/rental/${shopId}`)
+        } catch (err: any) {
+            const msg =
+                err?.response?.data?.message ||
+                err?.message ||
+                'Đăng ký thất bại. Vui lòng thử lại.'
+            message.error({ content: msg, key: 'reg' })
+        }
+    }
+>>>>>>> 6ea8f1d20b40c0eb7b72622383fb1737245341c4
     const onFinishFailed = (err: any) => console.log('Form error:', err)
 
     return (
@@ -82,7 +122,7 @@ export default function PersonalRentalRegistryPage() {
             </div>
 
             {/* Thông báo đã xác minh */}
-            {user?.isVerified && (
+            {user?.isVerified ? (
                 <div className="mb-4 flex items-center rounded-md border border-green-400 bg-green-50 p-4">
                     <ShieldCheck className="mr-2 hidden text-xl text-green-500 md:block" />
                     <div>
@@ -92,6 +132,19 @@ export default function PersonalRentalRegistryPage() {
                         <p className="text-sm text-green-700">
                             Tài khoản của bạn đã được xác minh danh tính. Hãy
                             hoàn tất thông tin để đăng ký làm người cho thuê!
+                        </p>
+                    </div>
+                </div>
+            ) : (
+                <div className="mb-4 flex items-center rounded-md border border-yellow-400 bg-yellow-50 p-4">
+                    <ShieldCheck className="mr-2 hidden text-xl text-yellow-500 md:block" />
+                    <div>
+                        <h3 className="font-bold text-yellow-800">
+                            Chưa xác minh
+                        </h3>
+                        <p className="text-sm text-yellow-700">
+                            Tài khoản của bạn chưa được xác minh danh tính. Vui
+                            lòng xác thực để đăng ký làm người cho thuê!
                         </p>
                     </div>
                 </div>

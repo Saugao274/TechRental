@@ -158,7 +158,6 @@ export default function PersonalProfile() {
             return false
         }
         const distance = faceapi.euclideanDistance(desc1, desc2)
-        console.log(`Khoảng cách giữa các khuôn mặt: ${distance}`)
         return distance < 0.6
     }
 

@@ -21,10 +21,13 @@ import type { UploadFile, UploadProps } from 'antd'
 import { useRouter, useParams } from 'next/navigation'
 import AddProductModal from '@/app/(main)/(rental-profile)//rental/[id]/new/page'
 import { getRequest } from '@/request'
+
+import { MessageCircle } from 'lucide-react'
+
+import { storeEndpoint } from '@/settings/endpoints'
 const { Panel } = Collapse
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
-import { MessageCircle } from 'lucide-react'
 
 // Define the product interface
 interface Product {
@@ -79,29 +82,23 @@ export default function ProductManagement() {
     const [activeTab, setActiveTab] = useState('products')
     const router = useRouter()
     const [shop, setShop] = useState<any>(null)
-    const { id: shopId } = useParams() as { id: string }
+
     const { id } = useParams() as { id: string }
 
     useEffect(() => {
-        if (id) {
-            console.log('🔒 Ghi shopId vào localStorage:', id)
-            localStorage.setItem('shopId', id)
-        }
-    }, [id])
-
-    // Nếu cần fetch thông tin shop thật từ backend
-    useEffect(() => {
         const fetchShop = async () => {
             try {
-                const res = await getRequest(`/api/shopDetail/${shopId}`)
+                console.log('id', id)
+                const res = await getRequest(storeEndpoint.GET_MY_SHOP)
+                console.log('resSHOP1', res)
                 setShop(res)
             } catch (err) {
-                console.error('Lỗi lấy shop:', err)
+                console.error('Lỗi lấy shop từ rental:', err)
             }
         }
 
-        if (shopId) fetchShop()
-    }, [shopId])
+        if (id) fetchShop()
+    }, [id])
 
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase()),
@@ -446,6 +443,7 @@ export default function ProductManagement() {
                         Thêm sản phẩm mới
                     </Button>
                 </div>
+
                 <div style={{ marginBottom: '16px' }}>
                     <Button
                         type="default"

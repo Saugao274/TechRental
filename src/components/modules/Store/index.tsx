@@ -42,7 +42,9 @@ import { type ProductDetail, type ShopDetail } from '@/data/products'
 import { getRequest, postRequest } from '@/request'
 import { productEndpoint, storeEndpoint } from '@/settings/endpoints'
 import { useRouter } from 'next/navigation'
+
 import { useChat } from '@/context/ChatContext'
+
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
 const { Search: SearchInput } = Input
@@ -54,13 +56,24 @@ export function StoreModule({ id }: StoreModuleProps) {
     const [productsData, setProductsData] = useState<ProductDetail[]>([])
     const [storeData, setStoreData] = useState<ShopDetail>()
     const router = useRouter()
-    const { createOrOpenRoom } = useChat()
-    console.log('shopId sẽ gửi lên BE:', id)
+
     const handleChatClick = async () => {
         try {
-            if (!id) return
-            const roomId = await createOrOpenRoom(id)
-            router.push(`/chat/${roomId}`)
+            const allRooms = await getRequest('/api/chatrooms')
+            // tìm xem đã có room chưa
+            const existingRoom = allRooms.find(
+                (room: any) => String(room.shopId?._id || room.shopId) === id,
+            )
+
+            if (existingRoom) {
+                router.push(`/chat/${existingRoom._id}`)
+            } else {
+                // tạo room mới
+                const newRoom = await postRequest('/api/chatrooms', {
+                    data: { shopId: id },
+                })
+                router.push(`/chat/${newRoom._id}`)
+            }
         } catch (err) {
             message.error('Không thể mở phòng chat')
         }
@@ -98,8 +111,6 @@ export function StoreModule({ id }: StoreModuleProps) {
                 product?.category?.name?.toLowerCase() === normalizedCategory
 
             const matchPrice = (() => {
-                console.log('product.price.pricece', product.price)
-
                 return (
                     product.price >= priceRange[0] &&
                     product.price <= priceRange[1]
@@ -352,7 +363,6 @@ export function StoreModule({ id }: StoreModuleProps) {
                                     <Select
                                         value={activeCategory}
                                         onChange={(value) => {
-                                            console.log('first', value)
                                             setActiveCategory(value)
                                         }}
                                         className="w-full"
@@ -394,7 +404,6 @@ export function StoreModule({ id }: StoreModuleProps) {
                                     <Radio.Group
                                         value={activeCategory}
                                         onChange={(e) => {
-                                            console.log('first', e)
                                             setActiveCategory(e.target.value)
                                         }}
                                         buttonStyle="solid"

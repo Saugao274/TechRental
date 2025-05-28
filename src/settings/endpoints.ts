@@ -8,6 +8,9 @@ const authEndpoint = {
 }
 const userEndpoint = {
     CHANGE_PASSWORD: `${prefixBase}/auth/changePassword`,
+    VERIFY_USER: (token: string) => `${prefixBase}/auth/verify/${token}`,
+    GET_MY_USER: `${prefixBase}/users/me`,
+    REGISTER_LESSOR: `${prefixBase}/users/become-owner`,
 }
 const productEndpoint = {
     GET_ALL: `${prefixBase}/product`,
@@ -32,6 +35,7 @@ const storeEndpoint = {
     GET_ALL: `${prefixBase}/shopDetail`,
     GET_BY_ID: (id: string) => `${prefixBase}/shopDetail/${id}`,
     CREATE: `${prefixBase}/shopDetail`,
+    GET_MY_SHOP: `${prefixBase}/shopDetail/me`,
 }
 const categoryEndpoint = {
     GET_ALL: `${prefixBase}/category`,
@@ -47,12 +51,14 @@ const cloudinaryEndpoint = {
 }
 
 export const chatEndpoint = {
+
   GET_ROOMS: () => '/api/chatrooms',
   CREATE_ROOM: () => '/api/chatrooms',
   GET_MESSAGES: (roomId: string) => `/api/chatrooms/${roomId}/messages`,
   POST_MESSAGE: (roomId: string) => `/api/chatrooms/${roomId}/messages`,
   GET_SHOP_ROOMS: (shopId: string) => `/api/chatrooms/shop/${shopId}`,
 }
+
 
 
 export {
