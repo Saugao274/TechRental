@@ -51,7 +51,9 @@ export const chatEndpoint = {
   CREATE_ROOM: () => '/api/chatrooms',
   GET_MESSAGES: (roomId: string) => `/api/chatrooms/${roomId}/messages`,
   POST_MESSAGE: (roomId: string) => `/api/chatrooms/${roomId}/messages`,
+  GET_SHOP_ROOMS: (shopId: string) => `/api/chatrooms/shop/${shopId}`,
 }
+
 
 export {
     authEndpoint,

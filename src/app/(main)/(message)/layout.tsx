@@ -1,10 +1,8 @@
-import MessageLayout from '@/components/core/layouts/MessageLayout'
-import React from 'react'
+'use client'
 
-export default function MessageRootLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
+import { ReactNode } from 'react'
+import MessageLayout from '@/components/core/layouts/MessageLayout'
+
+export default function ChatLayout({ children }: { children: ReactNode }) {
     return <MessageLayout>{children}</MessageLayout>
 }

@@ -28,6 +28,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import NotificationModal from '@/components/modules/NotificationModal'
 import { useAuth } from '@/context/AuthContext'
 import { useCart } from '@/context/CartContext'
+import { getRequest } from '@/request'
+import { useChat } from '@/context/ChatContext'
 
 export default function Header() {
     const { user, logout } = useAuth()
@@ -70,27 +72,20 @@ export default function Header() {
     })
     const [shopId, setShopId] = useState<string | null>(null)
 
+    const goToChat = () => {
+        router.push('/chat')
+    }
+
     useEffect(() => {
         const fetchShopId = async () => {
-            if (!user || user.roles?.includes('owner') === false) return
-
+            if (!user || !user.roles?.includes('owner')) return
             try {
-                const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/shopDetail/me`,
-                    {
-                        credentials: 'include',
-                    },
-                )
-                const data = await res.json()
-
-                if (res.ok) {
-                    setShopId(data.metadata._id)
-                }
+                const res = await getRequest('/api/shopDetail/me')
+                setShopId(res.metadata._id)
             } catch (err) {
                 console.error('Lỗi lấy shop:', err)
             }
         }
-
         fetchShopId()
     }, [user])
 
@@ -476,7 +471,7 @@ export default function Header() {
                         </div>
                         <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
-                            onClick={() => router.push('/chat')}
+                            onClick={goToChat}
                         >
                             <MessageCircle />
                             {user && (
@@ -785,7 +780,7 @@ export default function Header() {
                                             <div
                                                 className="flex items-center gap-2"
                                                 onClick={() => {
-                                                    router.push('/chat')
+                                                    goToChat()
                                                     setMobileMenuOpen(false)
                                                 }}
                                             >

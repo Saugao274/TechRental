@@ -24,6 +24,7 @@ import { getRequest } from '@/request'
 const { Panel } = Collapse
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
+import { MessageCircle } from 'lucide-react'
 
 // Define the product interface
 interface Product {
@@ -79,6 +80,14 @@ export default function ProductManagement() {
     const router = useRouter()
     const [shop, setShop] = useState<any>(null)
     const { id: shopId } = useParams() as { id: string }
+    const { id } = useParams() as { id: string }
+
+    useEffect(() => {
+        if (id) {
+            console.log('🔒 Ghi shopId vào localStorage:', id)
+            localStorage.setItem('shopId', id)
+        }
+    }, [id])
 
     // Nếu cần fetch thông tin shop thật từ backend
     useEffect(() => {
@@ -437,6 +446,17 @@ export default function ProductManagement() {
                         Thêm sản phẩm mới
                     </Button>
                 </div>
+                <div style={{ marginBottom: '16px' }}>
+                    <Button
+                        type="default"
+                        icon={<MessageCircle />}
+                        onClick={() => {
+                            router.push(`/chat?shopMode=1`) // hoặc router.push(`/chat/${roomId}?shopMode=1`) nếu đã biết trước roomId
+                        }}
+                    >
+                        Tin nhắn
+                    </Button>
+                </div>
 
                 <Tabs
                     activeKey={activeTab}
@@ -558,6 +578,15 @@ export default function ProductManagement() {
                                 onClick={() => router.push('rental/new')}
                             >
                                 Thêm sản phẩm mới
+                            </Button>
+                            <Button
+                                type="default"
+                                icon={<MessageCircle />}
+                                onClick={() => {
+                                    router.push(`/chat?shopMode=1`)
+                                }}
+                            >
+                                Tin nhắn
                             </Button>
                         </Space>
                     ) : (
