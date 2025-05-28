@@ -3,7 +3,10 @@ import ButtonCommon from '@/components/core/common/ButtonCommon'
 import PageHader from '@/components/core/common/PageHeader'
 import SectionCommon from '@/components/core/common/SectionCommon'
 import { ProductDetail, ReviewsType } from '@/data/products'
+import { getRequest } from '@/request'
+import { userEndpoint } from '@/settings/endpoints'
 import { Avatar, Card, Col, Rate, Row } from 'antd'
+import dayjs from 'dayjs'
 import {
     Backpack,
     Calendar,
@@ -15,10 +18,26 @@ import {
     Trophy,
     Users,
 } from 'lucide-react'
-import React, { useState } from 'react'
+import { useParams } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 import CountUp from 'react-countup'
 
 export default function ProductUserView() {
+    const params = useParams()
+    const userId = params?.userId
+    console.log(userId)
+
+    const [userData, setUserData] = useState<any>()
+    console.log(userData)
+
+    const handleGetUserData = async () => {
+        const res = await getRequest('/api/users/get-user-by-id/' + userId)
+        setUserData(res)
+    }
+    useEffect(() => {
+        handleGetUserData()
+    }, [])
+
     const [productDetail, setProductDetail] = useState<ProductDetail>({
         reviews: [
             {
@@ -61,14 +80,14 @@ export default function ProductUserView() {
                                 <div className="flex flex-col items-center">
                                     <div>
                                         <Avatar
-                                            src={'/images/Intro/avt2.png'}
+                                            src={userData?.user?.avatarz}
                                             size={118}
                                             className="!border-[2px] !border-white"
                                         />
                                     </div>
-                                    <div>
+                                    <div className='mt-2'>
                                         <p className="text-2xl font-bold text-primary">
-                                            Hồng Nguyên
+                                            {userData?.user?.name}
                                         </p>
                                     </div>
                                     <div className="max-w-[150px]">
@@ -98,7 +117,7 @@ export default function ProductUserView() {
                                     <div>
                                         {' '}
                                         <div className="text-[28px] font-bold text-primary">
-                                            22
+                                            2
                                             <p className="text-[12px] font-normal text-black">
                                                 Năm hoạt động trên Techrental
                                             </p>
@@ -110,7 +129,7 @@ export default function ProductUserView() {
                         <Col span={12}>
                             <div className="flex h-full flex-col items-start justify-center gap-5 px-3">
                                 <p className="text-[36px] font-bold text-primary">
-                                    Thông tin về Hồng Nguyên
+                                    Thông tin về {userData?.user?.name}
                                 </p>
                                 <div className="flex flex-col">
                                     <div className="flex flex-row items-center gap-2">
@@ -150,7 +169,10 @@ export default function ProductUserView() {
                                             <p className="font-medium text-primary">
                                                 Ngày tham gia Techrental{' '}
                                                 <span className="font-normal text-black">
-                                                    Tháng 5, 2025
+                                                    {dayjs(
+                                                        userData?.user
+                                                            ?.createdAt,
+                                                    ).format('DD/MM/YYYY')}
                                                 </span>
                                             </p>
                                         </div>
@@ -164,7 +186,9 @@ export default function ProductUserView() {
                                             <p className="font-medium text-primary">
                                                 Điểm đánh giá uy tín:{' '}
                                                 <span className="font-normal text-black">
-                                                    5/5
+                                                    {userData?.user?.rating ??
+                                                        1}
+                                                    /5
                                                 </span>
                                             </p>
                                         </div>
@@ -172,11 +196,17 @@ export default function ProductUserView() {
                                     <div className="flex flex-row items-center gap-2">
                                         <ShieldCheck
                                             size={16}
-                                            className="text-primary"
+                                            className={`${userData?.user?.identityVerification?.status !== 'verified' ? 'text-red-500' : 'text-primary'}`}
                                         />
                                         <div>
-                                            <p className="font-medium text-primary">
-                                                Đã xác minh danh tính
+                                            <p
+                                                className={`font-medium ${userData?.user?.identityVerification?.status !== 'verified' ? 'text-red-500' : 'text-primary'}`}
+                                            >
+                                                {userData?.user
+                                                    ?.identityVerification
+                                                    ?.status !== 'verified'
+                                                    ? 'Chưa xác minh danh tính'
+                                                    : 'Đã xác minh danh tính'}
                                             </p>
                                         </div>
                                     </div>

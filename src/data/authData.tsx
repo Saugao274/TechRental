@@ -11,8 +11,10 @@ export interface User {
     ownedProducts: number
     rentingProducts: number
     registeredLessor: boolean
-
-    rentedProducts?: number
+    avatar: string,
+    gender: string,
+    rentedProducts?: number,
+    dateOfBirth: string
 }
 
 export const user = {

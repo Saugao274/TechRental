@@ -30,6 +30,7 @@ import * as faceapi from 'face-api.js'
 import { CameraOutlined } from '@ant-design/icons'
 import { useRef, useEffect } from 'react'
 import webLocalStorage from '@/utils/webLocalStorage'
+import dayjs from 'dayjs'
 
 export default function PersonalProfile() {
     var videoRef = useRef<HTMLVideoElement>(null)
@@ -441,11 +442,12 @@ export default function PersonalProfile() {
                             size={64}
                             icon={<User />}
                             className="bg-gray-300"
+                            src={user?.avatar}
                         />
                         <div className="ml-4">
                             <h2 className="text-lg font-bold">{user?.name}</h2>
                             <p className="text-sm text-gray-500">
-                                Thành viên · Tham gia từ: {user?.joinDate}
+                                Thành viên · Tham gia từ: {dayjs(user?.joinDate).format('DD/MM/YYYY')}
                             </p>
                         </div>
                     </div>

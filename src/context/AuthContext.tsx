@@ -31,8 +31,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const router = useRouter()
 
     const [user, setUser] = useState<User | null>(null)
+    console.log(user)
     const [loading, setLoading] = useState(true)
-
+    
     useEffect(() => {
         const getUser = async () => {
             try {
