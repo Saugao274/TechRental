@@ -24,52 +24,6 @@ export default function PersonalRentalRegistryPage() {
     const router = useRouter()
 
     const onFinish = async (values: any) => {
-<<<<<<< HEAD
-        const res = await postRequest('/api/users/become-owner', {
-            data: values,
-        })
-        const shopRes = await getRequest('/api/shopDetail/me')
-        const shopId = shopRes?.metadata?._id
-
-        if (!shopId) {
-            return message.error('Không tìm thấy shopId sau khi đăng ký')
-        }
-
-        if (!user) return
-
-        if (!user.isVerified) {
-            return message.warning('Bạn cần xác minh tài khoản trước!')
-        }
-
-        const token = webStorageClient.getToken()
-        if (!token) {
-            return message.error(
-                'Không tìm thấy token đăng nhập. Vui lòng đăng nhập lại.',
-            )
-        }
-
-        try {
-            message.loading({ content: 'Đang gửi đăng ký...', key: 'reg' })
-
-            await postRequest('/api/users/become-owner', { data: values })
-
-            registeredLessor()
-
-            message.success({
-                content: 'Đăng ký thành công! Đang chuyển hướng...',
-                key: 'reg',
-            })
-            router.push(`/rental/${shopId}`)
-        } catch (err: any) {
-            const msg =
-                err?.response?.data?.message ||
-                err?.message ||
-                'Đăng ký thất bại. Vui lòng thử lại'
-            message.error({ content: msg, key: 'reg' })
-        }
-    }
-
-=======
         try {
             message.loading({ content: 'Đang gửi đăng ký...', key: 'reg' })
 
@@ -107,7 +61,7 @@ export default function PersonalRentalRegistryPage() {
             message.error({ content: msg, key: 'reg' })
         }
     }
->>>>>>> 6ea8f1d20b40c0eb7b72622383fb1737245341c4
+
     const onFinishFailed = (err: any) => console.log('Form error:', err)
 
     return (

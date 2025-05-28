@@ -211,11 +211,7 @@ export function ProfileOptionsNavigation({
     ]
 
     const handlePushRouter = (route: any) => {
-<<<<<<< HEAD
-        if (route.href === '/rental') {
-=======
         if (route.href === router.push(`/rental/${shopId}`)) {
->>>>>>> 6ea8f1d20b40c0eb7b72622383fb1737245341c4
             if (user?.isVerified && user?.roles?.includes('owner')) {
                 router.push(route.href)
             } else {
