@@ -10,6 +10,7 @@ import {
     BadgeIcon as IdCard,
     Menu,
     Package,
+    PackageCheck,
     ShoppingCart,
     X,
 } from 'lucide-react'
@@ -179,6 +180,12 @@ export function RentalProfileOptionsNavigation({
             label: 'Chính Sách Cho Thuê',
             icon: FileCog,
             active: pathname === '/rental/policy',
+        },
+        {
+            href: `/rental/${shopId}/package`,
+            label: 'Chọn gói dịch vụ',
+            icon: PackageCheck,
+            active: pathname === '/rental/package',
         },
 
         {
