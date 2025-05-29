@@ -97,6 +97,7 @@ export default function RentalRootLayout({ children }: RentalRootLayoutProps) {
 
                 <div className="flex flex-col gap-[20px] md:flex-row">
                     <LeftSideBarElement />
+
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -148,6 +149,7 @@ export function RentalProfileOptionsNavigation({
 }: SidebarNavProps) {
     const pathname = usePathname()
     const router = useRouter()
+
     const { id: shopId } = useParams() as { id: string }
 
     const routes = [
@@ -157,28 +159,33 @@ export function RentalProfileOptionsNavigation({
             icon: Package,
             active: pathname === `/rental/${shopId}`,
         },
+
         {
             href: `/rental/${shopId}/manage-orders`,
             label: 'Quản Lý Đơn Thuê',
             icon: ShoppingCart,
+
             active: pathname === `/rental/${shopId}/manage-orders`,
         },
         {
             href: `/rental/${shopId}/transactions`,
             label: 'Thống Kê Giao Dịch',
             icon: HandCoins,
+
             active: pathname === '/rental/transactions',
         },
         {
             href: `/rental/${shopId}/feedback`,
             label: 'Đánh Giá & Phản Hồi',
             icon: Contact,
+
             active: pathname === '/rental/feedback',
         },
         {
             href: `/rental/${shopId}/policy`,
             label: 'Chính Sách Cho Thuê',
             icon: FileCog,
+
             active: pathname === '/rental/policy',
         },
         {

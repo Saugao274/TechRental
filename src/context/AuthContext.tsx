@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import { User } from '@/data/authData'
 import webStorageClient from '@/utils/webStorageClient'
 import constants from '@/settings/constants'
+
 import { getRequest, postRequest } from '@/request'
 import { userEndpoint } from '@/settings/endpoints'
 
@@ -54,8 +55,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         getUser()
     }, [])
 
+    const persist = (u: User | null) =>
+        u
+            ? localStorage.setItem('user', JSON.stringify(u))
+            : localStorage.removeItem('user')
+
     const login = (userData: User, token: string) => {
         setUser(userData)
+        persist(userData)
         webStorageClient.set(constants.ACCESS_TOKEN, token)
     }
 

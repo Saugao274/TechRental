@@ -13,6 +13,8 @@ export interface User {
     registeredLessor: boolean
 
     rentedProducts?: number
+    username?: string
+    avatar?: string
 }
 
 export const user = {
