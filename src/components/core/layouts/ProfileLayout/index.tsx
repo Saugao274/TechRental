@@ -213,7 +213,7 @@ export function ProfileOptionsNavigation({
     const handlePushRouter = (route: any) => {
         if (route.href === router.push(`/rental/${shopId}`)) {
             if (user?.isVerified && user?.roles?.includes('owner')) {
-                router.push(route.href)
+                router.push(route?.href)
             } else {
                 message.error(
                     'Bạn cần xác minh và trở thành người cho thuê để truy cập',

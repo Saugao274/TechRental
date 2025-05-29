@@ -34,6 +34,9 @@ import {
     Users,
 } from 'lucide-react'
 import CountUp from 'react-countup'
+import { getRequest, patchRequest } from '@/request'
+import { userEndpoint } from '@/settings/endpoints'
+import dayjs from 'dayjs'
 
 const { Text } = Typography
 
@@ -53,19 +56,38 @@ const UpdateProfile = () => {
     const [form] = Form.useForm()
     const [avatar, setAvatar] = useState('/images/Intro/avt1.png')
     const { user, updateUser } = useAuth()
-
+    console.log(user)
+    const [userData, setUserData] = useState<any>(null)
+    // console.log(userData)
     useEffect(() => {
         form.setFieldsValue(user)
     }, [form])
 
-    const handleSubmit = (values: any) => {
+    const handleGetMe = async () => {
+        const response: User = await getRequest(userEndpoint.GET_MY_USER)
+        setUserData(response)
+    }
+
+    useEffect(() => {
+        handleGetMe()
+    }, [])
+
+    useEffect(() => {
+        handleGetMe()
+    }, [])
+
+    const handleSubmit = async (values: any) => {
         if (!user) return
-        message.success('Cập nhật thông tin thành công!')
-        const newUser: User = {
-            ...user,
-            ...values,
-        }
-        updateUser(newUser)
+        const response: any = await patchRequest(
+            '/api/users/me',
+            {
+                data: {
+                    avatar: values,
+                },
+            },
+            false,
+        )
+        updateUser(response.user)
     }
 
     const handleAvatarChange = (info: any) => {
@@ -75,14 +97,50 @@ const UpdateProfile = () => {
             message.success('Đổi ảnh đại diện thành công!')
         }
     }
+    const [loading, setLoading] = useState(false)
+    const onFinish: FormProps<ProfileFormValues>['onFinish'] = async (
+        values,
+    ) => {
+        if (!user) return
 
-    const onFinish: FormProps<ProfileFormValues>['onFinish'] = (values) => {}
+        try {
+            setLoading(true)
+            const payload = {
+                name: values.fullName,
+                phone: values.phoneNumber,
+                email: values.email,
+                identityVerification: {
+                    address: `${values.currentAddress}, ${values.ward}, ${values.district}, ${values.province}`,
+                },
+                gender: values.gender,
+                dateOfBirth: values.dateOfBirth,
+            }
+
+            const response: any = await patchRequest(
+                '/api/users/me',
+                { data: payload },
+                false,
+            )
+
+            if (!response || !response.user) {
+                throw new Error('Dữ liệu phản hồi không hợp lệ từ máy chủ.')
+            }
+
+            updateUser(response.user)
+            message.success('Cập nhật thông tin thành công!')
+        } catch (error) {
+            message.error('Cập nhật thất bại. Vui lòng thử lại sau.')
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const provinces = [
-        { value: 'danang', label: 'Đà Nẵng' },
-        { value: 'hanoi', label: 'Hà Nội' },
-        { value: 'hcm', label: 'TP. Hồ Chí Minh' },
-        { value: 'haiphong', label: 'Hải Phòng' },
+        { value: 'Đà Nẵng', label: 'Đà Nẵng' },
+        { value: 'Hà Nội', label: 'Hà Nội' },
+        { value: 'TP. Hồ Chí Minh', label: 'TP. Hồ Chí Minh' },
+        { value: 'Hải Phòng', label: 'Hải Phòng' },
     ]
 
     const [isChangePassword, setIsChangePassword] = useState(false)
@@ -98,15 +156,21 @@ const UpdateProfile = () => {
                     layout="vertical"
                     onFinish={onFinish}
                     initialValues={{
-                        gender: 'male',
-                        province: 'danang',
+                        gender: user?.gender,
+                        province: 'Đà Nẵng',
+                        fullName: user?.name,
+                        email: user?.email,
+                        phoneNumber: user?.phone,
+                        dateOfBirth: user?.dateOfBirth
+                            ? dayjs(user.dateOfBirth)
+                            : null,
                     }}
                 >
                     <Row gutter={16}>
                         <Col span={12}>
                             <div className="mb-6 flex flex-col items-center gap-4">
                                 <Avatar
-                                    src={avatar}
+                                    src={user?.avatar ? user.avatar : avatar}
                                     size={185}
                                     icon={<UserIcon />}
                                     className="mb-3 bg-gray-300"
@@ -134,12 +198,23 @@ const UpdateProfile = () => {
                                             return false
                                         }
 
-                                        const newAvatarUrl =
-                                            URL.createObjectURL(file)
-                                        setAvatar(newAvatarUrl)
-                                        message.success(
-                                            'Đổi ảnh đại diện thành công!',
-                                        )
+                                        const reader = new FileReader()
+                                        reader.readAsDataURL(file)
+                                        reader.onload = () => {
+                                            const base64 =
+                                                reader.result as string
+                                            setAvatar(base64)
+                                            handleSubmit(base64)
+                                            message.success(
+                                                'Đổi ảnh đại diện thành công!',
+                                            )
+                                        }
+                                        reader.onerror = () => {
+                                            message.error(
+                                                'Có lỗi xảy ra khi xử lý ảnh!',
+                                            )
+                                        }
+
                                         return false
                                     }}
                                 >
@@ -189,7 +264,7 @@ const UpdateProfile = () => {
                             </Form.Item>
 
                             {/* Date of Birth */}
-                            <Form.Item
+                            {/* <Form.Item
                                 label={<Text strong>Ngày sinh</Text>}
                                 name="dateOfBirth"
                             >
@@ -200,7 +275,7 @@ const UpdateProfile = () => {
                                     className="w-full"
                                     style={{ borderRadius: '6px' }}
                                 />
-                            </Form.Item>
+                            </Form.Item> */}
                         </Col>
                     </Row>
 
@@ -213,7 +288,7 @@ const UpdateProfile = () => {
                                 </Text>
                             </Col>
                             <Col span={12}>
-                                <Form.Item className="!mb-0">
+                                <Form.Item name="phoneNumber" className="!mb-0">
                                     {!isChangePassword && (
                                         <div className="flex items-center rounded-md p-3">
                                             <div className="flex items-center gap-2">
@@ -221,7 +296,7 @@ const UpdateProfile = () => {
                                                     size={16}
                                                     className="text-gray-500"
                                                 />
-                                                <Text>+84 012345678</Text>
+                                                <Text>+84 {user?.phone}</Text>
                                             </div>
                                             <p className="ml-2">|</p>
                                             <Button
@@ -243,7 +318,7 @@ const UpdateProfile = () => {
                                                 size="large"
                                                 style={{ borderRadius: '6px' }}
                                             />
-                                            <Button type="default" className="">
+                                            <Button type="default" className="" onClick={() => setIsChangePassword(false)}>
                                                 Hủy bỏ
                                             </Button>
                                         </div>
@@ -261,6 +336,7 @@ const UpdateProfile = () => {
                             <Col span={12}>
                                 <Form.Item
                                     className="!mb-0"
+                                    name="email"
                                     rules={[
                                         {
                                             required: true,
@@ -274,6 +350,7 @@ const UpdateProfile = () => {
                                 >
                                     <div className="flex flex-row items-center gap-2">
                                         <Input
+                                            disabled
                                             placeholder="nguyenabc@gmail.com"
                                             size="large"
                                             style={{ borderRadius: '6px' }}
