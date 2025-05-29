@@ -169,7 +169,7 @@ const UpdateProfile = () => {
 
             const data = await res.json()
             const imageUrl = data.secure_url
-            handleUpload(imageUrl)
+            handleAvatarUpdate(imageUrl)
             message.success('Đổi ảnh đại diện thành công!')
         } catch (error: any) {
             message.error(error.message || 'Lỗi không xác định khi tải ảnh lên')
