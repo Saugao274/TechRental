@@ -11,9 +11,9 @@ export interface User {
     ownedProducts: number
     rentingProducts: number
     registeredLessor: boolean
-    avatar: string,
-    gender: string,
-    rentedProducts?: number,
+    avatar: string
+    gender: string
+    rentedProducts?: number
     dateOfBirth: string
 }
 

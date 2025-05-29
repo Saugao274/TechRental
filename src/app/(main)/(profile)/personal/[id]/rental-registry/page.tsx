@@ -61,6 +61,7 @@ export default function PersonalRentalRegistryPage() {
             message.error({ content: msg, key: 'reg' })
         }
     }
+
     const onFinishFailed = (err: any) => console.log('Form error:', err)
 
     return (

@@ -21,6 +21,9 @@ import type { UploadFile, UploadProps } from 'antd'
 import { useRouter, useParams } from 'next/navigation'
 import AddProductModal from '@/app/(main)/(rental-profile)//rental/[id]/new/page'
 import { getRequest } from '@/request'
+
+import { MessageCircle } from 'lucide-react'
+
 import { storeEndpoint } from '@/settings/endpoints'
 const { Panel } = Collapse
 const { Title, Text, Paragraph } = Typography
@@ -79,6 +82,7 @@ export default function ProductManagement() {
     const [activeTab, setActiveTab] = useState('products')
     const router = useRouter()
     const [shop, setShop] = useState<any>(null)
+
     const { id } = useParams() as { id: string }
 
     useEffect(() => {
@@ -440,6 +444,18 @@ export default function ProductManagement() {
                     </Button>
                 </div>
 
+                <div style={{ marginBottom: '16px' }}>
+                    <Button
+                        type="default"
+                        icon={<MessageCircle />}
+                        onClick={() => {
+                            router.push(`/chat?shopMode=1`) // hoặc router.push(`/chat/${roomId}?shopMode=1`) nếu đã biết trước roomId
+                        }}
+                    >
+                        Tin nhắn
+                    </Button>
+                </div>
+
                 <Tabs
                     activeKey={activeTab}
                     onChange={setActiveTab}
@@ -557,9 +573,18 @@ export default function ProductManagement() {
                             <Button
                                 type="primary"
                                 icon={<PlusOutlined />}
-                                onClick={() => router.push(`/rental/${id}/new`)}
+                                onClick={() => router.push('rental/new')}
                             >
                                 Thêm sản phẩm mới
+                            </Button>
+                            <Button
+                                type="default"
+                                icon={<MessageCircle />}
+                                onClick={() => {
+                                    router.push(`/chat?shopMode=1`)
+                                }}
+                            >
+                                Tin nhắn
                             </Button>
                         </Space>
                     ) : (

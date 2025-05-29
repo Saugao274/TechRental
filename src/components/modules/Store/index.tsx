@@ -42,6 +42,9 @@ import { type ProductDetail, type ShopDetail } from '@/data/products'
 import { getRequest, postRequest } from '@/request'
 import { productEndpoint, storeEndpoint } from '@/settings/endpoints'
 import { useRouter } from 'next/navigation'
+
+import { useChat } from '@/context/ChatContext'
+
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
 const { Search: SearchInput } = Input
@@ -53,6 +56,7 @@ export function StoreModule({ id }: StoreModuleProps) {
     const [productsData, setProductsData] = useState<ProductDetail[]>([])
     const [storeData, setStoreData] = useState<ShopDetail>()
     const router = useRouter()
+
     const handleChatClick = async () => {
         try {
             const allRooms = await getRequest('/api/chatrooms')

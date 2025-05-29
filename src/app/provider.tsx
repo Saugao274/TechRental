@@ -1,3 +1,4 @@
+// src/app/provider.tsx
 'use client'
 
 import React from 'react'
@@ -8,7 +9,8 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { store } from '@/store'
 import { AuthProvider } from '@/context/AuthContext'
 import { CartProvider } from '@/context/CartContext'
-
+import { ChatProvider } from '@/context/ChatContext'
+import { ChatSocketProvider } from '@/context/ChatProvider'
 export default function AppProvider({
     children,
 }: {
@@ -41,7 +43,11 @@ export default function AppProvider({
                 <AntApp>
                     <ReduxProvider store={store}>
                         <AuthProvider>
-                            <CartProvider>{children}</CartProvider>
+                            <ChatProvider>
+                                <ChatSocketProvider>
+                                    <CartProvider>{children}</CartProvider>
+                                </ChatSocketProvider>
+                            </ChatProvider>
                         </AuthProvider>
                     </ReduxProvider>
                 </AntApp>

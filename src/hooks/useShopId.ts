@@ -1,4 +1,4 @@
-// hooks/useShopId.ts
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -39,4 +39,5 @@ export const useShopId = () => {
     }, [])
 
     return shopId
+
 }
