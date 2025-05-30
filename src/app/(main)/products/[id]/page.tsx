@@ -59,7 +59,7 @@ export default function ProductDetail() {
                 const responseAllProduct = await getRequest(
                     productEndpoint.GET_ALL_APPROVED,
                 )
-
+                console.log('responseAllProduct', responseAllProduct)
                 setProductDetail(response.metadata)
                 setProductsData(responseAllProduct.metadata)
             } catch (error) {

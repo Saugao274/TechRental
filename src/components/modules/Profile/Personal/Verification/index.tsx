@@ -11,9 +11,6 @@ import BackDriversLicense from '@/components/core/elements/Verification/Upload/B
 import Passport from '@/components/core/elements/Verification/Upload/Passport'
 import FaicalAuthentication from '@/components/core/elements/Verification/Facial/FacialAuthentication1st'
 import FacialAuthentication1st from '@/components/core/elements/Verification/Facial/FacialAuthentication1st'
-import FacialAuthentication2nd from '@/components/core/elements/Verification/Facial/FacialAuthentication2nd'
-import FacialAuthentication3rd from '@/components/core/elements/Verification/Facial/FacialAuthentication3rd'
-import FacialAuthentication4th from '@/components/core/elements/Verification/Facial/FacialAuthentication4th'
 
 export interface StepProps {
     step?: string
@@ -60,21 +57,6 @@ const Verification = () => {
             case 'facialAuthentication1st':
                 component = (
                     <FacialAuthentication1st step={step} setStep={setStep} />
-                )
-                break
-            case 'facialAuthentication2nd':
-                component = (
-                    <FacialAuthentication2nd step={step} setStep={setStep} />
-                )
-                break
-            case 'facialAuthentication3rd':
-                component = (
-                    <FacialAuthentication3rd step={step} setStep={setStep} />
-                )
-                break
-            case 'facialAuthentication4nd':
-                component = (
-                    <FacialAuthentication4th step={step} setStep={setStep} />
                 )
                 break
             default:
