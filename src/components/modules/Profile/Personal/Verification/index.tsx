@@ -9,7 +9,6 @@ import VerifyInformation from '@/components/core/elements/Verification/VerifyInf
 import FontDriversLicense from '@/components/core/elements/Verification/Upload/FontDriversLicense'
 import BackDriversLicense from '@/components/core/elements/Verification/Upload/BackDriversLicense'
 import Passport from '@/components/core/elements/Verification/Upload/Passport'
-import FaicalAuthentication from '@/components/core/elements/Verification/Facial/FacialAuthentication1st'
 import FacialAuthentication1st from '@/components/core/elements/Verification/Facial/FacialAuthentication1st'
 
 export interface StepProps {
