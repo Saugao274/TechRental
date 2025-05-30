@@ -2,8 +2,9 @@ import path from 'path'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    compiler: {},
     reactStrictMode: true,
+    swcMinify: false,
+    productionBrowserSourceMaps: false,
     eslint: {
         ignoreDuringBuilds: true,
     },
