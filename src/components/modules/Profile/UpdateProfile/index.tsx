@@ -76,31 +76,29 @@ const UpdateProfile = () => {
         handleGetMe()
     }, [])
 
-    const handleSubmit = async (values: any) => {
+    const handleAvatarUpdate = async (values: any) => {
         if (!user) return
-        const response: any = await patchRequest(
-            '/api/users/me',
-            {
-                data: {
-                    avatar: values,
+        try {
+            const response: any = await patchRequest(
+                '/api/users/me',
+                {
+                    data: {
+                        avatar: values,
+                    },
                 },
-            },
-            false,
-        )
-        updateUser(response.user)
-    }
-
-    const handleAvatarChange = (info: any) => {
-        if (info.file.status === 'done') {
-            const newAvatarUrl = URL.createObjectURL(info.file.originFileObj)
-            setAvatar(newAvatarUrl)
-            message.success('Đổi ảnh đại diện thành công!')
+                false,
+            )
+            updateUser(response.user)
+        } catch (error) {
+            message.error('Có lỗi xảy ra khi cập nhật ảnh!')
         }
     }
+
     const [loading, setLoading] = useState(false)
     const onFinish: FormProps<ProfileFormValues>['onFinish'] = async (
         values,
     ) => {
+        console.log('CALL ON FINISH')
         if (!user) return
 
         try {
@@ -109,11 +107,9 @@ const UpdateProfile = () => {
                 name: values.fullName,
                 phone: values.phoneNumber,
                 email: values.email,
-                identityVerification: {
-                    address: `${values.currentAddress}, ${values.ward}, ${values.district}, ${values.province}`,
-                },
                 gender: values.gender,
                 dateOfBirth: values.dateOfBirth,
+                'identityVerification.address': `${values.currentAddress}, ${values.ward}, ${values.district}, ${values.province}`,
             }
 
             const response: any = await patchRequest(
@@ -144,7 +140,41 @@ const UpdateProfile = () => {
     ]
 
     const [isChangePassword, setIsChangePassword] = useState(false)
+    const handleUpload = async (file: File) => {
+        const isJpgOrPng =
+            file.type === 'image/jpeg' || file.type === 'image/png'
+        if (!isJpgOrPng) {
+            message.error('Chỉ có thể tải lên file JPG/PNG!')
+            return
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2
+        if (!isLt2M) {
+            message.error('Ảnh phải nhỏ hơn 2MB!')
+            return
+        }
 
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('upload_preset', 'sipnseekthumbnails')
+        formData.append('cloud_name', 'dy1uuo6ql')
+
+        try {
+            const res = await fetch(
+                'https://api.cloudinary.com/v1_1/dy1uuo6ql/image/upload',
+                {
+                    method: 'POST',
+                    body: formData,
+                },
+            )
+
+            const data = await res.json()
+            const imageUrl = data.secure_url
+            handleAvatarUpdate(imageUrl)
+            message.success('Đổi ảnh đại diện thành công!')
+        } catch (error: any) {
+            message.error(error.message || 'Lỗi không xác định khi tải ảnh lên')
+        }
+    }
     return (
         <div className="flex justify-center">
             <Card
@@ -179,43 +209,11 @@ const UpdateProfile = () => {
                                     name="avatar"
                                     listType="picture"
                                     showUploadList={false}
-                                    beforeUpload={(file) => {
-                                        const isJpgOrPng =
-                                            file.type === 'image/jpeg' ||
-                                            file.type === 'image/png'
-                                        if (!isJpgOrPng) {
-                                            message.error(
-                                                'Chỉ có thể tải lên file JPG/PNG!',
-                                            )
-                                            return false
-                                        }
-                                        const isLt2M =
-                                            file.size / 1024 / 1024 < 2
-                                        if (!isLt2M) {
-                                            message.error(
-                                                'Ảnh phải nhỏ hơn 2MB!',
-                                            )
-                                            return false
-                                        }
-
-                                        const reader = new FileReader()
-                                        reader.readAsDataURL(file)
-                                        reader.onload = () => {
-                                            const base64 =
-                                                reader.result as string
-                                            setAvatar(base64)
-                                            handleSubmit(base64)
-                                            message.success(
-                                                'Đổi ảnh đại diện thành công!',
-                                            )
-                                        }
-                                        reader.onerror = () => {
-                                            message.error(
-                                                'Có lỗi xảy ra khi xử lý ảnh!',
-                                            )
-                                        }
-
-                                        return false
+                                    customRequest={({ file, onSuccess }) => {
+                                        handleUpload(file as File)
+                                        setTimeout(() => {
+                                            onSuccess?.('ok')
+                                        }, 0)
                                     }}
                                 >
                                     <Button
@@ -318,7 +316,13 @@ const UpdateProfile = () => {
                                                 size="large"
                                                 style={{ borderRadius: '6px' }}
                                             />
-                                            <Button type="default" className="" onClick={() => setIsChangePassword(false)}>
+                                            <Button
+                                                type="default"
+                                                className=""
+                                                onClick={() =>
+                                                    setIsChangePassword(false)
+                                                }
+                                            >
                                                 Hủy bỏ
                                             </Button>
                                         </div>
