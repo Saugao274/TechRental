@@ -17,6 +17,8 @@ import {
     Radio,
     message,
     RadioChangeEvent,
+    Spin,
+    Skeleton,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
@@ -39,6 +41,7 @@ import { productEndpoint } from '@/settings/endpoints'
 
 import { useCart } from '@/context/CartContext'
 import { useAuth } from '@/context/AuthContext'
+import SkeletonImage from 'antd/es/skeleton/Image'
 
 export default function ProductDetail() {
     const params = useParams<{ id: string }>()
@@ -46,6 +49,7 @@ export default function ProductDetail() {
     const { addItem } = useCart()
     const [productsData, setProductsData] = useState<ProductDetail[]>([])
     const [productDetail, setProductDetail] = useState<ProductDetail>()
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -55,10 +59,13 @@ export default function ProductDetail() {
                 const responseAllProduct = await getRequest(
                     productEndpoint.GET_ALL,
                 )
-                setProductsData(responseAllProduct.metadata)
+
                 setProductDetail(response.metadata)
+                setProductsData(responseAllProduct.metadata)
             } catch (error) {
                 console.error('Error fetching products:', error)
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -197,6 +204,12 @@ export default function ProductDetail() {
             quantity,
             parseInt(selectedDays),
         )
+    }
+    if (loading) {
+        return <Skeleton></Skeleton>
+    }
+    if (!productDetail || productDetail.adminApprovalStatus === 'pending') {
+        return <NotFound />
     }
     return (
         <SectionCommon className="mx-auto flex flex-col gap-24 !pb-4 md:max-w-[1440px]">
@@ -370,7 +383,7 @@ export default function ProductDetail() {
                                     )}
                                 </div>
                                 <div className="text-sm text-gray-500">
-                                    Hoạt động {shopInfor?.lastActive}
+                                    Đang hoạt động
                                 </div>
                             </div>
                         </div>
@@ -530,22 +543,26 @@ export default function ProductDetail() {
                 </div>
             )}
             {/* Related Products */}
-            {relatedProducts.length > 0 && (
-                <div className="border-t p-6">
-                    <h2 className="mb-4 text-lg font-bold">
-                        SẢN PHẨM LIÊN QUAN
-                    </h2>
-                    <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-                        {relatedProducts.slice(0, 4).map((product, index) => (
-                            <ProductCard
-                                product={product}
-                                key={index}
-                                hiddenShortDetails={true}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
+        {relatedProducts.length > 0 && (
+    <div className="border-t p-6">
+        <h2 className="mb-4 text-lg font-bold">
+            SẢN PHẨM LIÊN QUAN
+        </h2>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
+            {relatedProducts
+                .filter(product => product._id !== productDetail._id) 
+                .slice(0, 4)
+                .map((product, index) => (
+                    <ProductCard
+                        product={product}
+                        key={index}
+                        hiddenShortDetails={true}
+                    />
+                ))}
+        </div>
+    </div>
+)}
+
         </SectionCommon>
     )
 }

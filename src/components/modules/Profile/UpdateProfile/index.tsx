@@ -56,9 +56,7 @@ const UpdateProfile = () => {
     const [form] = Form.useForm()
     const [avatar, setAvatar] = useState('/images/Intro/avt1.png')
     const { user, updateUser } = useAuth()
-    console.log(user)
     const [userData, setUserData] = useState<any>(null)
-    // console.log(userData)
     useEffect(() => {
         form.setFieldsValue(user)
     }, [form])

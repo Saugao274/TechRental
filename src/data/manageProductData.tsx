@@ -1,9 +1,12 @@
 export type ordersType = {
     _id: string
     idProduct: string[]
+    productId?: string
+    unitId?: string
     dateOrder: string
     duration: string
-    nameCustomer: string
+    idCustomer: string
+    productStatus: 'rented' | 'available'
     status:
         | 'Đã hoàn thành'
         | 'Chờ thanh toán'
@@ -41,53 +44,59 @@ export const orders: ordersType[] = [
         idProduct: ['p001', 'DJI_Osmo_Pocket_3'],
         dateOrder: '01/01/2023',
         duration: '5 ngày',
+        productStatus: 'available',
         status: 'Đã hoàn thành',
         total: 2500000,
-        nameCustomer: 'Viết Thông',
+        idCustomer: 'Viết Thông',
     },
     {
         _id: 'OR01',
         idProduct: ['chan_may_001'],
         dateOrder: '15/02/2023',
         duration: '7 ngày',
+        productStatus: 'available',
         status: 'Đang giao hàng',
         total: 1500000,
-        nameCustomer: 'Nguyên',
+        idCustomer: 'Nguyên',
     },
     {
         _id: 'Or03',
         idProduct: ['chan_may_001'],
         dateOrder: '05/04/2023',
         duration: '3 ngày',
+        productStatus: 'available',
         status: 'Cần xác nhận',
         total: 2000000,
-        nameCustomer: 'Duyên',
+        idCustomer: 'Duyên',
     },
     {
         _id: 'Or03',
         idProduct: ['chan_may_001'],
         dateOrder: '05/04/2023',
         duration: '3 ngày',
+        productStatus: 'available',
         status: 'Đang giao hàng',
         total: 2000000,
-        nameCustomer: 'Duyên',
+        idCustomer: 'Duyên',
     },
     {
         _id: 'OR_003',
         idProduct: ['fpv_001'],
         dateOrder: '10/04/2023',
         duration: '10 ngày',
+        productStatus: 'available',
         status: 'Chờ người thuê thanh toán',
         total: 5500000,
-        nameCustomer: 'Đức Ánh',
+        idCustomer: 'Đức Ánh',
     },
     {
         _id: 'OR_003',
         idProduct: ['fpv_001'],
         dateOrder: '10/04/2023',
         duration: '10 ngày',
+        productStatus: 'available',
         status: 'Người bán đã hủy',
         total: 5500000,
-        nameCustomer: 'Thế Anh',
+        idCustomer: 'Thế Anh',
     },
 ]

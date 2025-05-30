@@ -1,7 +1,9 @@
+import path from 'path'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     compiler: {},
-    reactStrictMode: false,
+    reactStrictMode: true,
     eslint: {
         ignoreDuringBuilds: true,
     },
@@ -21,6 +23,14 @@ const nextConfig = {
                 port: '',
             },
         ],
+    },
+    webpack: (config) => {
+        config.cache = {
+            type: 'filesystem',
+            cacheDirectory: path.resolve('.next/cache/webpack'),
+            maxMemoryGenerations: 1,
+        };
+        return config;
     },
 }
 

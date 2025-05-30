@@ -353,7 +353,7 @@ export default function Header() {
                         setMobileMenuOpen(false)
                     }}
                 >
-                    Xác Minh Định Danh
+                    Thông tin shop
                 </p>
             ),
         },

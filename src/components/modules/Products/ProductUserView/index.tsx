@@ -25,10 +25,8 @@ import CountUp from 'react-countup'
 export default function ProductUserView() {
     const params = useParams()
     const userId = params?.userId
-    console.log(userId)
 
     const [userData, setUserData] = useState<any>()
-    console.log(userData)
 
     const handleGetUserData = async () => {
         const res = await getRequest('/api/users/get-user-by-id/' + userId)
@@ -85,7 +83,7 @@ export default function ProductUserView() {
                                             className="!border-[2px] !border-white"
                                         />
                                     </div>
-                                    <div className='mt-2'>
+                                    <div className="mt-2">
                                         <p className="text-2xl font-bold text-primary">
                                             {userData?.user?.name}
                                         </p>
