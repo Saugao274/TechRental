@@ -1,6 +1,10 @@
 import Products from '@/components/modules/Products'
-import React from 'react'
+import { ProductProvider } from '@/context/ProductContext'
 
-export default function ProductPage() {
-    return <Products />
-}
+const ProductsPage = () => (
+    <ProductProvider>
+        <Products />
+    </ProductProvider>
+)
+
+export default ProductsPage

@@ -14,6 +14,7 @@ const userEndpoint = {
 }
 const productEndpoint = {
     GET_ALL: `${prefixBase}/product`,
+    GET_ALL_APPROVED: `${prefixBase}/product/approved`,
     GET_BY_ID: (id: string) => `${prefixBase}/product/${id}`,
     CREATE: `${prefixBase}/product`,
     GET_BY_IDSHOP: (id: string) => `${prefixBase}/product/store/${id}`,

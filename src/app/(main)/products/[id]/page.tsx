@@ -57,7 +57,7 @@ export default function ProductDetail() {
                     productEndpoint.GET_BY_ID(params.id),
                 )
                 const responseAllProduct = await getRequest(
-                    productEndpoint.GET_ALL,
+                    productEndpoint.GET_ALL_APPROVED,
                 )
 
                 setProductDetail(response.metadata)
@@ -543,26 +543,27 @@ export default function ProductDetail() {
                 </div>
             )}
             {/* Related Products */}
-        {relatedProducts.length > 0 && (
-    <div className="border-t p-6">
-        <h2 className="mb-4 text-lg font-bold">
-            SẢN PHẨM LIÊN QUAN
-        </h2>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-            {relatedProducts
-                .filter(product => product._id !== productDetail._id) 
-                .slice(0, 4)
-                .map((product, index) => (
-                    <ProductCard
-                        product={product}
-                        key={index}
-                        hiddenShortDetails={true}
-                    />
-                ))}
-        </div>
-    </div>
-)}
-
+            {relatedProducts.length > 0 && (
+                <div className="border-t p-6">
+                    <h2 className="mb-4 text-lg font-bold">
+                        SẢN PHẨM LIÊN QUAN
+                    </h2>
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
+                        {relatedProducts
+                            .filter(
+                                (product) => product._id !== productDetail._id,
+                            )
+                            .slice(0, 4)
+                            .map((product, index) => (
+                                <ProductCard
+                                    product={product}
+                                    key={index}
+                                    hiddenShortDetails={true}
+                                />
+                            ))}
+                    </div>
+                </div>
+            )}
         </SectionCommon>
     )
 }

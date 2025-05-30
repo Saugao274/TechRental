@@ -61,28 +61,6 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
         setCameraOn(false)
     }
 
-    const captureImage = () => {
-        if (videoRef.current && canvasRef.current) {
-            const video = videoRef.current
-            const canvas = canvasRef.current
-            canvas.width = video.videoWidth
-            canvas.height = video.videoHeight
-            const context = canvas.getContext('2d')
-            if (context) {
-                context.translate(canvas.width, 0)
-                context.scale(-1, 1)
-                context.drawImage(video, 0, 0, canvas.width, canvas.height)
-                const dataUrl = canvas.toDataURL('image/png')
-                setImage(dataUrl)
-                stopCamera()
-            }
-        }
-    }
-
-    const rotateImage = () => {
-        setRotation((prev) => (prev + 90) % 360)
-    }
-
     useEffect(() => {
         return () => {
             stopCamera()

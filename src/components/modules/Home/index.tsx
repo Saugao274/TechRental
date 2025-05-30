@@ -7,6 +7,7 @@ import HotProducts from '@/components/core/elements/Products/HotProducts'
 import NewProduct from '@/components/core/elements/Products/NewProduct'
 import Slider from '@/components/core/elements/Slider'
 import StaticHome from '@/components/core/elements/StaticHome'
+import { ProductProvider } from '@/context/ProductContext'
 import { Skeleton } from 'antd'
 import React, { useEffect, useState } from 'react'
 
@@ -30,8 +31,11 @@ const Home = () => {
                 <NavIcons />
                 <Slider />
             </div>
-            <HotProducts />
-            <NewProduct />
+            <ProductProvider>
+                <HotProducts />
+                <NewProduct />
+            </ProductProvider>
+
             <News />
             <StaticHome />
         </div>

@@ -25,9 +25,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={cn(beVietnamPro.variable)}>
-                <AppProvider>
-                    <AuthProvider>{children}</AuthProvider>
-                </AppProvider>
+                <AppProvider>{children}</AppProvider>
             </body>
         </html>
     )

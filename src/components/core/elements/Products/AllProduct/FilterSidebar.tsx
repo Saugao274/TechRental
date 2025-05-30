@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import { Checkbox, Collapse, Button, Select } from 'antd'
 import { getRequest } from '@/request'
-import { productEndpoint } from '@/settings/endpoints'
+import { categoryEndpoint, productEndpoint } from '@/settings/endpoints'
+import { useProducts } from '@/context/ProductContext'
+import type { CategoryType } from '@/data/products'
 
 const { Panel } = Collapse
 const { Option } = Select
@@ -17,23 +19,6 @@ const priceOptions = [
     '50 triệu trở lên',
 ]
 
-const productOptions = [
-    'Chân Máy',
-    'FPV',
-    'DJI Goggles',
-    'Máy Quay',
-    'Flycam',
-    'Mic Thu Âm',
-    'Camera',
-    'Đèn quay phim',
-    'Đèn Flash',
-    'Macbook',
-    'Điện Thoại',
-    'Trạm Xạc Di Động',
-    'Phụ Kiện Đèn',
-    'Thiết bị Live',
-]
-
 const locationOptions = ['Hà Nội', 'Đà Nẵng', 'Sài Gòn']
 
 const FilterSidebar = ({
@@ -44,18 +29,20 @@ const FilterSidebar = ({
     const [selectedPrices, setSelectedPrices] = useState<string[]>([])
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [selectedLocations, setSelectedLocations] = useState<string[]>([])
-    const [productsData, setProductsData] = useState<any[]>([])
+    const { productsData } = useProducts()
+    const [categories, setCategories] = useState<CategoryType[]>([])
+
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await getRequest(productEndpoint.GET_ALL)
-                setProductsData(response.metadata)
-            } catch (error) {
-                console.error('Error fetching products:', error)
+        const getCategoryData = async () => {
+            const res = await getRequest(categoryEndpoint.GET_ALL)
+            console.log('res', res)
+
+            if (res?.metadata) {
+                setCategories(res.metadata)
             }
         }
 
-        fetchProducts()
+        getCategoryData()
     }, [])
 
     useEffect(() => {
@@ -79,6 +66,7 @@ const FilterSidebar = ({
                     : [...prev, value],
             )
         } else if (type === 'category') {
+            console.log('cate', value)
             setSelectedCategories((prev) =>
                 prev.includes(value)
                     ? prev.filter((c) => c !== value)
@@ -94,7 +82,7 @@ const FilterSidebar = ({
     }
 
     const applyFilters = () => {
-        const filteredProducts = productsData.filter((product) => {
+        const filteredProducts = productsData.filter((product: any) => {
             const matchesPrice =
                 selectedPrices.length === 0 ||
                 selectedPrices.some((price) => {
@@ -110,7 +98,7 @@ const FilterSidebar = ({
 
             const matchesCategory =
                 selectedCategories.length === 0 ||
-                selectedCategories.includes(product.category)
+                selectedCategories.includes(product.category._id)
 
             const matchesLocation =
                 selectedLocations.length === 0 ||
@@ -155,9 +143,9 @@ const FilterSidebar = ({
                     </Select>
 
                     <Select placeholder="Chọn sản phẩm" className="w-full">
-                        {productOptions.map((product) => (
-                            <Option key={product} value={product}>
-                                {product}
+                        {categories.map((product) => (
+                            <Option key={product._id} value={product}>
+                                {product.name}
                             </Option>
                         ))}
                     </Select>
@@ -215,15 +203,15 @@ const FilterSidebar = ({
                         header={<p className="font-bold">Sản Phẩm</p>}
                         key="2"
                     >
-                        {productOptions.map((product) => (
+                        {categories.map((product) => (
                             <Checkbox
-                                key={product}
+                                key={product._id}
                                 className="!mb-4 block w-full"
                                 onChange={() =>
-                                    handleFilterChange('category', product)
+                                    handleFilterChange('category', product._id)
                                 }
                             >
-                                {product}
+                                {product.name}
                             </Checkbox>
                         ))}
                     </Panel>

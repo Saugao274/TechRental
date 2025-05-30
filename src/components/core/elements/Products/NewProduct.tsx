@@ -6,28 +6,12 @@ import { productEndpoint } from '@/settings/endpoints'
 import { getRequest } from '@/request'
 import { useAuth } from '@/context/AuthContext'
 import { Skeleton } from 'antd'
+import { useProducts } from '@/context/ProductContext'
 
 const NewProduct = () => {
-    const [productsData, setProductsData] = useState<any[]>([])
-    const [loading, setLoading] = useState(false)
-    useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true)
-            try {
-                const responseAllProduct = await getRequest(
-                    productEndpoint.GET_ALL,
-                )
-                setProductsData(responseAllProduct.metadata)
-                setLoading(false)
-            } catch (error) {
-                console.error('Error fetching products:', error)
-            }
-        }
-
-        fetchProducts()
-    }, [])
+    const { productsData, loading } = useProducts()
     const newProductsData = productsData?.filter(
-        (product) => product.isNewProduct,
+        (product: any) => product.isNewProduct,
     )
     return (
         <SectionCommon className="flex flex-col gap-10">
@@ -38,7 +22,7 @@ const NewProduct = () => {
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
                     {newProductsData
                         ?.slice(0, 4)
-                        .map((product, index) => (
+                        .map((product: any, index: number) => (
                             <ProductCard product={product} key={index} />
                         ))}
                 </div>
@@ -53,7 +37,7 @@ const NewProduct = () => {
                         <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
                             {newProductsData
                                 .slice(0, 4)
-                                .map((product, index) => (
+                                .map((product: any, index: number) => (
                                     <ProductCard
                                         product={product}
                                         key={index}

@@ -1,18 +1,6 @@
 'use client'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
-import {
-    Avatar,
-    Badge,
-    Card,
-    Divider,
-    Modal,
-    Input,
-    Select,
-    DatePicker,
-    Upload,
-    Button,
-    message,
-} from 'antd'
+import { Avatar, Badge, Card, Divider } from 'antd'
 import {
     CalendarClock,
     Clock,
@@ -21,188 +9,20 @@ import {
     Star,
     User,
 } from 'lucide-react'
-import React, { useState } from 'react'
-import { UploadOutlined } from '@ant-design/icons'
+import React from 'react'
 
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
-import * as faceapi from 'face-api.js'
-import { CameraOutlined } from '@ant-design/icons'
-import { useRef, useEffect } from 'react'
-import webLocalStorage from '@/utils/webLocalStorage'
 import dayjs from 'dayjs'
 
 export default function PersonalProfile() {
-    var videoRef = useRef<HTMLVideoElement>(null)
-    const [isModelLoaded, setIsModelLoaded] = useState(false)
-    const [isModalOpen, setIsModalOpen] = useState(false)
     const { user, updateIdentifier } = useAuth()
-    const [gender, setGender] = useState('')
     const router = useRouter()
-    const [capturedImage, setCapturedImage] = useState<string | null>(null)
-    const [uploadedCCCDImageURL, setUploadedCCCDImageURL] = useState<
-        string | null
-    >(null)
-    const streamRef = useRef<MediaStream | null>(null)
-
-    const handleFrontCCCDUpload = (info: any) => {
-        if (info.file.status === 'done') {
-            const reader = new FileReader()
-            reader.onload = () =>
-                setUploadedCCCDImageURL(reader.result as string)
-            reader.readAsDataURL(info.file.originFileObj)
-        }
-    }
-    const loadModels = async () => {
-        await faceapi.nets.tinyFaceDetector.loadFromUri(
-            '/models/tiny_face_detector',
-        )
-
-        await faceapi.nets.faceLandmark68Net.loadFromUri(
-            '/models/face_landmark_68',
-        )
-        await faceapi.nets.faceRecognitionNet.loadFromUri(
-            '/models/face_recognition',
-        )
-        setIsModelLoaded(true)
-    }
-    const startVideo = async () => {
-        await loadModels()
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-        })
-        streamRef.current = stream
-        if (videoRef.current) {
-            videoRef.current.srcObject = stream
-        }
-    }
-    useEffect(() => {
-        const stopVideo = () => {
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach((track) => track.stop())
-                streamRef.current = null
-            }
-            if (videoRef.current) {
-                videoRef.current.srcObject = null
-            }
-        }
-
-        if (!isModalOpen || capturedImage) {
-            stopVideo()
-        } else {
-            startVideo()
-        }
-
-        return () => stopVideo()
-    }, [isModalOpen, capturedImage])
-
-    const OffCamera = () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-            const stream = videoRef.current.srcObject as MediaStream
-            stream.getTracks().forEach((track) => track.stop())
-            videoRef.current.srcObject = null
-        }
-    }
-    const handleCaptureFace = async () => {
-        if (!videoRef.current || !isModelLoaded) return
-
-        const detection = await faceapi
-            .detectSingleFace(
-                videoRef.current,
-                new faceapi.TinyFaceDetectorOptions(),
-            )
-            .withFaceLandmarks()
-            .withFaceDescriptor()
-
-        if (detection) {
-            const descriptor = Array.from(detection.descriptor)
-            webLocalStorage.set('faceDescriptor', JSON.stringify(descriptor))
-
-            const canvas = document.createElement('canvas')
-            canvas.width = videoRef.current.videoWidth
-            canvas.height = videoRef.current.videoHeight
-            const ctx = canvas.getContext('2d')
-            if (ctx) {
-                ctx.drawImage(
-                    videoRef.current,
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height,
-                )
-                const imageData = canvas.toDataURL('image/jpeg')
-                setCapturedImage(imageData)
-            }
-
-            message.success('Đã lưu khuôn mặt để xác thực sau này!')
-        } else {
-            message.error('Không nhận diện được khuôn mặt. Hãy thử lại.')
-        }
-    }
 
     const handleVerificationClick = () => {
-        // setIsModalOpen(true)
         router.push(`/personal/${user?._id}/verification`)
     }
-    const extractFaceFromImage = async (imageUrl: string) => {
-        const img = await faceapi.fetchImage(imageUrl)
-        const detection = await faceapi
-            .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
-            .withFaceLandmarks()
-            .withFaceDescriptor()
 
-        return detection?.descriptor || null
-    }
-
-    const compareDescriptors = (desc1: Float32Array, desc2: Float32Array) => {
-        if (!desc1 || !desc2) {
-            return false
-        }
-        const distance = faceapi.euclideanDistance(desc1, desc2)
-        return distance < 0.6
-    }
-
-    const handleOk = async () => {
-        const webcamDescriptor = JSON.parse(
-            webLocalStorage.get('faceDescriptor') || '[]',
-        )
-        if (
-            !webcamDescriptor ||
-            webcamDescriptor.length === 0 ||
-            !uploadedCCCDImageURL
-        ) {
-            message.error('Chưa lưu khuôn mặt từ webcam.')
-            return
-        }
-
-        const imageFile = uploadedCCCDImageURL
-
-        const cccdDescriptor = await extractFaceFromImage(imageFile || '')
-
-        if (!cccdDescriptor) {
-            message.error('Không phát hiện khuôn mặt trong ảnh CCCD.')
-            return
-        }
-
-        const isMatch = compareDescriptors(
-            new Float32Array(webcamDescriptor),
-            new Float32Array(cccdDescriptor),
-        )
-
-        if (isMatch) {
-            updateIdentifier()
-            message.success('Xác minh khuôn mặt thành công!')
-            handleCancel()
-        } else {
-            message.error('Khuôn mặt không khớp với ảnh CCCD.')
-        }
-    }
-
-    const handleCancel = () => {
-        OffCamera()
-        setCapturedImage(null)
-        setIsModalOpen(false)
-    }
     return (
         <main className="mx-auto flex w-full flex-col gap-5">
             {/* Greeting Header */}
@@ -251,188 +71,6 @@ export default function PersonalProfile() {
                     </ButtonCommon>
                 </div>
             )}
-            <Modal
-                title={
-                    <h2 className="text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-center text-2xl font-bold text-transparent">
-                        Đăng Ký Định Danh
-                    </h2>
-                }
-                open={isModalOpen}
-                onCancel={handleCancel}
-                footer={
-                    <Button
-                        type="primary"
-                        onClick={handleOk}
-                        className="h-10 w-full rounded-md border-none bg-gradient-to-r from-green-500 to-teal-500 text-white transition-all duration-300 hover:from-green-600 hover:to-teal-600"
-                    >
-                        Hoàn tất
-                    </Button>
-                }
-                width={600}
-                className="rounded-xl"
-                centered
-            >
-                <form className="space-y-5 p-4">
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Họ và Tên
-                        </label>
-                        <Input
-                            placeholder="Họ và Tên"
-                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Địa chỉ
-                        </label>
-                        <Input
-                            placeholder="Địa chỉ"
-                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Quốc tịch
-                        </label>
-                        <Input
-                            placeholder="Quốc tịch"
-                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Nơi cấp chứng từ
-                        </label>
-                        <Input
-                            placeholder="Nơi cấp chứng từ"
-                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Giới Tính
-                        </label>
-                        <Select
-                            value={gender}
-                            onChange={(value) => setGender(value)}
-                            placeholder="Chọn giới tính"
-                            className="w-full"
-                            popupClassName="rounded-md"
-                        >
-                            <Select.Option value="Nam">Nam</Select.Option>
-                            <Select.Option value="Nữ">Nữ</Select.Option>
-                            <Select.Option value="Khác">Khác</Select.Option>
-                        </Select>
-                    </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Ngày, tháng, năm sinh
-                        </label>
-                        <DatePicker
-                            placeholder="Chọn ngày"
-                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                            format="DD/MM/YYYY"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            CCCD/CMND
-                        </label>
-                        <Input
-                            placeholder="CCCD/CMND"
-                            className="w-full rounded-md border-gray-300 transition-all duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <label className="mb-2 block text-center text-sm font-medium text-gray-700">
-                                Mặt trước CCCD/CMND
-                            </label>
-                            <Upload
-                                listType="picture"
-                                maxCount={1}
-                                className="w-full"
-                                onChange={handleFrontCCCDUpload}
-                            >
-                                <Button
-                                    icon={<UploadOutlined />}
-                                    className="w-full bg-blue-100 text-blue-700 transition-all duration-200 hover:bg-blue-200"
-                                >
-                                    Tải lên
-                                </Button>
-                            </Upload>
-                        </div>
-                        <div>
-                            <label className="mb-2 block text-center text-sm font-medium text-gray-700">
-                                Mặt sau CCCD/CMND
-                            </label>
-                            <Upload
-                                listType="picture"
-                                maxCount={1}
-                                className="w-full"
-                            >
-                                <Button
-                                    icon={<UploadOutlined />}
-                                    className="w-full bg-blue-100 text-blue-700 transition-all duration-200 hover:bg-blue-200"
-                                >
-                                    Tải lên
-                                </Button>
-                            </Upload>
-                        </div>
-                    </div>
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Xác thực khuôn mặt
-                        </label>
-                        <div className="flex flex-col items-center space-y-2">
-                            {capturedImage ? (
-                                <img
-                                    src={capturedImage}
-                                    alt="Ảnh khuôn mặt đã chụp"
-                                    className="rounded-md border"
-                                    width="300"
-                                />
-                            ) : (
-                                <video
-                                    ref={videoRef}
-                                    autoPlay
-                                    muted
-                                    width="300"
-                                    className="rounded-md border"
-                                />
-                            )}
-
-                            {!capturedImage ? (
-                                <Button
-                                    icon={<CameraOutlined />}
-                                    onClick={handleCaptureFace}
-                                    className="bg-blue-500 text-white hover:bg-blue-600"
-                                >
-                                    Chụp và lưu khuôn mặt
-                                </Button>
-                            ) : (
-                                <Button
-                                    onClick={() => {
-                                        setCapturedImage(null)
-                                        setIsModelLoaded(false)
-                                    }}
-                                    className="bg-yellow-500 text-white hover:bg-yellow-600"
-                                >
-                                    Thử lại
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-                </form>
-            </Modal>
 
             {/* User? Profile Card */}
             <Card className="shadow-sm">
@@ -447,7 +85,8 @@ export default function PersonalProfile() {
                         <div className="ml-4">
                             <h2 className="text-lg font-bold">{user?.name}</h2>
                             <p className="text-sm text-gray-500">
-                                Thành viên · Tham gia từ: {dayjs(user?.joinDate).format('DD/MM/YYYY')}
+                                Thành viên · Tham gia từ:{' '}
+                                {dayjs(user?.joinDate).format('DD/MM/YYYY')}
                             </p>
                         </div>
                     </div>
