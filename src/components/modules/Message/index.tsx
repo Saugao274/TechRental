@@ -72,7 +72,6 @@ export default function MessageModule() {
         setText('')
         console.log('🔥 thử fetch POST…')
         const token = webStorageClient.get(constants.ACCESS_TOKEN)
-
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_SERVICE_API_SERVER || 'http://localhost:5000'}/api/chatrooms/${chatId}/messages`,
             {

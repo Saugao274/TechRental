@@ -56,23 +56,9 @@ const UpdateProfile = () => {
     const [form] = Form.useForm()
     const [avatar, setAvatar] = useState('/images/Intro/avt1.png')
     const { user, updateUser } = useAuth()
-    const [userData, setUserData] = useState<any>(null)
     useEffect(() => {
         form.setFieldsValue(user)
     }, [form])
-
-    const handleGetMe = async () => {
-        const response: User = await getRequest(userEndpoint.GET_MY_USER)
-        setUserData(response)
-    }
-
-    useEffect(() => {
-        handleGetMe()
-    }, [])
-
-    useEffect(() => {
-        handleGetMe()
-    }, [])
 
     const handleAvatarUpdate = async (values: any) => {
         if (!user) return

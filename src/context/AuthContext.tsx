@@ -14,6 +14,7 @@ import constants from '@/settings/constants'
 
 import { getRequest, postRequest } from '@/request'
 import { userEndpoint } from '@/settings/endpoints'
+import deleteStorage from '@/utils/deleteStorage'
 
 interface AuthContextType {
     user: User | null
@@ -31,20 +32,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const router = useRouter()
 
-    const [user, setUser] = useState<User | null>(null)
+    const [user, setUser] = useState<User | null>(() => {
+        const storedUser = localStorage.getItem('user')
+        return storedUser ? JSON.parse(storedUser) : null
+    })
+
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const getUser = async () => {
+        const checkToken = async () => {
             try {
-                const response: User = await getRequest(
-                    userEndpoint.GET_MY_USER,
-                )
-                if (response) {
-                    setUser(response)
-                } else {
-                    setUser(null)
+                const response: any = await getRequest(userEndpoint.GET_MY_USER)
+                if (response === 'Unauthorized') {
+                    localStorage.clear()
+                    return setUser(null)
                 }
+                setUser(response)
             } catch (error) {
                 console.error('Error fetching user:', error)
                 setUser(null)
@@ -52,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setLoading(false)
             }
         }
-        getUser()
+        checkToken()
     }, [])
 
     const persist = (u: User | null) =>
@@ -68,6 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = () => {
         setUser(null)
+        localStorage.clear()
         router.push('/')
     }
 

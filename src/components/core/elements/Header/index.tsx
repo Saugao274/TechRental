@@ -15,7 +15,7 @@ import {
     X,
 } from 'lucide-react'
 import Image from 'next/image'
-import { Button, Dropdown, type MenuProps, Space, message } from 'antd'
+import { Button, Dropdown, type MenuProps, Space, Spin, message } from 'antd'
 import ButtonCommon from '../../common/ButtonCommon'
 import {
     motion,
@@ -32,7 +32,7 @@ import { getRequest } from '@/request'
 import { useChat } from '@/context/ChatContext'
 
 export default function Header() {
-    const { user, logout } = useAuth()
+    const { user, logout, loading } = useAuth()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [isVisible, setIsVisible] = useState(true)
     const [lastScrollY, setLastScrollY] = useState(0)
@@ -406,7 +406,20 @@ export default function Header() {
         debouncedFocus()
     }
     const path = usePathname()
-
+    if (loading) {
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                }}
+            >
+                <Spin size="large" />
+            </div>
+        )
+    }
     return (
         <motion.header
             ref={headerRef}
