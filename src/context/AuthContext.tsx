@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setLoading(true)
             const response: any = await getRequest(userEndpoint.GET_MY_USER)
             if (response === 'Unauthorized') {
+                console.log('first', response)
                 localStorage.clear()
                 return setUser(null)
             }

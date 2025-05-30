@@ -1,36 +1,28 @@
 'use client'
+import NotFound from '@/app/not-found'
 import ButtonCommon from '@/components/core/common/ButtonCommon'
 import PageHader from '@/components/core/common/PageHeader'
 import SectionCommon from '@/components/core/common/SectionCommon'
 import { ProductDetail, ReviewsType } from '@/data/products'
 import { getRequest } from '@/request'
-import { userEndpoint } from '@/settings/endpoints'
 import { Avatar, Card, Col, Rate, Row } from 'antd'
 import dayjs from 'dayjs'
-import {
-    Backpack,
-    Calendar,
-    MapPin,
-    RefreshCw,
-    ShieldCheck,
-    Star,
-    ThumbsUp,
-    Trophy,
-    Users,
-} from 'lucide-react'
+import { Backpack, Calendar, MapPin, ShieldCheck, Star } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import CountUp from 'react-countup'
 
 export default function ProductUserView() {
     const params = useParams()
-    const userId = params?.userId
-
+    const { id } = params
     const [userData, setUserData] = useState<any>()
 
     const handleGetUserData = async () => {
-        const res = await getRequest('/api/users/get-user-by-id/' + userId)
-        setUserData(res)
+        const res = await getRequest('/api/users/get-user-by-id/' + id)
+        if (res?.user) setUserData(res)
+        else {
+            setUserData(null)
+        }
     }
     useEffect(() => {
         handleGetUserData()
@@ -43,7 +35,7 @@ export default function ProductUserView() {
                 author: 'Alice Nguyen',
                 avatar: 'https://i.pravatar.cc/150?img=1',
                 content:
-                    'Hồng Nguyên rất đúng giờ và sử dụng thiết bị cẩn thận. Rất vui khi làm việc với bạn!',
+                    'Rất đúng giờ và sử dụng thiết bị cẩn thận. Rất vui khi làm việc với bạn!',
                 date: '2024-09-10',
                 rating: 5,
             },
@@ -68,7 +60,7 @@ export default function ProductUserView() {
         ],
     } as unknown as ProductDetail)
 
-    return (
+    return userData ? (
         <SectionCommon className="mx-auto flex flex-col gap-24 !pb-4 md:max-w-[1440px]">
             <div className="mx-auto flex w-full flex-col gap-8 rounded-lg">
                 <div className="w-full px-[140px]">
@@ -280,6 +272,8 @@ export default function ProductUserView() {
                 </div>
             </div>
         </SectionCommon>
+    ) : (
+        <NotFound />
     )
 }
 

@@ -20,12 +20,9 @@ export default function RentalLayout({
     useEffect(() => {
         const fetchShop = async () => {
             try {
-                console.log('id', id)
                 const res = await getRequest(`${storeEndpoint.GET_MY_SHOP}`)
-                console.log('resSHOP1', res)
                 res?.metadata ? setShop(res) : setShop(null)
             } catch (err) {
-                console.error('Lỗi lấy shop từ rental:', err)
                 setShop(null)
             } finally {
                 setLoading(false)

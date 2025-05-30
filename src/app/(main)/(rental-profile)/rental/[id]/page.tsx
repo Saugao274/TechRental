@@ -116,10 +116,6 @@ export default function ProductManagement() {
         }
     }, [id])
 
-    const filteredProducts = products.filter((product) =>
-        product.title.toLowerCase().includes(search.toLowerCase()),
-    )
-
     const columns = [
         {
             title: 'Tên sản phẩm',
