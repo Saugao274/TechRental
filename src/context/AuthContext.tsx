@@ -14,7 +14,7 @@ import constants from '@/settings/constants'
 
 import { getRequest, postRequest } from '@/request'
 import { userEndpoint } from '@/settings/endpoints'
-import deleteStorage from '@/utils/deleteStorage'
+import { Spin } from 'antd'
 
 interface AuthContextType {
     user: User | null
@@ -38,23 +38,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     })
 
     const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        const checkToken = async () => {
-            try {
-                const response: any = await getRequest(userEndpoint.GET_MY_USER)
-                if (response === 'Unauthorized') {
-                    localStorage.clear()
-                    return setUser(null)
-                }
-                setUser(response)
-            } catch (error) {
-                console.error('Error fetching user:', error)
-                setUser(null)
-            } finally {
-                setLoading(false)
+    const checkToken = async () => {
+        try {
+            setLoading(true)
+            const response: any = await getRequest(userEndpoint.GET_MY_USER)
+            if (response === 'Unauthorized') {
+                localStorage.clear()
+                return setUser(null)
             }
+            setUser(response)
+        } catch (error) {
+            console.error('Error fetching user:', error)
+            setUser(null)
+        } finally {
+            setLoading(false)
         }
+    }
+    useEffect(() => {
         checkToken()
     }, [])
 
@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const updateUser = (newUser: User) => {
         setUser(newUser)
+        checkToken()
     }
 
     const updateIdentifier = async () => {
@@ -109,7 +110,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             return null
         }
     }
-
+    if (loading) {
+        return <Spin size="large"></Spin>
+    }
     return (
         <AuthContext.Provider
             value={{
