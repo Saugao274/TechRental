@@ -109,8 +109,8 @@ export default function ManageProducts() {
 
         {
             title: 'Tên khách hàng',
-            dataIndex: 'nameCustomer',
-            key: 'nameCustomer',
+            dataIndex: 'idCustomer',
+            key: 'idCustomer',
             responsive: ['md', 'lg', 'xl'],
         },
         {
@@ -180,7 +180,7 @@ export default function ManageProducts() {
                     <div>
                         <p>
                             <strong>Tên người thuê:</strong>{' '}
-                            {selectedOrder.nameCustomer}
+                            {selectedOrder?.idCustomer}
                         </p>
                         <p>
                             <strong>Địa chỉ:</strong>{' '}
@@ -224,11 +224,11 @@ export default function ManageProducts() {
                                 className="cursor-pointer text-blue-500 underline"
                                 // onClick={() =>
                                 //     showCustomerModal(
-                                //         selectedOrder.nameCustomer,
+                                //         selectedOrder.idCustomer,
                                 //     )
                                 // }
                             >
-                                {selectedOrder.nameCustomer}
+                                {selectedOrder.idCustomer}
                             </span>
                         </p>
                         <p>

@@ -67,42 +67,42 @@ export default function ProductManagement() {
                 const ordersData = orderRes?.data || []
 
                 const unitList = []
-for (const product of productsData) {
-    if (product.adminApprovalStatus === 'pending') {
-        unitList.push({
-            ...product,
-            unitId: `${product.stock}`,
-            status: 'Chờ admin duyệt',
-        })
-        continue
-    }
+                for (const product of productsData) {
+                    if (product.adminApprovalStatus === 'pending') {
+                        unitList.push({
+                            ...product,
+                            unitId: `${product.stock}`,
+                            status: 'Chờ admin duyệt',
+                        })
+                        continue
+                    }
 
-    // Tính số lượng đơn vị đã được đặt (rented)
-    const rentedCount = ordersData.filter(
-        (o: ordersType) =>
-            o.productId === product._id && o.productStatus === 'rented'
-    ).length
+                    const rentedCount = ordersData.filter(
+                        (o: ordersType) =>
+                            o.productId === product._id &&
+                            o.productStatus === 'rented',
+                    ).length
 
-    const availableCount = product.stock - rentedCount
+                    const availableCount = product.stock - rentedCount
 
-    let status = ''
-    if (rentedCount > 0 ) {
-        status = `Đã cho thuê`
-          unitList.push({
-        ...product,
-        unitId: `${availableCount} / ${product.stock}`,
-        status,
-    })
-    }  
-     if (availableCount > 0) {
-        status = 'Còn sản phẩm'
-        unitList.push({
-        ...product,
-        unitId: `${availableCount} / ${product.stock}`,
-        status,
-    })
-    } 
-}
+                    let status = ''
+                    if (rentedCount > 0) {
+                        status = `Đã cho thuê`
+                        unitList.push({
+                            ...product,
+                            unitId: `${availableCount} / ${product.stock}`,
+                            status,
+                        })
+                    }
+                    if (availableCount > 0) {
+                        status = 'Còn sản phẩm'
+                        unitList.push({
+                            ...product,
+                            unitId: `${availableCount} / ${product.stock}`,
+                            status,
+                        })
+                    }
+                }
                 setOrders(ordersData)
                 setProductUnits(unitList)
             } catch (err) {
