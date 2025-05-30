@@ -1,9 +1,10 @@
 export type ordersType = {
     _id: string
     idProduct: string[]
+    unitId?: string
     dateOrder: string
     duration: string
-    nameCustomer: string
+    idCustomer: string
     status:
         | 'Đã hoàn thành'
         | 'Chờ thanh toán'
@@ -43,7 +44,7 @@ export const orders: ordersType[] = [
         duration: '5 ngày',
         status: 'Đã hoàn thành',
         total: 2500000,
-        nameCustomer: 'Viết Thông',
+        idCustomer: 'Viết Thông',
     },
     {
         _id: 'OR01',
@@ -52,7 +53,7 @@ export const orders: ordersType[] = [
         duration: '7 ngày',
         status: 'Đang giao hàng',
         total: 1500000,
-        nameCustomer: 'Nguyên',
+        idCustomer: 'Nguyên',
     },
     {
         _id: 'Or03',
@@ -61,7 +62,7 @@ export const orders: ordersType[] = [
         duration: '3 ngày',
         status: 'Cần xác nhận',
         total: 2000000,
-        nameCustomer: 'Duyên',
+        idCustomer: 'Duyên',
     },
     {
         _id: 'Or03',
@@ -70,7 +71,7 @@ export const orders: ordersType[] = [
         duration: '3 ngày',
         status: 'Đang giao hàng',
         total: 2000000,
-        nameCustomer: 'Duyên',
+        idCustomer: 'Duyên',
     },
     {
         _id: 'OR_003',
@@ -79,7 +80,7 @@ export const orders: ordersType[] = [
         duration: '10 ngày',
         status: 'Chờ người thuê thanh toán',
         total: 5500000,
-        nameCustomer: 'Đức Ánh',
+        idCustomer: 'Đức Ánh',
     },
     {
         _id: 'OR_003',
@@ -88,6 +89,6 @@ export const orders: ordersType[] = [
         duration: '10 ngày',
         status: 'Người bán đã hủy',
         total: 5500000,
-        nameCustomer: 'Thế Anh',
+        idCustomer: 'Thế Anh',
     },
 ]

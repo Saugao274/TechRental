@@ -35,7 +35,7 @@ import {
 import { getRequest, postRequest } from '@/request'
 import { CategoryType } from '@/data/products'
 import { useAuth } from '@/context/AuthContext'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 const { Panel } = Collapse
 const { Title, Text } = Typography
@@ -58,6 +58,7 @@ export default function ProductCreateForm() {
     const [form] = Form.useForm()
     const { user } = useAuth()
     const router = useRouter()
+    const { id } = useParams() as { id: string }
 
     const validateVideo = (file: File) => {
         const isMp4 = file.type === 'video/mp4'
@@ -77,7 +78,7 @@ export default function ProductCreateForm() {
         string,
         { key: string; label: string; required?: boolean }[]
     > = {
-        Camera: [
+        'Máy ảnh': [
             { key: 'brand', label: 'Thương hiệu', required: true },
             { key: 'status', label: 'Tình trạng', required: true },
             { key: 'cameraType', label: 'Loại máy ảnh', required: true },
@@ -86,7 +87,7 @@ export default function ProductCreateForm() {
             { key: 'resolution', label: 'Độ phân giải (MP)' },
             { key: 'lensSupport', label: 'Hệ lens (Canon EF, Sony E,...)' },
             { key: 'burstSpeed', label: 'Tốc độ chụp liên tiếp' },
-            { key: 'videoFormat', label: 'Định Dạng Quay Video' },
+            { key: 'videoFormat', label: 'Định dạng quay video' },
             { key: 'opticalZoom', label: 'Zoom quang học' },
             { key: 'iso', label: 'Chỉ số ISO' },
             { key: 'storage', label: 'Ổ cứng lưu trữ (nếu tích hợp)' },
@@ -94,22 +95,94 @@ export default function ProductCreateForm() {
             { key: 'accessories', label: 'Phụ kiện đi kèm' },
             { key: 'mic', label: 'Input mic / tai nghe' },
         ],
-        laptop: [
+        'Ống kính': [
             { key: 'brand', label: 'Thương hiệu', required: true },
             { key: 'status', label: 'Tình trạng', required: true },
-            { key: 'cpu', label: 'Loại bộ vi xử lý', required: true },
-            { key: 'displayResolution', label: 'Độ phân giải màn hình' },
-            { key: 'gpuRam', label: 'Bộ nhớ đồ họa (RAM)' },
-            { key: 'vram', label: 'Hệ thống bộ nhớ (VRAM)' },
-            { key: 'screenSize', label: 'Kích thước màn hình' },
-            { key: 'graphicCard', label: 'Card đồ họa' },
-            { key: 'ports', label: 'Cổng kết nối (USB-C, HDMI,...)' },
+            { key: 'lensType', label: 'Loại ống kính', required: true },
+            { key: 'focalLength', label: 'Tiêu cự (mm)' },
+            { key: 'aperture', label: 'Khẩu độ tối đa' },
+            { key: 'lensMount', label: 'Ngàm lens' },
+            { key: 'opticalZoom', label: 'Zoom quang học' },
             { key: 'weight', label: 'Khối lượng' },
-            { key: 'iso', label: 'Chỉ số ISO' },
-            { key: 'storage', label: 'Ổ cứng lưu trữ (nếu tích hợp)' },
             { key: 'accessories', label: 'Phụ kiện đi kèm' },
         ],
-        // Thêm các loại khác: drone, light, lens
+        'Máy quay phim': [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            { key: 'cameraType', label: 'Loại máy quay', required: true },
+            { key: 'resolution', label: 'Độ phân giải (MP)' },
+            { key: 'sensorSize', label: 'Kích thước cảm biến' },
+            { key: 'videoFormat', label: 'Định dạng quay video' },
+            { key: 'opticalZoom', label: 'Zoom quang học' },
+            { key: 'iso', label: 'Chỉ số ISO' },
+            { key: 'storage', label: 'Ổ cứng lưu trữ (nếu tích hợp)' },
+            { key: 'screen', label: 'Màn hình xoay / cảm ứng' },
+            { key: 'accessories', label: 'Phụ kiện đi kèm' },
+        ],
+        'Phụ kiện máy ảnh': [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            { key: 'accessoryType', label: 'Loại phụ kiện', required: true },
+            { key: 'compatibility', label: 'Tương thích với thiết bị' },
+            { key: 'weight', label: 'Khối lượng' },
+            { key: 'dimensions', label: 'Kích thước' },
+            { key: 'accessories', label: 'Phụ kiện đi kèm' },
+        ],
+        'Thiết bị Studio': [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            { key: 'equipmentType', label: 'Loại thiết bị', required: true },
+            { key: 'power', label: 'Công suất (W)' },
+            { key: 'dimensions', label: 'Kích thước' },
+            { key: 'weight', label: 'Khối lượng' },
+            { key: 'accessories', label: 'Phụ kiện đi kèm' },
+        ],
+        'Âm thanh & livestream': [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            {
+                key: 'audioType',
+                label: 'Loại thiết bị âm thanh',
+                required: true,
+            },
+            { key: 'frequencyRange', label: 'Dải tần số' },
+            { key: 'connectivity', label: 'Kết nối (Bluetooth, USB,...)' },
+            { key: 'power', label: 'Công suất (W)' },
+            { key: 'dimensions', label: 'Kích thước' },
+            { key: 'weight', label: 'Khối lượng' },
+            { key: 'accessories', label: 'Phụ kiện đi kèm' },
+        ],
+        Gimbal: [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            { key: 'gimbalType', label: 'Loại gimbal', required: true },
+            { key: 'compatibility', label: 'Tương thích với thiết bị' },
+            { key: 'batteryLife', label: 'Thời lượng pin' },
+            { key: 'weight', label: 'Khối lượng' },
+            { key: 'dimensions', label: 'Kích thước' },
+            { key: 'accessories', label: 'Phụ kiện đi kèm' },
+        ],
+        'Đồ chơi': [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            { key: 'toyType', label: 'Loại đồ chơi', required: true },
+            { key: 'ageGroup', label: 'Nhóm tuổi phù hợp' },
+            { key: 'material', label: 'Chất liệu' },
+            { key: 'dimensions', label: 'Kích thước' },
+            { key: 'weight', label: 'Khối lượng' },
+            { key: 'accessories', label: 'Phụ kiện đi kèm' },
+        ],
+        'Lưu trữ': [
+            { key: 'brand', label: 'Thương hiệu', required: true },
+            { key: 'status', label: 'Tình trạng', required: true },
+            { key: 'storageType', label: 'Loại lưu trữ', required: true },
+            { key: 'capacity', label: 'Dung lượng' },
+            { key: 'readSpeed', label: 'Tốc độ đọc' },
+            { key: 'writeSpeed', label: 'Tốc độ ghi' },
+            { key: 'dimensions', label: 'Kích thước' },
+            { key: 'weight', label: 'Khối lượng' },
+            { key: 'compatibility', label: 'Tương thích với thiết bị' },
+        ],
     }
     const handleSubmit = async (values: any) => {
         try {
@@ -141,7 +214,13 @@ export default function ProductCreateForm() {
                 }) || [],
             )
 
-            const images = [...realUrls, ...detailUrls]
+            const imageUrls =
+                values.imageUrls
+                    ?.split('\n')
+                    .map((url: string) => url.trim())
+                    .filter((url: string) => url) || []
+
+            const images = [...realUrls, ...detailUrls, ...imageUrls]
 
             const categoryKey = values?.category?.label || values?.category?.key
             const attributeList = productAttributes[categoryKey] || []
@@ -166,7 +245,7 @@ export default function ProductCreateForm() {
 
                     parameter,
                     images,
-                    idShop: user?._id,
+                    idShop: id,
                     details: values?.description,
                     shortDetails: values?.description
                         ? values.description.length > 100
@@ -179,20 +258,19 @@ export default function ProductCreateForm() {
                     stock: values?.stock,
                 },
             })
-
-            if (!res?.metadata?._id) {
+            console.log('res?.metadata?._id', res)
+            if (!res?.data?.product?._id) {
                 message.error('Tạo sản phẩm thất bại')
                 return
             }
 
-            message.success('Tạo sản phẩm thành công')
-            router.push(`/products/${res.metadata._id}`)
+            message.success('Tạo sản phẩm thành công, chờ admin duyệt')
+            router.push(`/rental/${id}`)
         } catch (error) {
             console.error('Error while creating product:', error)
             message.error('Đã xảy ra lỗi khi tạo sản phẩm')
         }
     }
-
     const [categoryData, setCategoryData] = useState<CategoryType[]>()
     useEffect(() => {
         const getCategoryData = async () => {
@@ -203,9 +281,16 @@ export default function ProductCreateForm() {
     }, [])
     const getContentScore = (values: any): number => {
         let score = 0
-        const detailImages = values.detailImages || []
 
-        if (detailImages.length >= 3) score += 1
+        const detailImages = values.detailImages || []
+        const imageUrls =
+            values.imageUrls
+                ?.split('\n')
+                .map((url: string) => url.trim())
+                .filter((url: string) => url) || []
+
+        // Check if there are at least 3 images (uploaded or URLs)
+        if (detailImages.length + imageUrls.length >= 3) score += 1
 
         const description = values.description || ''
         if (description.trim().length >= 30) score += 1
@@ -258,7 +343,6 @@ export default function ProductCreateForm() {
                     form={form}
                     onValuesChange={() => {
                         const values = form.getFieldsValue()
-
                         if (values?.category) {
                             setCategory(values.category.label)
                         }
@@ -275,9 +359,6 @@ export default function ProductCreateForm() {
                         }
                     }}
                     className="mx-auto flex max-w-2xl flex-col gap-5 rounded-xl"
-                    initialValues={{
-                        dailyStock: '',
-                    }}
                 >
                     <div className="rounded-2xl bg-white p-4">
                         <h3 className="text-lg font-bold text-primary">
@@ -328,7 +409,6 @@ export default function ProductCreateForm() {
                             label="Vị trí"
                             rules={[
                                 {
-                                    required: true,
                                     message: 'Vui lòng chọn danh mục',
                                 },
                             ]}
@@ -348,7 +428,6 @@ export default function ProductCreateForm() {
                             }
                             rules={[
                                 {
-                                    required: true,
                                     message: 'Vui lòng tải lên ảnh thực tế',
                                 },
                             ]}
@@ -366,7 +445,6 @@ export default function ProductCreateForm() {
                             label="Ảnh chi tiết của sản phẩm"
                             rules={[
                                 {
-                                    required: true,
                                     message: 'Vui lòng tải lên ảnh chi tiết',
                                 },
                             ]}
@@ -378,6 +456,21 @@ export default function ProductCreateForm() {
                                     setDetailImages(newFiles)
                                 }}
                             />
+                            <Form.Item
+                                name="imageUrls"
+                                label="URLs của ảnh (mỗi URL trên một dòng)"
+                                rules={[
+                                    {
+                                        required: false,
+                                        message: 'Vui lòng nhập URL ảnh',
+                                    },
+                                ]}
+                            >
+                                <Input.TextArea
+                                    placeholder="Nhập URL ảnh, mỗi URL trên một dòng"
+                                    rows={4}
+                                />
+                            </Form.Item>
                         </Form.Item>
 
                         <Form.Item
@@ -591,7 +684,7 @@ export default function ProductCreateForm() {
                             </div>
                             <div className="flex flex-row items-center gap-5">
                                 <Progress
-                                    percent={(contentScore / 5) * 100} // maxScore là tổng tối đa, ví dụ 6
+                                    percent={(contentScore / 5) * 100}
                                     showInfo={false}
                                     status={
                                         contentScore === 0

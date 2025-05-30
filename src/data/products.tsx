@@ -44,6 +44,8 @@ export type ProductDetail = {
     discount: number | 0
     rate: number | 0
     storage: number | 0
+    adminApprovalStatus: 'approved' | 'pending' | 'rejected'
+    stock: number
 }
 export interface ShopDetail {
     _id: string
