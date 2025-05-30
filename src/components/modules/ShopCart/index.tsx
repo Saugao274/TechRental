@@ -226,8 +226,8 @@ export default function CartPage() {
                     <p className="text-center text-gray-500">Giỏ hàng trống.</p>
                 ) : (
                     <div className="flex flex-col gap-4 md:gap-8">
-                        <div className="rounded-lg shadow-sm bg-white/80">
-                            <div className="hidden items-center justify-between border-b bg-white/80 rounded-t-lg border-gray-200 px-6 py-4 text-sm font-semibold text-gray-600 md:flex">
+                        <div className="rounded-lg bg-white/80 shadow-sm">
+                            <div className="hidden items-center justify-between rounded-t-lg border-b border-gray-200 bg-white/80 px-6 py-4 text-sm font-semibold text-gray-600 md:flex">
                                 <span className="w-1/3">Sản phẩm</span>
                                 <div className="flex w-2/3 justify-between">
                                     <span className="w-24 text-center">
@@ -308,7 +308,7 @@ export default function CartPage() {
                             )}
                         </div>
 
-                        <div className="mx-auto bg-white/80 w-full rounded-lg p-4 shadow-sm md:w-[400px] md:p-6">
+                        <div className="mx-auto w-full rounded-lg bg-white/80 p-4 shadow-sm md:w-[400px] md:p-6">
                             <h2 className="mb-3 text-base font-semibold text-gray-800 md:mb-4 md:text-lg">
                                 Tổng giỏ hàng
                             </h2>
@@ -335,12 +335,8 @@ export default function CartPage() {
                                 className="flex h-10 w-full items-center justify-center gap-2 rounded-none bg-green-600 py-2 text-xs font-semibold text-white disabled:opacity-60 md:h-12 md:py-3 md:text-sm"
                                 onClick={() =>
                                     router.push(
-                                        `/personal/${user._id}/payment?total=${total}&products=${encodeURIComponent(
-                                            JSON.stringify(
-                                                items.filter((i) =>
-                                                    selectedIds.includes(i.id),
-                                                ),
-                                            ),
+                                        `/personal/${user._id}/payment?selectedIds=${encodeURIComponent(
+                                            JSON.stringify(selectedIds),
                                         )}`,
                                     )
                                 }

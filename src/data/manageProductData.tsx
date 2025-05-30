@@ -1,26 +1,26 @@
-export type ordersType = {
+export type OrderProductType = {
     _id: string
-    idProduct: string[]
-    productId?: string
-    unitId?: string
-    dateOrder: string
-    duration: string
-    idCustomer: string
-    productStatus: 'rented' | 'available'
+    productId: string
+    unitId: string
+    productStatus: 'available' | 'rented'
+    orderId: string
+    createdAt: string
+    updatedAt: string
+}
+
+export type OrderType = {
+    _id: string
+    customerId: string
+    products: OrderProductType[]
+    totalPrice: number
     status:
-        | 'Đã hoàn thành'
-        | 'Chờ thanh toán'
-        | 'Chờ người cho thuê xác nhận'
-        | 'Chờ người thuê thanh toán'
-        | 'Người thuê đã hủy'
-        | 'Người bán đã hủy'
-        | 'Cần xác nhận'
-        | 'Chờ giao hàng' //người thuê
-        | 'Đang giao hàng' //cho thuê
-        | 'Đã giao hàng' //cho thuê
-        | 'Đã nhận hàng' //người thuê
-        | 'Đã trả hàng' //người thuê
-    total: number
+        | 'completed'
+        | 'pending_payment'
+        | 'pending_confirmation'
+        | 'in_delivery'
+        | 'canceled'
+    createdAt: string
+    updatedAt: string
 }
 export const statusColors = {
     'Đã hoàn thành': 'green',
@@ -38,65 +38,43 @@ export const statusColors = {
     'Đang giao hàng': 'blue',
     'Đã giao hàng': 'blue',
 }
-export const orders: ordersType[] = [
+export const orders: OrderType[] = [
     {
         _id: 'OR01',
-        idProduct: ['p001', 'DJI_Osmo_Pocket_3'],
-        dateOrder: '01/01/2023',
-        duration: '5 ngày',
-        productStatus: 'available',
-        status: 'Đã hoàn thành',
-        total: 2500000,
-        idCustomer: 'Viết Thông',
+        customerId: 'Viết Thông',
+        products: [
+            {
+                _id: 'p001',
+                productId: 'DJI_Osmo_Pocket_3',
+                unitId: 'DJI_Osmo_Pocket_3-1',
+                productStatus: 'available',
+                orderId: 'OR01',
+                createdAt: '2023-01-01T00:00:00Z',
+                updatedAt: '2023-01-01T00:00:00Z',
+            },
+        ],
+        totalPrice: 2500000,
+        status: 'completed',
+        createdAt: '2023-01-01T00:00:00Z',
+        updatedAt: '2023-01-01T00:00:00Z',
     },
     {
-        _id: 'OR01',
-        idProduct: ['chan_may_001'],
-        dateOrder: '15/02/2023',
-        duration: '7 ngày',
-        productStatus: 'available',
-        status: 'Đang giao hàng',
-        total: 1500000,
-        idCustomer: 'Nguyên',
-    },
-    {
-        _id: 'Or03',
-        idProduct: ['chan_may_001'],
-        dateOrder: '05/04/2023',
-        duration: '3 ngày',
-        productStatus: 'available',
-        status: 'Cần xác nhận',
-        total: 2000000,
-        idCustomer: 'Duyên',
-    },
-    {
-        _id: 'Or03',
-        idProduct: ['chan_may_001'],
-        dateOrder: '05/04/2023',
-        duration: '3 ngày',
-        productStatus: 'available',
-        status: 'Đang giao hàng',
-        total: 2000000,
-        idCustomer: 'Duyên',
-    },
-    {
-        _id: 'OR_003',
-        idProduct: ['fpv_001'],
-        dateOrder: '10/04/2023',
-        duration: '10 ngày',
-        productStatus: 'available',
-        status: 'Chờ người thuê thanh toán',
-        total: 5500000,
-        idCustomer: 'Đức Ánh',
-    },
-    {
-        _id: 'OR_003',
-        idProduct: ['fpv_001'],
-        dateOrder: '10/04/2023',
-        duration: '10 ngày',
-        productStatus: 'available',
-        status: 'Người bán đã hủy',
-        total: 5500000,
-        idCustomer: 'Thế Anh',
+        _id: 'OR02',
+        customerId: 'Nguyên',
+        products: [
+            {
+                _id: 'chan_may_001',
+                productId: 'Laptop MacBook Pro',
+                unitId: 'Laptop_MacBook_Pro-1',
+                productStatus: 'available',
+                orderId: 'OR02',
+                createdAt: '2023-02-15T00:00:00Z',
+                updatedAt: '2023-02-15T00:00:00Z',
+            },
+        ],
+        totalPrice: 3200000,
+        status: 'in_delivery',
+        createdAt: '2023-02-15T00:00:00Z',
+        updatedAt: '2023-02-15T00:00:00Z',
     },
 ]
