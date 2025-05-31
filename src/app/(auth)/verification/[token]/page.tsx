@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { message, Typography, Button, Image } from 'antd'
 import Link from 'next/link'
+import axios from '@/utils/axiosInstance'
 
 const { Title, Text } = Typography
 
@@ -28,14 +29,14 @@ const Welcome = () => {
     }
 
     const handleVerify = async () => {
-        console.log('token', token)
         if (!token) return
-
         try {
-            // thêm api check token => thêm user
-            message.success('Xác thực thành công')
-        } catch (error) {
-            message.error('Xác thực thất bại')
+            const res = await axios.get(`/auth/verify/${token}`)
+
+            message.success('Xác thực thành công!')
+            console.log('✅ Xác thực:', res)
+        } catch (error: any) {
+            message.error(error?.response?.data?.message || 'Xác thực thất bại')
         } finally {
             startCountdown()
         }

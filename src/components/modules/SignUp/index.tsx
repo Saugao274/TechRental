@@ -28,8 +28,7 @@ export default function SignUpModule() {
                 address: 'None',
             })
 
-            alert('Đăng ký thành công. Vui lòng kiểm tra email để xác minh.')
-            router.push('/signIn')
+            router.push(`/signUp/success?email=${values.email}`)
         } catch (error: any) {
             console.error('Đăng ký lỗi:', error)
             const msg = error.response?.data?.message || 'Có lỗi xảy ra'
