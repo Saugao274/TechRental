@@ -13,7 +13,11 @@ import {
     Image,
     Rate,
 } from 'antd'
-import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
+import {
+    SearchOutlined,
+    PlusOutlined,
+    MessageOutlined,
+} from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { getRequest, postRequest } from '@/request'
@@ -40,6 +44,10 @@ export default function ProductManagement() {
     const pageSize = 5
     const router = useRouter()
     const { id } = useParams() as { id: string }
+    useEffect(() => {
+        if (id) localStorage.setItem('shopId', id)
+    }, [id])
+
     useEffect(() => {
         const fetchShop = async () => {
             try {
@@ -263,6 +271,12 @@ export default function ProductManagement() {
                             onClick={() => router.push(`${id}/new`)}
                         >
                             Thêm sản phẩm mới
+                        </Button>
+                        <Button
+                            icon={<MessageOutlined />}
+                            onClick={() => router.push('/chat?shopMode=1')}
+                        >
+                            Chat với khách
                         </Button>
                     </Space>
                 </div>
