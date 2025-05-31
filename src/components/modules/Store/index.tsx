@@ -56,24 +56,29 @@ export function StoreModule({ id }: StoreModuleProps) {
     const [productsData, setProductsData] = useState<ProductDetail[]>([])
     const [storeData, setStoreData] = useState<ShopDetail>()
     const router = useRouter()
+    const { createOrOpenRoom } = useChat()
+    const { refreshRooms } = useChat()
 
     const handleChatClick = async () => {
         try {
             const allRooms = await getRequest('/api/chatrooms')
-            // tìm xem đã có room chưa
+
             const existingRoom = allRooms.find(
                 (room: any) => String(room.shopId?._id || room.shopId) === id,
             )
 
+            let roomId
             if (existingRoom) {
-                router.push(`/chat/${existingRoom._id}`)
+                roomId = existingRoom._id
             } else {
-                // tạo room mới
                 const newRoom = await postRequest('/api/chatrooms', {
                     data: { shopId: id },
                 })
-                router.push(`/chat/${newRoom._id}`)
+                roomId = newRoom._id
             }
+
+            await refreshRooms() // 👈 nạp lại rooms vào ChatContext
+            router.push(`/chat/${roomId}`)
         } catch (err) {
             message.error('Không thể mở phòng chat')
         }
@@ -83,10 +88,10 @@ export function StoreModule({ id }: StoreModuleProps) {
         if (!id) return
         ;(async () => {
             try {
-                const respStore = await getRequest(storeEndpoint.GET_BY_ID(id))
-                const respProducts = await getRequest(
-                    productEndpoint.GET_BY_IDSHOP(id),
-                )
+                const [respStore, respProducts] = await Promise.all([
+                    getRequest(storeEndpoint.GET_BY_ID(id)),
+                    getRequest(productEndpoint.GET_BY_IDSHOP(id)),
+                ])
                 setStoreData(respStore.metadata)
                 setProductsData(respProducts.metadata)
             } catch (e) {
@@ -94,6 +99,7 @@ export function StoreModule({ id }: StoreModuleProps) {
             }
         })()
     }, [id])
+
     const [activeCategory, setActiveCategory] = useState<string>('all')
     const [sortBy, setSortBy] = useState<string>('popular')
     const [priceRange, setPriceRange] = useState<[number, number]>([

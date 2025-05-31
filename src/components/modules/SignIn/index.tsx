@@ -33,7 +33,7 @@ const SignIn = () => {
             )
 
             if (!response || !response.user) {
-                throw new Error('Dữ liệu phản hồi không hợp lệ từ máy chủ.')
+                throw new Error('Mail hoặc mật khẩu không chính xác.')
             }
 
             const user = response.user
