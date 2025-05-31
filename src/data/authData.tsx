@@ -17,8 +17,8 @@ export interface User {
     dateOfBirth: string
 }
 
-export const user = {
-    id: 'abc',
+export const userData: User = {
+    _id: 'abc',
     name: 'Nguyễn ABC',
     joinDate: '01/01/2025',
     roles: ['rental'],
@@ -30,4 +30,7 @@ export const user = {
     rentingProducts: 2,
     rentedProducts: 10,
     registeredLessor: true,
+    avatar: '',
+    gender: '',
+    dateOfBirth: '',
 }

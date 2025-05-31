@@ -1,7 +1,6 @@
-import OrderManagement from '@/components/modules/Profile/Personal/OrderManagement'
-import ManageProducts from '@/components/modules/Rental/ManageProducts'
+import OrderManagement from '@/components/modules/OrderManagement'
 import React from 'react'
 
-export default function RentalIdentificationPage() {
-    return <OrderManagement />
+export default function RentalOrdersPage() {
+    return <OrderManagement type="rental" />
 }

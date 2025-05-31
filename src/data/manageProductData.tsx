@@ -1,4 +1,6 @@
-export type OrderProductType = {
+import { userData, type User } from './authData'
+
+export type UnitProductType = {
     _id: string
     productId: string
     unitId: string
@@ -10,8 +12,8 @@ export type OrderProductType = {
 
 export type OrderType = {
     _id: string
-    customerId: string
-    products: OrderProductType[]
+    customerId: User
+    products: UnitProductType[]
     totalPrice: number
     status:
         | 'completed'
@@ -19,29 +21,24 @@ export type OrderType = {
         | 'pending_confirmation'
         | 'in_delivery'
         | 'canceled'
+        | 'before_deadline'
     createdAt: string
     updatedAt: string
+    duration: number
 }
 export const statusColors = {
-    'Đã hoàn thành': 'green',
+    completed: 'green',
     //người thuê
-    'Chờ thanh toán': 'orange',
-    'Người thuê đã hủy': 'red',
-    'Chờ người cho thuê xác nhận': 'orange',
-    'Chờ giao hàng': 'orange',
-    'Đã nhận hàng': 'blue',
-    'Đã trả hàng': 'blue',
-    //người cho thuê
-    'Chờ người thuê thanh toán': 'orange',
-    'Người bán đã hủy': 'red',
-    'Cần xác nhận': 'orange',
-    'Đang giao hàng': 'blue',
-    'Đã giao hàng': 'blue',
+    pending_payment: 'orange',
+    canceledy: 'red',
+    pending_confirmation: 'orange',
+    in_delivery: 'orange',
+    before_deadline: 'blue',
 }
 export const orders: OrderType[] = [
     {
         _id: 'OR01',
-        customerId: 'Viết Thông',
+        customerId: userData,
         products: [
             {
                 _id: 'p001',
@@ -54,13 +51,14 @@ export const orders: OrderType[] = [
             },
         ],
         totalPrice: 2500000,
+        duration: 3,
         status: 'completed',
         createdAt: '2023-01-01T00:00:00Z',
         updatedAt: '2023-01-01T00:00:00Z',
     },
     {
         _id: 'OR02',
-        customerId: 'Nguyên',
+        customerId: userData,
         products: [
             {
                 _id: 'chan_may_001',
@@ -73,6 +71,7 @@ export const orders: OrderType[] = [
             },
         ],
         totalPrice: 3200000,
+        duration: 3,
         status: 'in_delivery',
         createdAt: '2023-02-15T00:00:00Z',
         updatedAt: '2023-02-15T00:00:00Z',

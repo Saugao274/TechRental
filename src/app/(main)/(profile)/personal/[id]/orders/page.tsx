@@ -1,8 +1,6 @@
-import OrderManagement from '@/components/modules/Profile/Personal/OrderManagement'
+import OrderManagement from '@/components/modules/OrderManagement'
 import React from 'react'
 
 export default function PersonalOrdersPage() {
-  return (
-    <OrderManagement/>
-  )
+    return <OrderManagement type="personal" />
 }
