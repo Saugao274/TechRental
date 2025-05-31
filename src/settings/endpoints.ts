@@ -42,6 +42,8 @@ const orderEndpoint = {
     GET_ORDER_BY_UNIT_ID: (unitId: string) =>
         `${prefixBase}/order-products/unit/${unitId}`,
     GET_ORDER_BY_PRODUCT_ID: `${prefixBase}/order-products/byProductIds`,
+    CREATE_ORDER: `${prefixBase}/orders/create-payment-url`,
+    RETURN_ORDER: `${prefixBase}/orders/vnpay-return`,
 }
 
 export const chatEndpoint = {
