@@ -101,20 +101,21 @@ export default function MessageModule() {
 
     const isSelf = room.userId?._id === user._id
     const peer = isSelf ? room.shopId : room.userId
-
+    const peerName = peer?.name || 'Người dùng'
+    const peerAvatar = peer?.avatar || '/placeholder.svg'
     return (
         <div className="flex h-full flex-col">
             {/* Header */}
             <div className="flex items-center gap-3 rounded-t bg-white p-4">
-                <Avatar src={peer.avatar} size={50} />
+                <Avatar src={peerAvatar} size={50} />
                 <div>
-                    <p className="text-lg font-bold">{peer.name}</p>
+                    <p className="text-lg font-bold">{peerName}</p>
                     <Text type="secondary" className="text-xs">
                         Hoạt động gần đây
                     </Text>
                 </div>
             </div>
-
+            {/* //as */}
             {/* Messages */}
             <div className="message-list custom-scrollbar flex-1 space-y-3 overflow-y-auto bg-gray-50 p-4">
                 {messages.length === 0 ? (
