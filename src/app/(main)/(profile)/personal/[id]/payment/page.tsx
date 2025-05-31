@@ -1,41 +1,45 @@
 'use client'
 import { Button, Input, Modal } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { CheckCircleFilled } from '@ant-design/icons'
+import { useAuth } from '@/context/AuthContext'
+import { postRequest } from '@/request'
+import { orderEndpoint } from '@/settings/endpoints'
+import { OrderPayload } from '@/types/payload'
 
 // Define the CartItem interface
 interface CartItem {
-    id: number
+    id: string
     name: string
     price: number
     quantity: number
     image: string
+    shop: string
+    days: number
 }
-
 const PaymentPage = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const { user } = useAuth()
 
-    // State for cart items and modal visibility
-    const [cartItems, setCartItems] = useState<CartItem[]>([
-        {
-            id: 1,
-            name: 'ĐÈN FLASH GODOX V860III',
-            price: 3000000,
-            quantity: 2,
-            image: 'https://tse3.mm.bing.net/th?id=OIP.Tk-zyaMmnDTvKU4WjhHkAQHaHa&pid=Api&P=0&h=220',
-        },
-        {
-            id: 2,
-            name: 'OSMO POCKET 3',
-            price: 7000000,
-            quantity: 1,
-            image: 'https://tse1.mm.bing.net/th?id=OIP.J9bna2G4uiIGIGcaPzYI-wHaD4&pid=Api&P=0&h=220',
-        },
-    ])
+    const [cartItems, setCartItems] = useState<CartItem[]>([])
+
+    useEffect(() => {
+        const productsParam = searchParams.get('products')
+        if (productsParam) {
+            try {
+                const parsedItems = JSON.parse(
+                    decodeURIComponent(productsParam),
+                )
+                setCartItems(parsedItems)
+            } catch (error) {
+                console.error('Failed to parse products from URL', error)
+            }
+        }
+    }, [searchParams])
     const [isModalVisible, setIsModalVisible] = useState(false)
 
     // Calculate total price
@@ -45,7 +49,7 @@ const PaymentPage = () => {
     )
 
     // Handle quantity change
-    const handleQuantityChange = (id: number, delta: number) => {
+    const handleQuantityChange = (id: string, delta: number) => {
         setCartItems(
             cartItems.map((item) =>
                 item.id === id
@@ -56,8 +60,28 @@ const PaymentPage = () => {
     }
 
     // Handle order confirmation
-    const handleConfirmOrder = () => {
-        setIsModalVisible(true)
+    const handleConfirmOrder = async () => {
+        try {
+            const payload: OrderPayload = {
+                customerId: user?._id!,
+                products: cartItems.map((item) => item.id),
+                totalPrice: totalPrice,
+                status: 'pending_payment',
+                duration: cartItems.reduce(
+                    (total: number, item: CartItem) => total + item.days,
+                    0,
+                ),
+                deliveryDate: new Date().toISOString(),
+            }
+            // Make API request to confirm the order
+            const res = await postRequest(orderEndpoint.POST_ORDER, {
+                data: payload,
+            })
+            console.log(res)
+            setIsModalVisible(true)
+        } catch (error) {
+            console.error('Failed to confirm order', error)
+        }
     }
 
     const handleModalOk = () => {
@@ -129,30 +153,34 @@ const PaymentPage = () => {
                             </div>
                         </div>
 
-                        <div className="mt-2 flex items-center space-x-2 md:mt-0">
-                            <Button
-                                onClick={() =>
-                                    handleQuantityChange(item.id, -1)
-                                }
-                                disabled={item.quantity === 1}
-                            >
-                                -
-                            </Button>
-                            <Input
-                                value={item.quantity}
-                                className="w-12 text-center"
-                                readOnly
-                            />
-                            <Button
-                                onClick={() => handleQuantityChange(item.id, 1)}
-                            >
-                                +
-                            </Button>
-                        </div>
+                        <div className="flex flex-row items-center gap-2">
+                            <div className="mt-2 flex items-center space-x-2 md:mt-0">
+                                <Button
+                                    onClick={() =>
+                                        handleQuantityChange(item.id, -1)
+                                    }
+                                    disabled={item.quantity === 1}
+                                >
+                                    -
+                                </Button>
+                                <Input
+                                    value={item.quantity}
+                                    className="w-12 text-center"
+                                    readOnly
+                                />
+                                <Button
+                                    onClick={() =>
+                                        handleQuantityChange(item.id, 1)
+                                    }
+                                >
+                                    +
+                                </Button>
+                            </div>
 
-                        <p className="mt-2 font-semibold text-red-500 md:mt-0">
-                            {(item.price * item.quantity).toLocaleString()}đ
-                        </p>
+                            <p className="mt-2 font-semibold text-red-500 md:mt-0">
+                                {(item.price * item.quantity).toLocaleString()}đ
+                            </p>
+                        </div>
                     </div>
                 ))}
             </motion.div>
