@@ -1,42 +1,92 @@
 'use client'
-
-import { Button, Modal } from 'antd'
-import React, { useState, useMemo } from 'react'
+import { Button, Input, Modal } from 'antd'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { CheckCircleFilled } from '@ant-design/icons'
-import { useCart } from '@/context/CartContext'
+import { useAuth } from '@/context/AuthContext'
+import { postRequest } from '@/request'
+import { orderEndpoint } from '@/settings/endpoints'
+import { OrderPayload } from '@/types/payload'
 
+// Define the CartItem interface
+interface CartItem {
+    id: string
+    name: string
+    price: number
+    quantity: number
+    image: string
+    shop: string
+    days: number
+}
 const PaymentPage = () => {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const { items } = useCart()
+    const { user } = useAuth()
 
-    const selectedIds = useMemo(() => {
-        const ids = searchParams.get('selectedIds')
-        return ids ? JSON.parse(decodeURIComponent(ids)) : []
+    const [cartItems, setCartItems] = useState<CartItem[]>([])
+
+    useEffect(() => {
+        const productsParam = searchParams.get('products')
+        if (productsParam) {
+            try {
+                const parsedItems = JSON.parse(
+                    decodeURIComponent(productsParam),
+                )
+                setCartItems(parsedItems)
+            } catch (error) {
+                console.error('Failed to parse products from URL', error)
+            }
+        }
     }, [searchParams])
+    const [isModalVisible, setIsModalVisible] = useState(false)
 
-    const selectedItems = useMemo(
-        () => items.filter((item) => selectedIds.includes(item.id)),
-        [items, selectedIds],
-    )
-
-    const totalPrice = selectedItems.reduce(
-        (total, item) => total + item.price * item.quantity * item.days,
+    // Calculate total price
+    const totalPrice = cartItems.reduce(
+        (total: number, item: CartItem) => total + item.price * item.quantity,
         0,
     )
 
-    const [isModalVisible, setIsModalVisible] = useState(false)
+    // Handle quantity change
+    const handleQuantityChange = (id: string, delta: number) => {
+        setCartItems(
+            cartItems.map((item) =>
+                item.id === id
+                    ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+                    : item,
+            ),
+        )
+    }
 
-    const handleConfirmOrder = () => {
-        setIsModalVisible(true)
+    // Handle order confirmation
+    const handleConfirmOrder = async () => {
+        try {
+            const payload: OrderPayload = {
+                customerId: user?._id!,
+                products: cartItems.map((item) => item.id),
+                totalPrice: totalPrice,
+                status: 'pending_payment',
+                duration: cartItems.reduce(
+                    (total: number, item: CartItem) => total + item.days,
+                    0,
+                ),
+                deliveryDate: new Date().toISOString(),
+            }
+            // Make API request to confirm the order
+            const res = await postRequest(orderEndpoint.POST_ORDER, {
+                data: payload,
+            })
+            console.log(res)
+            setIsModalVisible(true)
+        } catch (error) {
+            console.error('Failed to confirm order', error)
+        }
     }
 
     const handleModalOk = () => {
         setIsModalVisible(false)
-        router.push('/')
+        router.push('http://localhost:3000/')
     }
 
     return (
@@ -80,9 +130,7 @@ const PaymentPage = () => {
                 className="mb-6 rounded-lg bg-white p-4 shadow-md"
             >
                 <h2 className="mb-4 text-lg font-semibold">Shop: mayanhvn</h2>
-
-                <h2 className="mb-4 text-lg font-semibold">Sản phẩm đã chọn</h2>
-                {selectedItems.map((item) => (
+                {cartItems.map((item) => (
                     <div
                         key={item.id}
                         className="flex flex-col items-center justify-between border-b py-4 md:flex-row"
@@ -104,18 +152,40 @@ const PaymentPage = () => {
                                 </p>
                             </div>
                         </div>
-                        <p className="mt-2 font-semibold text-red-500 md:mt-0">
-                            {(
-                                item.price *
-                                item.quantity *
-                                item.days
-                            ).toLocaleString()}
-                            đ
-                        </p>
+
+                        <div className="flex flex-row items-center gap-2">
+                            <div className="mt-2 flex items-center space-x-2 md:mt-0">
+                                <Button
+                                    onClick={() =>
+                                        handleQuantityChange(item.id, -1)
+                                    }
+                                    disabled={item.quantity === 1}
+                                >
+                                    -
+                                </Button>
+                                <Input
+                                    value={item.quantity}
+                                    className="w-12 text-center"
+                                    readOnly
+                                />
+                                <Button
+                                    onClick={() =>
+                                        handleQuantityChange(item.id, 1)
+                                    }
+                                >
+                                    +
+                                </Button>
+                            </div>
+
+                            <p className="mt-2 font-semibold text-red-500 md:mt-0">
+                                {(item.price * item.quantity).toLocaleString()}đ
+                            </p>
+                        </div>
                     </div>
                 ))}
             </motion.div>
 
+            {/* Summary and Confirm Button */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -142,6 +212,7 @@ const PaymentPage = () => {
                 </Button>
             </motion.div>
 
+            {/* Updated Confirmation Modal */}
             <Modal
                 title={null}
                 open={isModalVisible}
@@ -157,9 +228,9 @@ const PaymentPage = () => {
                         Đặt hàng thành công!
                     </h2>
                     <p className="mb-6 text-gray-600">
-                        Chúng tôi đã gửi yêu cầu xác thực cho người cho thuê.
-                        Khi họ xác nhận, bạn sẽ nhận được email hướng dẫn để
-                        hoàn tất hợp đồng và thanh toán.
+                        Chúng tôi đã gửi link ký hợp đồng điện tử đến email của
+                        bạn. Vui lòng kiểm tra email để hoàn tất hợp đồng và
+                        nhận đơn hàng nhé!
                     </p>
                     <Button
                         type="primary"

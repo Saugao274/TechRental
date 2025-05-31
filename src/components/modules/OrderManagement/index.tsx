@@ -18,7 +18,7 @@ const { Title, Text } = Typography
 const { TabPane } = Tabs
 
 interface OrderManagementProps {
-    type: 'personal' | 'rental' // Define the type of orders
+    type: 'personal' | 'rental'
 }
 
 export default function OrderManagement({ type }: OrderManagementProps) {
