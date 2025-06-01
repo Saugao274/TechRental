@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
-import { getRequest, postRequest, putRequest } from '@/request' // ⬅️ hàm GET wrapper
-import { orderEndpoint } from '@/settings/endpoints' // ⬅️ '/orders/user/:userId'
+import { getRequest, postRequest, putRequest } from '@/request' 
+import { orderEndpoint } from '@/settings/endpoints'
 import {
     Card,
     Tabs,
