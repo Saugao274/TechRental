@@ -124,6 +124,7 @@ const UpdateProfile = () => {
     ]
 
     const [isChangePassword, setIsChangePassword] = useState(false)
+    
     const handleUpload = async (file: File) => {
         const isJpgOrPng =
             file.type === 'image/jpeg' || file.type === 'image/png'

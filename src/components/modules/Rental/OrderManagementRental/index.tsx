@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
-import { getRequest, postRequest, putRequest } from '@/request' // ⬅️ hàm GET wrapper
-import { orderEndpoint } from '@/settings/endpoints' // ⬅️ '/orders/user/:userId'
+import { getRequest, postRequest, putRequest } from '@/request'
+import { orderEndpoint } from '@/settings/endpoints' 
 import {
     Card,
     Tabs,
@@ -378,6 +378,20 @@ export default function OrderManagementRental() {
             ),
         },
     ]
+
+    mobileCols.push({
+        title: 'Hành động',
+        render: (record: Order) => {
+            if (record.status === 'Cần giao hàng') {
+                return (
+                    <Button type="primary" onClick={() => {}}>
+                        Giao hàng
+                    </Button>
+                )
+            }
+        }
+    })
+
 
     if (isOwner) {
         mobileCols.push({

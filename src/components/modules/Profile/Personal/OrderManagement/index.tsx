@@ -47,8 +47,8 @@ export type OrderStatusVN =
     | 'Đã hoàn thành'
     | 'Chờ xác nhận'
     | 'Chờ giao hàng'
-    | 'Đã nhận được hàng'
     | 'Cần trả hàng'
+    | 'Đang giao hàng'
 
 type Order = {
     id: string
@@ -84,7 +84,7 @@ export const STATUS_VN: Record<OrderStatusAPI, OrderStatusVN> = {
     in_delivery: 'Chờ giao hàng',
     return_product: 'Cần trả hàng',
     canceled: 'Đã hủy',
-    before_deadline: 'Đã nhận được hàng',
+    before_deadline: 'Đang giao hàng',
 }
 const STATUS_COLOR: Record<OrderStatusVN, string> = {
     'Đã hủy': 'red',
@@ -92,8 +92,8 @@ const STATUS_COLOR: Record<OrderStatusVN, string> = {
     'Đã hoàn thành': 'green',
     'Chờ xác nhận': 'orange',
     'Chờ giao hàng': 'blue',
-    'Đã nhận được hàng': 'green',
     'Cần trả hàng': 'orange',
+    'Đang giao hàng': 'blue',
 }
 
 export const STATUS_API: Record<OrderStatusVN, OrderStatusAPI> =
@@ -211,10 +211,11 @@ export default function OrderManagement() {
             const res = await postRequest(orderEndpoint.CREATE_ORDER, {
                 data: {
                     amount: cleanAmount.toString(),
+                    orderId,
+                    customerId,
                 },
             })
             window.open(res?.data, '_blank')
-            handleChangeToInDelivery(orderId, customerId)
         } catch (error) {
             message.error('Vui lòng thử lại sau!')
         }
@@ -232,7 +233,7 @@ export default function OrderManagement() {
             return searched.filter(
                 (o) =>
                     o.status === 'Chờ giao hàng' ||
-                    o.status === 'Đã nhận được hàng' ||
+                    o.status === 'Đang giao hàng' ||
                     o.status === 'Cần trả hàng',
             )
         if (activeTab === 'completed')
@@ -300,13 +301,13 @@ export default function OrderManagement() {
                                 Thông tin
                             </Button>
                         )
-                    case 'Chờ giao hàng':
+                    case 'Đang giao hàng':
                         return (
                             <Button
                                 type="link"
                                 onClick={() =>
                                     router.push(
-                                        `/manage-orders/${record.id}/before`,
+                                        `/personal/${record.customerId}/orders/${record.id}/confirm`,
                                     )
                                 }
                             >
