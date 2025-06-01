@@ -224,7 +224,7 @@ export default function ProductManagement() {
             <Table
                 columns={columns}
                 dataSource={filteredTabProducts}
-                rowKey="unitId"
+                rowKey={(record) => `${record.unitId}-${record._id}`}
                 pagination={{
                     current: currentPage,
                     pageSize: pageSize,
