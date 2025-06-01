@@ -47,6 +47,7 @@ const orderEndpoint = {
     POST_ORDER: `${prefixBase}/orders`,
     GET_ORDER_BY_USER_ID: `${prefixBase}/orders/user/:userId`,
     UPDATE_STATUS: `${prefixBase}/orders/:id/status`,
+    GET_ORDER_BY_RENTER_ID: `${prefixBase}/orders/renter/:renterId`,
 }
 
 export const chatEndpoint = {

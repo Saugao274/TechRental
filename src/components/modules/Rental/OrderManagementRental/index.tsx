@@ -103,7 +103,7 @@ const { Title, Text } = Typography
 const { TabPane } = Tabs
 const { useBreakpoint } = Grid
 
-export default function OrderManagement() {
+export default function OrderManagementRental() {
     const { user } = useAuth()
     const isOwner = user?.roles?.includes('owner')
     const screens = useBreakpoint()
@@ -121,7 +121,7 @@ export default function OrderManagement() {
         try {
             setLoading(true)
             const { data } = await getRequest(
-                orderEndpoint.GET_ORDER_BY_USER_ID.replace(':userId', user._id),
+                orderEndpoint.GET_ORDER_BY_RENTER_ID.replace(':renterId', user._id),
             )
 
             // convert
@@ -285,26 +285,24 @@ export default function OrderManagement() {
         },
     ]
 
-    desktopCols.push({
-        title: 'Thanh toán',
-        render: (record: Order) =>
-            record.status === 'Chờ thanh toán' ? (
-                <Button
-                    type="primary"
-                    onClick={() =>
-                        handlePayment(
-                            record.total,
-                            record.id,
-                            record.customerId,
-                        )
-                    }
-                >
-                    Thanh toán
-                </Button>
-            ) : (
-                <Text>-</Text>
-            ),
-    })
+    if (isOwner) {
+        desktopCols.push({
+            title: 'Duyệt đơn',
+            render: (record: Order) =>
+                record.status === 'Chờ xác nhận' ? (
+                    <Button
+                        type="primary"
+                        onClick={() =>
+                            handleApprove(record.id, record.customerId)
+                        }
+                    >
+                        Duyệt
+                    </Button>
+                ) : (
+                    <Text>Đã duyệt</Text>
+                ),
+        })
+    }
 
     const mobileCols: ColumnType<Order>[] = [
         {
@@ -331,20 +329,22 @@ export default function OrderManagement() {
         },
     ]
 
-    mobileCols.push({
-        title: 'Thanh toán',
-        render: (r: Order) =>
-            r.status === 'Chờ thanh toán' ? (
-                <Button
-                    type="primary"
-                    onClick={() => handlePayment(r.total, r.id, r.customerId)}
-                >
-                    Thanh toán
-                </Button>
-            ) : (
-                <Text>-</Text>
-            ),
-    })
+    if (isOwner) {
+        mobileCols.push({
+            title: 'Duyệt đơn',
+            render: (r: Order) =>
+                r.status === 'Chờ xác nhận' ? (
+                    <Button
+                        type="primary"
+                        onClick={() => handleApprove(r.id, r.customerId)}
+                    >
+                        Duyệt
+                    </Button>
+                ) : (
+                    <Text>Đã duyệt</Text>
+                ),
+        })
+    }
 
     /* ---------------------------- tab labels ---------------------------- */
     const tabItems = [

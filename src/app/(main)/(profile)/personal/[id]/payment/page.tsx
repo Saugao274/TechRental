@@ -66,7 +66,7 @@ const PaymentPage = () => {
                 customerId: user?._id!,
                 products: cartItems.map((item) => item.id),
                 totalPrice: totalPrice,
-                status: 'pending_payment',
+                status: 'pending_confirmation',
                 duration: cartItems.reduce(
                     (total: number, item: CartItem) => total + item.days,
                     0,

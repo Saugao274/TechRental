@@ -256,6 +256,7 @@ export default function ProductCreateForm() {
                     location: values?.location,
                     discount: values?.discount,
                     stock: values?.stock,
+                    renterId: user?._id,
                 },
             })
             console.log('res?.metadata?._id', res)
