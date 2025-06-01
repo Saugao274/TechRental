@@ -37,7 +37,7 @@ import ProductCard from '@/components/core/common/CardCommon/ProductCard'
 import { motion } from 'framer-motion'
 import webLocalStorage from '@/utils/webLocalStorage'
 import { getRequest } from '@/request'
-import { productEndpoint } from '@/settings/endpoints'
+import { productEndpoint, storeEndpoint } from '@/settings/endpoints'
 
 import { useCart } from '@/context/CartContext'
 import { useAuth } from '@/context/AuthContext'
@@ -50,6 +50,7 @@ export default function ProductDetail() {
     const [productsData, setProductsData] = useState<ProductDetail[]>([])
     const [productDetail, setProductDetail] = useState<ProductDetail>()
     const [loading, setLoading] = useState(true)
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -87,7 +88,17 @@ export default function ProductDetail() {
         { label: '14 ngày', value: '14' },
         { label: '30 ngày', value: '30' },
     ]
+    const handleIncreaseQuantity = () => {
+        if (quantity >= (productDetail?.stock ?? 0)) {
+            message.warning('Không thể thuê nhiều hơn số lượng trong kho hàng')
+            return
+        }
+        setQuantity(quantity + 1)
+    }
 
+    const handleDecreaseQuantity = () => {
+        setQuantity(Math.max(1, quantity - 1))
+    }
     const columns: ColumnsType<SpecificationType> = [
         {
             title: 'Thông số',
@@ -184,7 +195,7 @@ export default function ProductDetail() {
             ? productDetail.images
             : getRandomFallbackImageArray(5)
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (!user) {
             message.warning('Vui lòng đăng nhập để thêm vào giỏ hàng')
             localStorage.setItem('redirectAfterLogin', window.location.pathname)
@@ -192,7 +203,11 @@ export default function ProductDetail() {
             return
         }
         if (!productDetail) return
-
+        const res = await getRequest(`${storeEndpoint.GET_MY_SHOP}`)
+        if (res?.metadata) {
+            message.warning('Bạn không thể mua hàng từ shop của mình')
+            return
+        }
         addItem(
             {
                 id: productDetail._id,
@@ -297,6 +312,12 @@ export default function ProductDetail() {
                                     {productDetail.category.name}
                                 </span>
                             )}
+                            {productDetail?.stock && (
+                                <span className="text-gray-500">
+                                    <span className="font-bold">Kho hàng:</span>{' '}
+                                    {productDetail?.stock} sản phẩm
+                                </span>
+                            )}
                         </div>
                         <div className="mt-2 flex items-center gap-3">
                             <span className="rounded bg-white px-2 py-1 text-sm font-bold text-red-500">
@@ -327,16 +348,14 @@ export default function ProductDetail() {
                     <div className="flex items-center gap-4">
                         <div className="flex items-center rounded border bg-white">
                             <Button
-                                onClick={() =>
-                                    setQuantity(Math.max(1, quantity - 1))
-                                }
+                                onClick={handleDecreaseQuantity}
                                 className="border-0"
                             >
                                 -
                             </Button>
                             <span className="px-4">{quantity}</span>
                             <Button
-                                onClick={() => setQuantity(quantity + 1)}
+                                onClick={handleIncreaseQuantity}
                                 className="border-0"
                             >
                                 +

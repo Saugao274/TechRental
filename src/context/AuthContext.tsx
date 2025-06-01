@@ -71,11 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null)
         localStorage.clear()
         router.push('/')
-        useEffect(() => {
-            if (!user?.roles?.includes('owner')) {
-                localStorage.removeItem('shopId')
-            }
-        }, [user])
     }
 
     const updateUser = (newUser: User) => {
