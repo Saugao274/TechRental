@@ -21,11 +21,14 @@ import {
     UploadOutlined,
     DeleteOutlined,
 } from '@ant-design/icons'
+import { useParams } from 'next/navigation'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
 
 export default function ConfirmProducts() {
+    const params = useParams()
+    const { orderId } = params
     const [selectedOrder, setSelectedOrder] = useState('')
     const [capturedImages, setCapturedImages] = useState<string[]>([])
     const [recordedVideos, setRecordedVideos] = useState<string[]>([])
@@ -377,8 +380,8 @@ export default function ConfirmProducts() {
                             Ghi nhận tình trạng trước khi giao hàng
                         </Title>
                         <Text type="secondary">
-                            Xác minh tình trạng thiết bị trước khi bàn giao cho
-                            khách thuê.
+                            Xác minh tình trạng thiết bị để làm minh chứng nếu
+                            có khiếu nại về sau.
                         </Text>
                     </div>
 
@@ -623,7 +626,7 @@ export default function ConfirmProducts() {
                         onClick={handleSubmit}
                         className="h-12 w-full border-blue-900 bg-blue-900 hover:bg-blue-800"
                     >
-                        Gửi báo cáo
+                        Lưu tình trạng
                     </Button>
                 </Space>
             </Card>

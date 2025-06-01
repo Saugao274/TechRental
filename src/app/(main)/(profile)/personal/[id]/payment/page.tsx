@@ -1,5 +1,5 @@
 'use client'
-import { Button, Input, Modal } from 'antd'
+import { Button, Input, message, Modal } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -62,6 +62,12 @@ const PaymentPage = () => {
     // Handle order confirmation
     const handleConfirmOrder = async () => {
         try {
+            if (!user?.isVerified) {
+                message.warning(
+                    'Bạn phải xác minh danh tính mới tiến hành đặt hàng',
+                )
+                return
+            }
             const payload: OrderPayload = {
                 customerId: user?._id!,
                 products: cartItems.map((item) => item.id),

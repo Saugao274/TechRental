@@ -26,6 +26,7 @@ import 'dayjs/locale/vi'
 import { useState, useEffect, useMemo } from 'react'
 import currency from 'currency.js'
 import { ColumnType } from 'antd/es/table'
+import { useRouter } from 'next/navigation'
 
 dayjs.locale('vi')
 
@@ -41,11 +42,12 @@ export type OrderStatusAPI =
 
 export type OrderStatusVN =
     | 'Đã hoàn thành'
-    | 'Chờ xác nhận'
-    | 'Đang xử lý'
     | 'Đã hủy'
-    | 'Đã trả'
     | 'Chờ thanh toán'
+    | 'Cần xác nhận'
+    | 'Cần giao hàng'
+    | 'Đã giao hàng'
+    | 'Chờ trả hàng'
 
 type Order = {
     id: string
@@ -78,18 +80,19 @@ const mockOrders: Order[] = [
 export const STATUS_VN: Record<OrderStatusAPI, OrderStatusVN> = {
     completed: 'Đã hoàn thành',
     pending_payment: 'Chờ thanh toán',
-    pending_confirmation: 'Chờ xác nhận',
-    in_delivery: 'Đang xử lý',
-    return_product: 'Đã trả',
+    pending_confirmation: 'Cần xác nhận',
+    in_delivery: 'Cần giao hàng',
+    return_product: 'Chờ trả hàng',
     canceled: 'Đã hủy',
-    before_deadline: 'Đang xử lý',
+    before_deadline: 'Đã giao hàng',
 }
 const STATUS_COLOR: Record<OrderStatusVN, string> = {
     'Đã hoàn thành': 'green',
-    'Chờ xác nhận': 'orange',
-    'Đang xử lý': 'blue',
+    'Cần xác nhận': 'orange',
+    'Cần giao hàng': 'blue',
+    'Chờ trả hàng': 'blue',
     'Đã hủy': 'red',
-    'Đã trả': 'red',
+    'Đã giao hàng': 'green',
     'Chờ thanh toán': 'orange',
 }
 
@@ -121,7 +124,10 @@ export default function OrderManagementRental() {
         try {
             setLoading(true)
             const { data } = await getRequest(
-                orderEndpoint.GET_ORDER_BY_RENTER_ID.replace(':renterId', user._id),
+                orderEndpoint.GET_ORDER_BY_RENTER_ID.replace(
+                    ':renterId',
+                    user._id,
+                ),
             )
 
             // convert
@@ -176,7 +182,7 @@ export default function OrderManagementRental() {
         try {
             setLoading(true)
 
-            // Đơn đang ở trạng thái 'Chờ xác nhận' (pending_confirmation),
+            // Đơn đang ở trạng thái 'Cần xác nhận' (pending_confirmation),
             // ta duyệt để chuyển sang 'pending_payment'.
             const nstatus: OrderStatusAPI = 'pending_payment'
 
@@ -205,7 +211,7 @@ export default function OrderManagementRental() {
         customerId: string,
     ): Promise<void> => {
         try {
-            // Đơn đang ở trạng thái 'Chờ xác nhận' (pending_confirmation),
+            // Đơn đang ở trạng thái 'Cần xác nhận' (pending_confirmation),
             // ta duyệt để chuyển sang 'pending_payment'.
 
             await putRequest(
@@ -219,7 +225,7 @@ export default function OrderManagementRental() {
             )
 
             message.success('Đơn hàng đã được duyệt!')
-            await fetchOrders();
+            await fetchOrders()
         } catch (error) {
             console.error(error)
             message.error('Duyệt đơn hàng thất bại!')
@@ -252,9 +258,18 @@ export default function OrderManagementRental() {
     const tabOrders = useMemo(() => {
         if (activeTab === 'all') return searched
         if (activeTab === 'pending')
-            return searched.filter((o) => o.status === 'Chờ xác nhận')
+            return searched.filter(
+                (o) =>
+                    o.status === 'Cần xác nhận' ||
+                    o.status === 'Chờ thanh toán',
+            )
         if (activeTab === 'processing')
-            return searched.filter((o) => o.status === 'Đang xử lý')
+            return searched.filter(
+                (o) =>
+                    o.status === 'Cần giao hàng' ||
+                    o.status === 'Chờ trả hàng' ||
+                    o.status === 'Đã giao hàng',
+            )
         if (activeTab === 'completed')
             return searched.filter((o) => o.status === 'Đã hoàn thành')
         if (activeTab === 'cancelled')
@@ -280,29 +295,64 @@ export default function OrderManagementRental() {
         },
         { title: 'Tổng tiền', dataIndex: 'total' },
         {
-            title: 'Chi tiết',
-            render: () => <Button type="link">Chi tiết</Button>,
+            title: 'Hành động',
+            render: (record: Order) => {
+                switch (record.status) {
+                    case 'Cần xác nhận':
+                        return (
+                            <Button
+                                type="text"
+                                onClick={() =>
+                                    handleApprove(record.id, record.customerId)
+                                }
+                            >
+                                Xác nhận
+                            </Button>
+                        )
+                    case 'Chờ trả hàng':
+                        return (
+                            <div className="flex flex-col gap-2">
+                                <Button
+                                    type="link"
+                                    onClick={() =>
+                                        router.push(
+                                            `/manage-orders/${record.id}/return-info`,
+                                        )
+                                    }
+                                >
+                                    Báo cáo
+                                </Button>
+                                <Button
+                                    type="link"
+                                    onClick={() =>
+                                        router.push(
+                                            `/manage-orders/${record.id}/return-info`,
+                                        )
+                                    }
+                                >
+                                    Hoàn tất đơn hàng?
+                                </Button>
+                            </div>
+                        )
+                    case 'Cần giao hàng':
+                        return (
+                            <Button
+                                type="link"
+                                onClick={() =>
+                                    router.push(
+                                        `/manage-orders/${record.id}/before`,
+                                    )
+                                }
+                            >
+                                Đã giao hàng?
+                            </Button>
+                        )
+                    default:
+                        return <Button type="default">_</Button>
+                }
+            },
         },
     ]
-
-    if (isOwner) {
-        desktopCols.push({
-            title: 'Duyệt đơn',
-            render: (record: Order) =>
-                record.status === 'Chờ xác nhận' ? (
-                    <Button
-                        type="primary"
-                        onClick={() =>
-                            handleApprove(record.id, record.customerId)
-                        }
-                    >
-                        Duyệt
-                    </Button>
-                ) : (
-                    <Text>Đã duyệt</Text>
-                ),
-        })
-    }
 
     const mobileCols: ColumnType<Order>[] = [
         {
@@ -333,7 +383,7 @@ export default function OrderManagementRental() {
         mobileCols.push({
             title: 'Duyệt đơn',
             render: (r: Order) =>
-                r.status === 'Chờ xác nhận' ? (
+                r.status === 'Cần xác nhận' ? (
                     <Button
                         type="primary"
                         onClick={() => handleApprove(r.id, r.customerId)}
@@ -349,11 +399,12 @@ export default function OrderManagementRental() {
     /* ---------------------------- tab labels ---------------------------- */
     const tabItems = [
         { key: 'all', label: 'Tất cả' },
-        { key: 'pending', label: 'Chờ xác nhận' },
+        { key: 'pending', label: 'Cần xác nhận' },
         { key: 'processing', label: 'Đang xử lý' },
         { key: 'completed', label: 'Đã hoàn thành' },
         { key: 'cancelled', label: 'Đã hủy' },
     ]
+    const router = useRouter()
 
     /* ---------------------------- render UI ---------------------------- */
     return (
