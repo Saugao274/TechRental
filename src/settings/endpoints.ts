@@ -25,6 +25,8 @@ const storeEndpoint = {
     GET_BY_ID: (id: string) => `${prefixBase}/shopDetail/${id}`,
     CREATE: `${prefixBase}/shopDetail`,
     GET_MY_SHOP: `${prefixBase}/shopDetail/me`,
+    UPDATE_PACKAGE: `${prefixBase}/shopDetail/packages`,
+
 }
 const categoryEndpoint = {
     GET_ALL: `${prefixBase}/category`,

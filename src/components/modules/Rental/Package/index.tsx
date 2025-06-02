@@ -14,6 +14,8 @@ import {
     BadgeX,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { getRequest } from '@/request'
+import { storeEndpoint } from '@/settings/endpoints'
 
 interface RentalPackage {
     type: string
@@ -40,6 +42,25 @@ export default function PackageNews({ id }: PackageNewsProps) {
     const [isMobile, setIsMobile] = useState(false)
     const [activeTab, setActiveTab] = useState('rental')
     const router = useRouter()
+    const [shop, setShop] = useState<any>(null)
+    useEffect(() => {
+        if (id) localStorage.setItem('shopId', id)
+    }, [id])
+
+    useEffect(() => {
+        const fetchShop = async () => {
+            try {
+                const res = await getRequest(storeEndpoint.GET_BY_ID(id))
+                setShop(res?.metadata)
+            } catch (err) {
+                console.error('Lỗi lấy shop từ rental:', err)
+            }
+        }
+
+        if (id) {
+            fetchShop()
+        }
+    }, [id])
 
     useEffect(() => {
         const checkIfMobile = () => {
@@ -127,22 +148,26 @@ export default function PackageNews({ id }: PackageNewsProps) {
         },
         {
             type: 'Premium',
-            name: 'Gói Cơ bản',
+            name: 'Gói Toàn diện',
             insuranceFee: 10,
             maxCoverage: 'Tối đa 80% giá trị thiết bị hoặc thay thế tương đương',
             description: 'Dành cho lens đắt tiền, camera quay phim, thiết bị studio',
         },
     ]
 
-    const handlePurchasePackage = (packageType: string, price: number) => {
+    const handlePurchasePackage = (packageType: string, price: number, packagePost: boolean) => {
         message.success(`Đã chọn ${packageType}`)
-        router.push(`/rental/${id}/package/payment?price=${price.toLocaleString('vi-VN')}&type=${packageType}`)
+        router.push(`/rental/${id}/package/payment?price=${price.toLocaleString('vi-VN')}&type=${packageType}&packagePost=${packagePost}`)
     }
 
     const renderRentalPackages = () => (
         <Row gutter={[16, 24]} className="mt-8 flex justify-between">
             {rentalPackages.map((pkg, index) => {
                 const isBestSeller = pkg.type === 'Advanced'
+                const ownPackage =
+                    shop?.packagePost && Array.isArray(shop.packagePost)
+                        ? shop.packagePost.map((p: string) => p.toLowerCase()).includes(pkg.type.toLowerCase())
+                        : false
                 return (
                     <Col
                         key={pkg.type}
@@ -164,9 +189,11 @@ export default function PackageNews({ id }: PackageNewsProps) {
                             }}
                         >
                             {isBestSeller && (
-                                <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-1 font-semibold text-blue-900 shadow-md text-xs">
+                                <Button className="!absolute !-top-3 !left-1/2 z-10 !-translate-x-1/2 !rounded-full !bg-white !px-4 !py-1 !font-semibold !text-blue-900 !shadow-md !text-xs"
+                                    disabled
+                                >
                                     Bán chạy nhất
-                                </div>
+                                </Button>
                             )}
                             <Card
                                 className="w-full h-full flex flex-col justify-between relative pb-24"
@@ -205,7 +232,7 @@ export default function PackageNews({ id }: PackageNewsProps) {
                                         style={{
                                             textAlign: 'center',
                                             color: isBestSeller ? '#fff' : '#1D3D85',
-                                            margin: '16px 0',
+                                            marginBottom: '14px',
                                         }}
                                     >
                                         {pkg.price === 0 ? (
@@ -215,11 +242,16 @@ export default function PackageNews({ id }: PackageNewsProps) {
                                         )}
                                         <span className="text-xs font-light"> / {pkg.duration}</span>
                                     </Typography.Title>
-                                    {pkg.type !== 'Free' && (
-                                        <div className="mb-4 flex w-full items-center justify-center rounded-xl border-2 border-blue-300 bg-green-100 p-2 font-vietnam text-green-500">
-                                            <p>Tiết kiệm {pkg.type === 'Advanced' ? '27%' : pkg.type === 'Business' ? '20%' : '16%'} so với giá bán lẻ</p>
+                                    {pkg.type !== 'Free' ? (
+                                        <div className="mb-4 flex w-full items-center justify-center rounded-xl border-2 border-blue-300 bg-green-50 p-2 font-vietnam text-green-500">
+                                            <p className='text-xs'>Tiết kiệm {pkg.type === 'Advanced' ? '27%' : pkg.type === 'Business' ? '20%' : '16%'} so với giá bán lẻ</p>
                                         </div>
-                                    )}
+                                    ) :
+                                        (
+                                            <div className="mb-4 flex w-full items-center justify-center rounded-xl border-2 border-blue-300 bg-green-50 p-2 font-vietnam text-green-500">
+                                                <p className='text-xs'>Trải nghiệm miễn phí</p>
+                                            </div>
+                                        )}
                                     <ul className="space-y-2">
                                         {pkg.benefits.map((benefit, idx) => (
                                             <li key={idx} className="flex items-center gap-2">
@@ -236,92 +268,126 @@ export default function PackageNews({ id }: PackageNewsProps) {
                                     </ul>
                                 </div>
                                 <div className="absolute bottom-6 left-6 right-6">
-                                    <Button
-                                        type="primary"
-                                        block
-                                        onClick={() => handlePurchasePackage(pkg.type, pkg.price)}
-                                        className={
-                                            isBestSeller
-                                                ? 'h-12 rounded-lg !bg-white !font-bold !text-blue-800 hover:!bg-blue-50'
-                                                : 'h-12 rounded-lg !bg-blue-900 !font-bold !text-white hover:!bg-blue-800'
-                                        }
-                                    >
-                                        MUA NGAY
-                                    </Button>
+                                    {ownPackage ? (
+                                        <Button
+                                            block
+                                            disabled
+                                            className="h-12 rounded-lg !bg-gray-400 !font-bold !text-white"
+                                        >
+                                            Đã sở hữu
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            type="primary"
+                                            block
+                                            onClick={() => handlePurchasePackage(pkg.type, pkg.price, true)}
+                                            className={
+                                                isBestSeller
+                                                    ? 'h-12 rounded-lg !bg-white !font-bold !text-blue-800 hover:!bg-blue-50'
+                                                    : 'h-12 rounded-lg !bg-blue-900 !font-bold !text-white hover:!bg-blue-800'
+                                            }
+                                        >
+                                            MUA NGAY
+                                        </Button>
+                                    )}
                                 </div>
                             </Card>
                         </div>
                     </Col>
-                )}
+                )
+            }
             )}
         </Row>
     )
 
     const renderInsurancePackages = () => (
+
         <Row gutter={[16, 24]} className="mt-8 flex justify-between">
-            {insurancePackages.map((pkg) => (
-                <Col
-                    key={pkg.type}
-                    xs={24}
-                    sm={24}
-                    md={8}
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Card
-                        className="w-full h-full flex flex-col justify-between relative pb-24"
+            {insurancePackages.map((pkg) => {
+                const ownInsurance =
+                    shop?.packageInsurance && Array.isArray(shop.packageInsurance)
+                        ? shop.packageInsurance.map((p: string) => p.toLowerCase()).includes(pkg.type.toLowerCase())
+                        : false
+                return (
+
+                    <Col
+                        key={pkg.type}
+                        xs={24}
+                        sm={24}
+                        md={8}
                         style={{
-                            borderRadius: '12px',
-                            border: 'none',
-                            background: 'linear-gradient(135deg, rgba(230, 250, 255, 0.7) 0%, rgba(222, 235, 249, 0.7) 100%)',
+                            display: 'flex',
+                            justifyContent: 'center',
                         }}
                     >
-                        <div className="flex flex-col">
-                            <Typography.Title
-                                level={4}
-                                style={{
-                                    textAlign: 'center',
-                                    color: '#1D3D85',
-                                    marginBottom: '8px',
-                                }}
-                            >
-                                {pkg.name}
-                            </Typography.Title>
-                            <Typography.Paragraph
-                                style={{
-                                    textAlign: 'center',
-                                    color: '#666',
-                                    fontSize: '14px',
-                                    minHeight: '42px',
-                                    margin: '0 0 16px 0',
-                                }}
-                            >
-                                {pkg.description}
-                            </Typography.Paragraph>
-                            <div className="text-center">
-                                <div className="text-lg font-semibold text-blue-900">
-                                    Phí bảo hiểm: {pkg.insuranceFee}% giá trị đơn thuê
-                                </div>
-                                <div className="mt-2 text-base text-gray-600">
-                                    Mức chi trả: {pkg.maxCoverage}
+                        <Card
+                            className="w-full h-full flex flex-col justify-between relative pb-24"
+                            style={{
+                                borderRadius: '12px',
+                                border: 'none',
+                                background: 'linear-gradient(135deg, rgba(230, 250, 255, 0.7) 0%, rgba(222, 235, 249, 0.7) 100%)',
+                            }}
+                        >
+                            <div className="flex flex-col">
+                                <Typography.Title
+                                    level={4}
+                                    style={{
+                                        textAlign: 'center',
+                                        color: '#1D3D85',
+                                        marginBottom: '8px',
+                                    }}
+                                >
+                                    {pkg.name}
+                                </Typography.Title>
+                                <Typography.Paragraph
+                                    style={{
+                                        textAlign: 'center',
+                                        color: '#666',
+                                        fontSize: '14px',
+                                        minHeight: '42px',
+                                        margin: '0 0 16px 0',
+                                    }}
+                                >
+                                    {pkg.description}
+                                </Typography.Paragraph>
+                                <div className="text-center flex flex-col gap-2">
+                                    <Button className="!p-4 !border-gray-50 !text-xs   !bg-blue-200 !text-blue-800 ">
+                                        Phí bảo hiểm: <span className='font-bold'>{pkg.insuranceFee}% giá trị đơn thuê</span>
+                                    </Button>
+                                    <Button className="!px-0 !py-6 !border-gray-50 !text-xs !bg-blue-200 !text-blue-800 !whitespace-normal !break-words !items-center ">
+                                        <p>
+                                            Mức chi trả: <span className='font-bold'> {pkg.maxCoverage}</span>
+                                        </p>
+                                    </Button>
                                 </div>
                             </div>
-                        </div>
-                        <div className="absolute bottom-6 left-6 right-6">
-                            <Button
-                                type="primary"
-                                block
-                                onClick={() => handlePurchasePackage(pkg.type, 0)}
-                                className="h-12 rounded-lg !bg-blue-900 !font-bold !text-white hover:!bg-blue-800"
-                            >
-                                MUA NGAY
-                            </Button>
-                        </div>
-                    </Card>
-                </Col>
-            ))}
+                            <div className="mt-6 bottom-6 left-6 right-6">
+                                {ownInsurance ? (
+                                    <Button
+                                        block
+                                        disabled
+                                        className="h-12 rounded-lg !bg-gray-400 !font-bold !text-white"
+                                    >
+                                        Đã sở hữu
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        type="primary"
+                                        block
+                                        onClick={() => handlePurchasePackage(pkg.type, 300000, false)}
+                                        className="h-12 rounded-lg !bg-blue-900 !font-bold !text-white hover:!bg-blue-800"
+                                    >
+                                        MUA NGAY
+                                    </Button>
+                                )}
+                            </div>
+                        </Card>
+                    </Col>
+                )
+
+            }
+
+            )}
         </Row>
     )
 

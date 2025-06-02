@@ -220,7 +220,7 @@ export default function VNPayReturnPage() {
     }
 
     return (
-        <div className="flex py-52 items-center justify-center p-4">
+        <div className="flex pb-40 pt-14 items-center justify-center p-4">
             <div className="w-full max-w-md">
                 {renderStatusCard()}
             </div>

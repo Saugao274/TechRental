@@ -204,10 +204,8 @@ export default function OrderManagement() {
         orderId: string,
         customerId: string,
     ) => {
-        console.log("cehclkl", total)
         try {
             const numberOnly = total.replace(/[^\d]/g, '')
-
             const cleanAmount = Number(numberOnly).toLocaleString('vi-VN')
 
             const res = await postRequest(orderEndpoint.CREATE_ORDER, {
@@ -322,7 +320,20 @@ export default function OrderManagement() {
                                 )}
                             </>
                         )
-                    case 'Đã giao hàng':
+                    case 'Chờ giao hàng':
+                        return (
+                            <Button
+                                type="link"
+                                onClick={() =>
+                                    router.push(
+                                        `/personal/${record.customerId}/orders/${record.id}/confirm`,
+                                    )
+                                }
+                            >
+                                Đã nhận hàng?
+                            </Button>
+                        )
+                    case 'Chờ giao hàng':
                         return (
                             <Button
                                 type="link"
