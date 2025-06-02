@@ -52,6 +52,8 @@ const orderEndpoint = {
     GET_ORDER_BY_RENTER_ID: `${prefixBase}/orders/renter/:renterId`,
     GET_ORDER_BY_ID: (id: string) => `${prefixBase}/orders/${id}`,
     ORDER_EVIDENCE: `${prefixBase}/order-evidence`,
+    GET_ORDER_EVIDENCE_BY_ORDERID: (id: string) => `${prefixBase}/order-evidence/order/${id}`,
+
 }
 
 export const chatEndpoint = {

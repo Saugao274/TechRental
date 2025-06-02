@@ -90,7 +90,6 @@ export default function ProductManagement() {
                             o.productId === product._id &&
                             o.productStatus === 'rented',
                     ).length
-                    console.log('abc', rentedCount)
                     const availableCount = product.stock - rentedCount
 
                     let status = ''

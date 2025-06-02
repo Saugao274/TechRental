@@ -427,11 +427,7 @@ export default function ProductCreateForm() {
                             getValueFromEvent={(e) =>
                                 Array.isArray(e) ? e : e?.fileList
                             }
-                            rules={[
-                                {
-                                    message: 'Vui lòng tải lên ảnh thực tế',
-                                },
-                            ]}
+
                         >
                             <ImageUploadPreview
                                 value={realImages}
@@ -444,11 +440,7 @@ export default function ProductCreateForm() {
                         <Form.Item
                             name={'detailImages'}
                             label="Ảnh chi tiết của sản phẩm"
-                            rules={[
-                                {
-                                    message: 'Vui lòng tải lên ảnh chi tiết',
-                                },
-                            ]}
+
                             getValueFromEvent={(e) => e}
                         >
                             <ImageUploadPreview
@@ -696,10 +688,10 @@ export default function ProductCreateForm() {
                                         contentScore === 0
                                             ? '#EF4444'
                                             : contentScore <= 2
-                                              ? '#F59E0B'
-                                              : contentScore <= 4
-                                                ? '#3B82F6'
-                                                : '#10B981'
+                                                ? '#F59E0B'
+                                                : contentScore <= 4
+                                                    ? '#3B82F6'
+                                                    : '#10B981'
                                     }
                                 />
                                 <span className="text-lg font-bold">
@@ -711,10 +703,10 @@ export default function ProductCreateForm() {
                                     contentScore === 0
                                         ? 'danger'
                                         : contentScore <= 2
-                                          ? 'warning'
-                                          : contentScore <= 4
-                                            ? 'secondary'
-                                            : 'success'
+                                            ? 'warning'
+                                            : contentScore <= 4
+                                                ? 'secondary'
+                                                : 'success'
                                 }
                                 className="text-sm font-bold"
                             >

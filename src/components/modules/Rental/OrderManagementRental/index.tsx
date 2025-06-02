@@ -124,6 +124,7 @@ export default function OrderManagementRental() {
         'all' | 'pending' | 'processing' | 'completed' | 'cancelled'
     >('all')
 
+
     const fetchOrders = async () => {
         if (USE_MOCK || !user?._id) return
         try {
@@ -168,6 +169,36 @@ export default function OrderManagementRental() {
         fetchOrders()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user])
+    const [evidenceMap, setEvidenceMap] = useState<Record<string, boolean>>({});
+
+    // When orders change, fetch evidence for orders in "Chờ giao hàng" status
+    useEffect(() => {
+        const fetchEvidenceForOrders = async () => {
+            const newEvidenceMap: Record<string, boolean> = {};
+            // Filter orders with status "Chờ giao hàng"
+            const awaitingEvidence = orders.filter(
+                (o) => o.status === "Cần giao hàng"
+            );
+            await Promise.all(
+                awaitingEvidence.map(async (order) => {
+                    try {
+                        const res = await getRequest(
+                            orderEndpoint.GET_ORDER_EVIDENCE_BY_ORDERID(order.id)
+                        );
+                        // Update evidenceMap: set to true if evidence exists and submittedBy is "renter"
+                        newEvidenceMap[order.id] = res?.data?.[0]?.submittedBy === "owner";
+                    } catch (error) {
+                        console.error("Error fetching evidence for order", order.id, error);
+                    }
+                })
+            );
+            setEvidenceMap((prev) => ({ ...prev, ...newEvidenceMap }));
+        };
+
+        if (orders.length > 0) {
+            fetchEvidenceForOrders();
+        }
+    }, [orders]);
 
     /* --------------------------- filter logic --------------------------- */
     const searched = useMemo(
@@ -288,19 +319,46 @@ export default function OrderManagementRental() {
                                 </Button>
                             </div>
                         )
-                    case 'Cần giao hàng':
-                        return (
-                            <Button
-                                type="link"
-                                onClick={() =>
-                                    router.push(
-                                        `/manage-orders/${record.id}/before`,
-                                    )
-                                }
-                            >
-                                Đã giao hàng?
-                            </Button>
-                        )
+                    // case 'Cần giao hàng':
+                    //     return (
+                    //         <Button
+                    //             type="link"
+                    //             onClick={() =>
+                    //                 router.push(
+                    //                     `/manage-orders/${record.id}/before`,
+                    //                 )
+                    //             }
+                    //         >
+                    //             Đã giao hàng?
+                    //         </Button>
+                    //     )
+                    case 'Cần giao hàng': {
+                        // Kiểm tra trạng thái evidence đã được lưu trong evidenceMap
+                        console.log('Record:', record.id, record.status);
+                        const hasEvidence = evidenceMap[record.id];
+                        console.log('Record:', record.id, hasEvidence);
+
+                        if (hasEvidence) {
+                            return (
+                                <span className="text-sm text-gray-500">
+                                    Người thuê đang cập nhật minh chứng
+                                </span>
+                            );
+                        } else {
+                            return (
+                                <Button
+                                    type="link"
+                                    onClick={() =>
+                                        router.push(
+                                            `/personal/${record.customerId}/orders/${record.id}/confirm`
+                                        )
+                                    }
+                                >
+                                    Đã nhận hàng?
+                                </Button>
+                            );
+                        }
+                    }
                     default:
                         return <Button type="default">_</Button>
                 }

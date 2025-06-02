@@ -437,16 +437,20 @@ export default function ConfirmProductsPersonal() {
         customerId: string,
     ): Promise<void> => {
         try {
-            await putRequest(
-                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
-                {
-                    data: {
-                        status: 'before_deadline',
-                        toId: customerId,
-                    },
-                },
+            const res = await getRequest(
+                orderEndpoint.GET_ORDER_EVIDENCE_BY_ORDERID(orderId),
             )
-
+            if (res?.data?.length === 2) {
+                await putRequest(
+                    orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                    {
+                        data: {
+                            status: 'before_deadline',
+                            toId: customerId,
+                        },
+                    },
+                )
+            }
         } catch (error) {
             console.error(error)
         } finally {

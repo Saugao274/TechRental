@@ -439,16 +439,20 @@ export default function ConfirmProductsPersonal() {
         try {
             // Đơn đang ở trạng thái 'Cần xác nhận' (pending_confirmation),
             // ta duyệt để chuyển sang 'pending_payment'.
-
-            await putRequest(
-                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
-                {
-                    data: {
-                        status: 'before_deadline',
-                        toId: customerId,
-                    },
-                },
+            const res = await getRequest(
+                orderEndpoint.GET_ORDER_EVIDENCE_BY_ORDERID(orderId),
             )
+            if (res?.data?.length === 2) {
+                await putRequest(
+                    orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                    {
+                        data: {
+                            status: 'before_deadline',
+                            toId: customerId,
+                        },
+                    },
+                )
+            }
 
         } catch (error) {
             console.error(error)
