@@ -1,6 +1,6 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
-import { getRequest, postRequest, putRequest } from '@/request' 
+import { getRequest, postRequest, putRequest } from '@/request'
 import { orderEndpoint } from '@/settings/endpoints'
 import {
     Card,
@@ -15,6 +15,7 @@ import {
     Spin,
     Empty,
     message,
+    Modal,
 } from 'antd'
 import {
     SearchOutlined,
@@ -48,7 +49,7 @@ export type OrderStatusVN =
     | 'Chờ xác nhận'
     | 'Chờ giao hàng'
     | 'Cần trả hàng'
-    | 'Đang giao hàng'
+    | 'Đã giao hàng'
 
 type Order = {
     id: string
@@ -84,7 +85,7 @@ export const STATUS_VN: Record<OrderStatusAPI, OrderStatusVN> = {
     in_delivery: 'Chờ giao hàng',
     return_product: 'Cần trả hàng',
     canceled: 'Đã hủy',
-    before_deadline: 'Đang giao hàng',
+    before_deadline: 'Đã giao hàng',
 }
 const STATUS_COLOR: Record<OrderStatusVN, string> = {
     'Đã hủy': 'red',
@@ -93,7 +94,7 @@ const STATUS_COLOR: Record<OrderStatusVN, string> = {
     'Chờ xác nhận': 'orange',
     'Chờ giao hàng': 'blue',
     'Cần trả hàng': 'orange',
-    'Đang giao hàng': 'blue',
+    'Đã giao hàng': 'purple',
 }
 
 export const STATUS_API: Record<OrderStatusVN, OrderStatusAPI> =
@@ -184,7 +185,7 @@ export default function OrderManagement() {
                 orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
                 {
                     data: {
-                        status: 'in_delivery',
+                        status: 'com',
                         toId: customerId,
                     },
                 },
@@ -203,6 +204,7 @@ export default function OrderManagement() {
         orderId: string,
         customerId: string,
     ) => {
+        console.log("cehclkl", total)
         try {
             const numberOnly = total.replace(/[^\d]/g, '')
 
@@ -233,7 +235,7 @@ export default function OrderManagement() {
             return searched.filter(
                 (o) =>
                     o.status === 'Chờ giao hàng' ||
-                    o.status === 'Đang giao hàng' ||
+                    o.status === 'Đã giao hàng' ||
                     o.status === 'Cần trả hàng',
             )
         if (activeTab === 'completed')
@@ -242,6 +244,7 @@ export default function OrderManagement() {
             return searched.filter((o) => o.status === 'Đã hủy')
         return searched
     }, [searched, activeTab])
+    const [returnInfoRecord, setReturnInfoRecord] = useState<Order | null>(null)
 
     const desktopCols: ColumnType<Order>[] = [
         {
@@ -290,18 +293,36 @@ export default function OrderManagement() {
                         )
                     case 'Cần trả hàng':
                         return (
-                            <Button
-                                type="link"
-                                onClick={() =>
-                                    router.push(
-                                        `/manage-orders/${record.id}/return-info`,
-                                    )
-                                }
-                            >
-                                Thông tin
-                            </Button>
+                            <>
+                                <Button
+                                    type="link"
+                                    onClick={() => setReturnInfoRecord(record)}
+                                >
+                                    Thông tin
+                                </Button>
+                                {returnInfoRecord?.id === record.id && (
+                                    <Modal
+                                        visible={true}
+                                        title="Thông tin Shop"
+                                        onCancel={() => setReturnInfoRecord(null)}
+                                        footer={[
+                                            <Button key="cancel" onClick={() => setReturnInfoRecord(null)}>
+                                                Đóng
+                                            </Button>,
+                                            <Button key="confirm" type="primary" >
+                                                Xác nhận đã hoàn tất
+                                            </Button>
+                                        ]}
+                                        centered
+                                    >
+                                        {/* Display shop information here */}
+                                        <p>Shop: {record.production}</p>
+                                        {/* Add more shop information as needed */}
+                                    </Modal>
+                                )}
+                            </>
                         )
-                    case 'Đang giao hàng':
+                    case 'Đã giao hàng':
                         return (
                             <Button
                                 type="link"
@@ -410,11 +431,10 @@ export default function OrderManagement() {
             <Card bodyStyle={{ padding: isMobile ? 12 : 24 }}>
                 {/* header */}
                 <div
-                    className={`flex ${
-                        isMobile
-                            ? 'flex-col gap-3'
-                            : 'items-center justify-between'
-                    } mb-4`}
+                    className={`flex ${isMobile
+                        ? 'flex-col gap-3'
+                        : 'items-center justify-between'
+                        } mb-4`}
                 >
                     <div>
                         <Title level={isMobile ? 5 : 4} className="!mb-0">

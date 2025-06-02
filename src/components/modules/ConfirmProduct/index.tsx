@@ -519,14 +519,14 @@ export default function ConfirmProductsPersonal() {
                 data: evidenceData
             })
 
-            message.success('Đã gửi báo cáo kiểm tra thành công!')
+            message.success('Đã gửi minh chứng thành công!')
             if (orderData?.customerId?._id) {
                 handleChangeToBeforeDeadLine(orderId as string, orderData.customerId._id)
             }
             router.back();
         } catch (error: any) {
             console.error('Error submitting evidence:', error)
-            message.error('Lỗi khi gửi báo cáo: ' + (error.message || 'Vui lòng thử lại'))
+            message.error('Lỗi khi gửi: ' + (error.message || 'Vui lòng thử lại'))
         } finally {
             setLoading(false)
         }
@@ -560,10 +560,10 @@ export default function ConfirmProductsPersonal() {
     useEffect(() => {
         const fetchOrderData = async () => {
             if (!orderId) return;
-            
+
             setLoading(true);
             setError(null);
-            
+
             try {
                 const response = await getRequest(orderEndpoint.GET_ORDER_BY_ID(orderId as string))
                 setOrderData(response.data);
@@ -598,7 +598,7 @@ export default function ConfirmProductsPersonal() {
                 <Space direction="vertical" size="large" className="w-full">
                     <div>
                         <Title level={3} className="!mb-2 !text-blue-900">
-                        Ghi nhận tình trạng trước khi giao hàng
+                            Ghi nhận tình trạng trước khi giao hàng
                         </Title>
                         <Text type="secondary">
                             Xác minh tình trạng thiết bị để làm minh chứng nếu

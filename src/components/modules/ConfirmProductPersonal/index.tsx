@@ -444,7 +444,7 @@ export default function ConfirmProductsPersonal() {
                 orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
                 {
                     data: {
-                        status: 'completed',
+                        status: 'before_deadline',
                         toId: customerId,
                     },
                 },
@@ -525,7 +525,7 @@ export default function ConfirmProductsPersonal() {
             message.success('Đã gửi báo cáo kiểm tra thành công!')
             // Optionally redirect or clear form
             if (orderData?.customerId?._id) {
-                handleChangeToCompleted(orderId as string, orderData.customerId._id)    
+                handleChangeToCompleted(orderId as string, orderData.customerId._id)
             }
             router.back();
         } catch (error: any) {
@@ -564,10 +564,10 @@ export default function ConfirmProductsPersonal() {
     useEffect(() => {
         const fetchOrderData = async () => {
             if (!orderId) return;
-            
+
             setLoading(true);
             setError(null);
-            
+
             try {
                 const response = await getRequest(orderEndpoint.GET_ORDER_BY_ID(orderId as string))
                 setOrderData(response.data);

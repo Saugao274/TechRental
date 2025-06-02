@@ -35,11 +35,6 @@ const PaymentPage = () => {
         return acc
     }, {} as Record<string, CartItem[]>)
 
-    // Calculate overall total if needed
-    const overallTotal = cartItems.reduce(
-        (total: number, item: CartItem) => total + item.price * item.quantity,
-        0,
-    )
     useEffect(() => {
         const productsParam = searchParams.get('products')
         if (productsParam) {

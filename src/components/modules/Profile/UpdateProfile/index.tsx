@@ -54,7 +54,6 @@ interface ProfileFormValues {
 
 const UpdateProfile = () => {
     const [form] = Form.useForm()
-    const [avatar, setAvatar] = useState('/images/Intro/avt1.png')
     const { user, updateUser } = useAuth()
     useEffect(() => {
         form.setFieldsValue(user)
@@ -124,7 +123,7 @@ const UpdateProfile = () => {
     ]
 
     const [isChangePassword, setIsChangePassword] = useState(false)
-    
+
     const handleUpload = async (file: File) => {
         const isJpgOrPng =
             file.type === 'image/jpeg' || file.type === 'image/png'
@@ -185,7 +184,7 @@ const UpdateProfile = () => {
                         <Col span={12}>
                             <div className="mb-6 flex flex-col items-center gap-4">
                                 <Avatar
-                                    src={user?.avatar ? user.avatar : avatar}
+                                    src={user?.avatar}
                                     size={185}
                                     icon={<UserIcon />}
                                     className="mb-3 bg-gray-300"
@@ -274,13 +273,20 @@ const UpdateProfile = () => {
                                 <Form.Item name="phoneNumber" className="!mb-0">
                                     {!isChangePassword && (
                                         <div className="flex items-center rounded-md p-3">
-                                            <div className="flex items-center gap-2">
-                                                <Phone
-                                                    size={16}
-                                                    className="text-gray-500"
-                                                />
-                                                <Text>+84 {user?.phone}</Text>
-                                            </div>
+                                            {user?.phone ?
+                                                <div className="flex items-center gap-2">
+                                                    <Phone
+                                                        size={16}
+                                                        className="text-gray-500"
+                                                    />
+                                                    <Text>+84 {user?.phone}</Text>
+                                                </div> : <div className="flex items-center gap-2">
+                                                    <Phone
+                                                        size={16}
+                                                        className="text-gray-500"
+                                                    />
+                                                    <Text>Chưa cập nhật</Text>
+                                                </div>}
                                             <p className="ml-2">|</p>
                                             <Button
                                                 type="link"

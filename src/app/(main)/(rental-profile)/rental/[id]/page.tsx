@@ -98,7 +98,7 @@ export default function ProductManagement() {
                         status = `Đã cho thuê`
                         unitList.push({
                             ...product,
-                            unitId: `${availableCount} / ${product.stock}`,
+                            unitId: `${rentedCount} / ${product.stock}`,
                             status,
                         })
                     }
@@ -188,8 +188,8 @@ export default function ProductManagement() {
                         status === 'Còn sản phẩm'
                             ? 'green'
                             : status === 'Chờ admin duyệt'
-                              ? 'orange'
-                              : 'red'
+                                ? 'orange'
+                                : 'red'
                     }
                     text={status}
                 />
