@@ -30,39 +30,69 @@ export default function VNPayReturnPage() {
     const [paymentData, setPaymentData] = useState<VNPayResponse | null>(null)
     const [status, setStatus] = useState<PaymentStatus>('pending')
 
+    const handleChangeToInDelivery = async (
+        orderId: string,
+        customerId: string,
+    ): Promise<void> => {
+        try {
+            await putRequest(
+                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                {
+                    data: {
+                        status: 'in_delivery',
+                        toId: customerId,
+                    },
+                },
+            )
+        } catch (error) {
+            console.error(error)
+        } finally {
+        }
+    }
+
+
     useEffect(() => {
         // Parse URL parameters
-        const data: VNPayResponse = {
-            vnp_Amount: searchParams.get('vnp_Amount') || '',
-            vnp_BankCode: searchParams.get('vnp_BankCode') || '',
-            vnp_BankTranNo: searchParams.get('vnp_BankTranNo') || '',
-            vnp_CardType: searchParams.get('vnp_CardType') || '',
-            vnp_OrderInfo: searchParams.get('vnp_OrderInfo') || '',
-            vnp_PayDate: searchParams.get('vnp_PayDate') || '',
-            vnp_ResponseCode: searchParams.get('vnp_ResponseCode') || '',
-            vnp_TmnCode: searchParams.get('vnp_TmnCode') || '',
-            vnp_TransactionNo: searchParams.get('vnp_TransactionNo') || '',
-            vnp_TransactionStatus:
-                searchParams.get('vnp_TransactionStatus') || '',
-            vnp_TxnRef: searchParams.get('vnp_TxnRef') || '',
-            vnp_SecureHash: searchParams.get('vnp_SecureHash') || '',
+        const handlePaymentResponse = async () => {
+            const data: VNPayResponse = {
+                vnp_Amount: searchParams.get('vnp_Amount') || '',
+                vnp_BankCode: searchParams.get('vnp_BankCode') || '',
+                vnp_BankTranNo: searchParams.get('vnp_BankTranNo') || '',
+                vnp_CardType: searchParams.get('vnp_CardType') || '',
+                vnp_OrderInfo: searchParams.get('vnp_OrderInfo') || '',
+                vnp_PayDate: searchParams.get('vnp_PayDate') || '',
+                vnp_ResponseCode: searchParams.get('vnp_ResponseCode') || '',
+                vnp_TmnCode: searchParams.get('vnp_TmnCode') || '',
+                vnp_TransactionNo: searchParams.get('vnp_TransactionNo') || '',
+                vnp_TransactionStatus:
+                    searchParams.get('vnp_TransactionStatus') || '',
+                vnp_TxnRef: searchParams.get('vnp_TxnRef') || '',
+                vnp_SecureHash: searchParams.get('vnp_SecureHash') || '',
+            }
+
+            setPaymentData(data)
+
+            // Determine status based on response code
+            const responseCode = data.vnp_ResponseCode
+            if (responseCode === '00') {
+                setStatus('success')
+                const orderInfo = decodeURIComponent(data.vnp_OrderInfo)
+                const [orderId, customerId] = orderInfo.split('|')
+                if (orderId && customerId) {
+                    await handleChangeToInDelivery(orderId, customerId)
+                }
+            } else if (
+                responseCode === '24' ||
+                responseCode === '51' ||
+                responseCode === '65'
+            ) {
+                setStatus('confirmation')
+            } else {
+                setStatus('failed')
+            }
         }
 
-        setPaymentData(data)
-
-        // Determine status based on response code
-        const responseCode = data.vnp_ResponseCode
-        if (responseCode === '00') {
-            setStatus('success')
-        } else if (
-            responseCode === '24' ||
-            responseCode === '51' ||
-            responseCode === '65'
-        ) {
-            setStatus('confirmation')
-        } else {
-            setStatus('failed')
-        }
+        handlePaymentResponse()
     }, [searchParams])
 
     const formatAmount = (amount: string) => {
@@ -190,41 +220,9 @@ export default function VNPayReturnPage() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+        <div className="flex py-52 items-center justify-center p-4">
             <div className="w-full max-w-md">
                 {renderStatusCard()}
-
-                {process.env.NODE_ENV === 'development' && (
-                    <Card className="mt-4 bg-gray-50">
-                        <div className="p-4">
-                            <h3 className="mb-2 font-semibold">Debug Info:</h3>
-                            <div className="space-y-1 text-xs">
-                                <p>
-                                    <strong>Response Code:</strong>{' '}
-                                    {paymentData.vnp_ResponseCode}
-                                </p>
-                                <p>
-                                    <strong>Transaction Status:</strong>{' '}
-                                    {paymentData.vnp_TransactionStatus}
-                                </p>
-                                <p>
-                                    <strong>Amount:</strong>{' '}
-                                    {formatAmount(paymentData.vnp_Amount)}
-                                </p>
-                                <p>
-                                    <strong>Order Info:</strong>{' '}
-                                    {decodeURIComponent(
-                                        paymentData.vnp_OrderInfo,
-                                    )}
-                                </p>
-                                <p>
-                                    <strong>Transaction Ref:</strong>{' '}
-                                    {paymentData.vnp_TxnRef}
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-                )}
             </div>
         </div>
     )

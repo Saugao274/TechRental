@@ -1,43 +1,35 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
-
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-    Form,
-    Input,
-    Select,
-    Upload,
     Button,
-    message,
-    Switch,
-    InputNumber,
-    Typography,
-    Collapse,
-    Progress,
+    Card,
     Col,
     Row,
-    Card,
+    Typography,
+    Tabs,
+    message,
 } from 'antd'
 import {
     BadgeCheckIcon,
     BadgeX,
-    CheckCircle,
-    ChevronDown,
-    ChevronUp,
-    RotateCw,
-    TriangleAlert,
-    UploadCloud,
-    X,
 } from 'lucide-react'
-import SectionCommon from '@/components/core/common/SectionCommon'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
-interface PriorityPackage {
-    type: 'Basic' | 'Premium' | 'Vip'
+interface RentalPackage {
+    type: string
     name: string
     price: number
+    duration: string
     description: string
-    benefits: any
+    benefits: { value: string; isChoice: boolean }[]
+}
+
+interface InsurancePackage {
+    type: string
+    name: string
+    insuranceFee: number
+    maxCoverage: string
+    description: string
 }
 
 interface PackageNewsProps {
@@ -46,207 +38,153 @@ interface PackageNewsProps {
 
 export default function PackageNews({ id }: PackageNewsProps) {
     const [isMobile, setIsMobile] = useState(false)
-    // // Check if screen is mobile
+    const [activeTab, setActiveTab] = useState('rental')
+    const router = useRouter()
+
     useEffect(() => {
         const checkIfMobile = () => {
             setIsMobile(window.innerWidth < 768)
         }
-
-        // Initial check
         checkIfMobile()
-
-        // Add event listener
         window.addEventListener('resize', checkIfMobile)
-
-        // Cleanup
         return () => window.removeEventListener('resize', checkIfMobile)
     }, [])
 
-    type PriorityPackage = {
-        type: 'Basic' | 'Professional' | 'Vip'
-        name: string
-        price: number
-        duration: string
-        description: string
-        discount: number
-        savingPercent: number
-        benefits: { value: string; isChoice: boolean }[]
-    }
-
-    const priorityPackages: PriorityPackage[] = [
+    const rentalPackages: RentalPackage[] = [
+        {
+            type: 'Free',
+            name: 'Gói Miễn phí',
+            price: 0,
+            duration: '30 ngày',
+            description: 'Dành cho người mới, dùng thử nền tảng',
+            benefits: [
+                { value: 'Đăng 1 thiết bị', isChoice: true },
+                { value: 'Hiển thị trong danh mục phụ', isChoice: true },
+                { value: 'Hỗ trợ hợp đồng điện tử đầu tiên', isChoice: true },
+                { value: 'Không có cửa tiền hiển thị', isChoice: false },
+                { value: 'Không báo cáo hiệu suất', isChoice: false },
+            ],
+        },
         {
             type: 'Basic',
             name: 'Gói Cơ bản',
-            price: 315000,
-            discount: 16,
+            price: 299000,
             duration: '30 ngày',
             description: 'Dành cho cá nhân mới bắt đầu cho thuê thiết bị',
-            savingPercent: 16,
             benefits: [
-                { value: 'Lượt đăng thiết bị: 25', isChoice: true },
-                { value: 'Không giới hạn lượt xem sản phẩm', isChoice: true },
-                { value: 'Báo cáo hiệu suất thuê', isChoice: false },
-                { value: 'Công cụ quản lý khách thuê', isChoice: false },
-                { value: 'Ưu tiên hiển thị trên trang chủ', isChoice: false },
+                { value: 'Đăng tối đa 5 thiết bị', isChoice: true },
+                { value: 'Không giới hạn lượt xem', isChoice: true },
+                { value: 'Hỗ trợ qua email', isChoice: true },
+                { value: 'Không có báo cáo hiệu suất', isChoice: false },
+                { value: 'Không có quản lý nâng cao', isChoice: false },
             ],
         },
         {
-            discount: 27,
-            type: 'Professional',
-            name: 'Gói Chuyên nghiệp',
+            type: 'Advanced',
+            name: 'Gói Nâng cao',
             price: 549000,
             duration: '30 ngày',
-            description: 'Dành cho người cho thuê nhiều sản phẩm',
-            savingPercent: 27,
+            description: 'Dành cho cá nhân bán chuyên, freelancer',
             benefits: [
-                { value: 'Lượt đăng thiết bị: 50', isChoice: true },
-                { value: 'Không giới hạn lượt xem sản phẩm', isChoice: true },
+                { value: 'Đăng tối đa 20 thiết bị', isChoice: true },
+                { value: 'Không giới hạn danh mục', isChoice: true },
                 { value: 'Báo cáo hiệu suất thuê', isChoice: true },
-                { value: 'Công cụ quản lý khách thuê', isChoice: false },
-                { value: 'Ưu tiên hiển thị trên trang chủ', isChoice: false },
+                { value: 'Hỗ trợ marketing cơ bản', isChoice: true },
+                { value: 'Hỗ trợ qua email + chat', isChoice: true },
             ],
         },
         {
-            discount: 20,
-            type: 'Vip',
-            name: 'Gói VIP',
-            price: 839000,
+            type: 'Business',
+            name: 'Gói Doanh nghiệp',
+            price: 1499000,
             duration: '30 ngày',
-            description:
-                'Dành cho cửa hàng/công ty cho thuê chuyên nghiệp, quản lý nhiều đơn',
-            savingPercent: 20,
+            description: 'Dành cho Công ty/cửa hàng cho thuê thiết bị chuyên nghiệp',
             benefits: [
-                { value: 'Lượt đăng thiết bị: 70', isChoice: true },
-                { value: 'Không giới hạn lượt xem sản phẩm', isChoice: true },
-                { value: 'Báo cáo hiệu suất thuê', isChoice: true },
-                { value: 'Công cụ quản lý khách thuê', isChoice: true },
-                { value: 'Ưu tiên hiển thị trên trang chủ', isChoice: true },
+                { value: 'Đăng không giới hạn thiết bị', isChoice: true },
+                { value: 'Hiển thị ưu tiên trang chủ', isChoice: true },
+                { value: 'Báo cáo chi tiết hiệu suất', isChoice: true },
+                { value: 'Hỗ trợ marketing nâng cao', isChoice: true },
+                { value: 'Quản lý hợp đồng, lịch thuê', isChoice: true },
+                { value: 'Hỗ trợ 24/7', isChoice: true },
             ],
         },
     ]
-    const router = useRouter()
 
-    const handlePurchasePriority = (
-        packageType: 'Basic' | 'Professional' | 'Vip',
-        price: number,
-    ) => {
-        message.success(
-            `Đã mua ${
-                packageType === 'Basic'
-                    ? 'Gói cơ bản'
-                    : packageType === 'Professional'
-                      ? 'Gói Chuyên nghiệp'
-                      : 'Gói VIP'
-            }`,
-        )
-        router.push(
-            `/rental/${id}/package/payment?price=${price.toLocaleString('vi-VN')}&type=${packageType}`,
-        )
+    const insurancePackages: InsurancePackage[] = [
+        {
+            type: 'Basic',
+            name: 'Gói Cơ bản',
+            insuranceFee: 3,
+            maxCoverage: 'Tối đa 1 triệu VND/trường hợp',
+            description: 'Dành cho máy ảnh cơ bản, tai nghe, điện thoại phổ thông',
+        },
+        {
+            type: 'Standard',
+            name: 'Gói Tiêu chuẩn',
+            insuranceFee: 5,
+            maxCoverage: 'Tối đa 5 triệu VND/trường hợp',
+            description: 'Dành cho iPhone, Mirrorless, thiết bị chuyên dụng',
+        },
+        {
+            type: 'Premium',
+            name: 'Gói Cơ bản',
+            insuranceFee: 10,
+            maxCoverage: 'Tối đa 80% giá trị thiết bị hoặc thay thế tương đương',
+            description: 'Dành cho lens đắt tiền, camera quay phim, thiết bị studio',
+        },
+    ]
+
+    const handlePurchasePackage = (packageType: string, price: number) => {
+        message.success(`Đã chọn ${packageType}`)
+        router.push(`/rental/${id}/package/payment?price=${price.toLocaleString('vi-VN')}&type=${packageType}`)
     }
 
-    return (
-        <div className="pt-14">
-            <h1 className="flex items-center justify-center text-3xl font-bold text-blue-950">
-                Chọn gói Đăng Tin Cho Thuê theo nhu cầu
-            </h1>
-            <p className="flex items-center justify-center text-base italic">
-                Lưu ý: Gói có hiệu lực trong 30 ngày kể từ ngày kích hoạt
-            </p>
-
-            <Row gutter={[16, 24]} className="mt-11 flex justify-between">
-                {priorityPackages.map((pkg, index) => {
-                    const isBestSeller = index === 1
-                    return (
-                        <Col
-                            key={pkg.type}
-                            xs={24}
-                            sm={24}
-                            md={8}
+    const renderRentalPackages = () => (
+        <Row gutter={[16, 24]} className="mt-8 flex justify-between">
+            {rentalPackages.map((pkg, index) => {
+                const isBestSeller = pkg.type === 'Advanced'
+                return (
+                    <Col
+                        key={pkg.type}
+                        xs={24}
+                        sm={24}
+                        md={6}
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <div
                             style={{
-                                display: 'flex',
-                                justifyContent: 'center',
+                                position: 'relative',
+                                width: '100%',
+                                maxWidth: isBestSeller ? '400px' : '340px',
+                                zIndex: isBestSeller ? 2 : 1,
+                                transform: isBestSeller ? 'scale(1.08)' : 'scale(1)',
                             }}
                         >
-                            <div
+                            {isBestSeller && (
+                                <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-1 font-semibold text-blue-900 shadow-md text-xs">
+                                    Bán chạy nhất
+                                </div>
+                            )}
+                            <Card
+                                className="w-full h-full flex flex-col justify-between relative pb-24"
                                 style={{
-                                    position: 'relative',
-                                    width: '100%',
-                                    maxWidth: isBestSeller ? '400px' : '340px',
-                                    zIndex: isBestSeller ? 2 : 1,
-                                    transform: isBestSeller
-                                        ? 'scale(1.08)'
-                                        : 'scale(1)',
-                                    transition: 'transform 0.3s',
+                                    borderRadius: '12px',
+                                    border: isBestSeller ? '2px solid #7892cd' : 'none',
+                                    background: isBestSeller
+                                        ? 'linear-gradient(135deg, #234daf 0%, #1D3D85 100%)'
+                                        : 'linear-gradient(135deg, rgba(230, 250, 255, 0.7) 0%, rgba(222, 235, 249, 0.7) 100%)',
                                 }}
                             >
-                                {isBestSeller && (
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            backgroundColor: '#fff',
-                                            color: '#1D3D85',
-                                            padding: '4px 16px',
-                                            borderRadius: '999px',
-                                            fontSize: '13px',
-                                            fontWeight: 600,
-                                            boxShadow:
-                                                '0 4px 8px rgba(0, 0, 0, 0.15)',
-                                            zIndex: 2,
-                                            border: '1px solid #ddd',
-                                        }}
-                                    >
-                                        Bán chạy nhất
-                                    </div>
-                                )}
-                                <Card
-                                    className="w-full"
-                                    style={{
-                                        // height: isBestSeller ? '400px' : '',
-                                        top: !isBestSeller ? '20px' : '',
-                                        borderRadius: '12px',
-                                        border:
-                                            pkg.type === 'Professional'
-                                                ? '2px solid #7892cd'
-                                                : '2px solid #2d93c2',
-                                        background:
-                                            pkg.type === 'Professional'
-                                                ? 'linear-gradient(135deg, #234daf 0%, #1D3D85 100%)'
-                                                : 'linear-gradient(135deg, #e6faffc7 0%, #deebf9c1 100%)',
-                                        boxShadow: isBestSeller
-                                            ? '0 6px 24px rgba(0, 0, 0, 0.25)'
-                                            : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                                        transition: 'transform 0.3s ease',
-                                    }}
-                                    styles={{
-                                        body: {
-                                            padding: isMobile ? '16px' : '24px',
-                                        },
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        if (!isMobile) {
-                                            e.currentTarget.style.transform =
-                                                'scale(1.03)'
-                                        }
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        if (!isMobile) {
-                                            e.currentTarget.style.transform =
-                                                'scale(1)'
-                                        }
-                                    }}
-                                >
+                                <div className="flex flex-col">
                                     <Typography.Title
-                                        level={isMobile ? 5 : 4}
+                                        level={4}
                                         style={{
                                             textAlign: 'center',
-                                            color:
-                                                pkg.type === 'Professional'
-                                                    ? '#fff'
-                                                    : '#1D3D85',
-                                            fontSize: 30,
+                                            color: isBestSeller ? '#fff' : '#1D3D85',
+                                            marginBottom: '8px',
                                         }}
                                     >
                                         {pkg.name}
@@ -254,112 +192,167 @@ export default function PackageNews({ id }: PackageNewsProps) {
                                     <Typography.Paragraph
                                         style={{
                                             textAlign: 'center',
-                                            fontSize: isMobile
-                                                ? '12px'
-                                                : '14px',
-                                            color:
-                                                pkg.type === 'Professional'
-                                                    ? '#fff'
-                                                    : '#1D3D85',
-                                            flexWrap: 'wrap',
+                                            color: isBestSeller ? '#fff' : '#666',
+                                            fontSize: '14px',
+                                            minHeight: '42px',
+                                            margin: '0 0 16px 0',
                                         }}
                                     >
                                         {pkg.description}
                                     </Typography.Paragraph>
-
-                                    <Typography.Text
-                                        strong
+                                    <Typography.Title
+                                        level={3}
                                         style={{
-                                            fontSize: isMobile
-                                                ? '20px'
-                                                : '24px',
-                                            color:
-                                                pkg.type === 'Professional'
-                                                    ? '#fff'
-                                                    : '#1D3D85',
-                                            display: 'block',
                                             textAlign: 'center',
-                                            marginBottom: '10px',
+                                            color: isBestSeller ? '#fff' : '#1D3D85',
+                                            margin: '16px 0',
                                         }}
                                     >
-                                        {pkg.price.toLocaleString('vi-VN')} ₫{' '}
-                                        <span className="text-xs font-light">
-                                            / 30 ngày
-                                        </span>
-                                    </Typography.Text>
-                                    <div
-                                        className={`mb-2 flex w-full items-center justify-center rounded-xl border-2 border-blue-300 bg-green-100 p-2 font-vietnam text-green-500`}
-                                    >
-                                        <p>
-                                            Tiết kiệm {pkg.discount}% so với giá
-                                            bán lẻ
-                                        </p>
-                                    </div>
-                                    <ul
-                                        style={{
-                                            paddingLeft: '20px',
-                                            marginBottom: '24px',
-                                            color:
-                                                pkg.type === 'Professional'
-                                                    ? '#fff'
-                                                    : '#1D3D85',
-                                            fontSize: isMobile
-                                                ? '12px'
-                                                : '14px',
-                                        }}
-                                    >
+                                        {pkg.price === 0 ? (
+                                            '0đ'
+                                        ) : (
+                                            `${pkg.price.toLocaleString('vi-VN')}đ`
+                                        )}
+                                        <span className="text-xs font-light"> / {pkg.duration}</span>
+                                    </Typography.Title>
+                                    {pkg.type !== 'Free' && (
+                                        <div className="mb-4 flex w-full items-center justify-center rounded-xl border-2 border-blue-300 bg-green-100 p-2 font-vietnam text-green-500">
+                                            <p>Tiết kiệm {pkg.type === 'Advanced' ? '27%' : pkg.type === 'Business' ? '20%' : '16%'} so với giá bán lẻ</p>
+                                        </div>
+                                    )}
+                                    <ul className="space-y-2">
                                         {pkg.benefits.map((benefit, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="flex items-center justify-start gap-2"
-                                            >
-                                                <div>
-                                                    {benefit.isChoice ? (
-                                                        <BadgeCheckIcon
-                                                            size={16}
-                                                            color="#52c41a"
-                                                        />
-                                                    ) : (
-                                                        <BadgeX
-                                                            size={16}
-                                                            color="#A4A4A4"
-                                                        />
-                                                    )}
-                                                </div>
-                                                <p>{benefit.value}</p>
-                                            </div>
+                                            <li key={idx} className="flex items-center gap-2">
+                                                {benefit.isChoice ? (
+                                                    <BadgeCheckIcon size={16} color="#52c41a" />
+                                                ) : (
+                                                    <BadgeX size={16} color="#A4A4A4" />
+                                                )}
+                                                <span style={{ color: isBestSeller ? '#fff' : '#666' }}>
+                                                    {benefit.value}
+                                                </span>
+                                            </li>
                                         ))}
                                     </ul>
-
+                                </div>
+                                <div className="absolute bottom-6 left-6 right-6">
                                     <Button
                                         type="primary"
                                         block
-                                        onClick={() =>
-                                            handlePurchasePriority(
-                                                pkg.type,
-                                                pkg.price,
-                                            )
-                                        }
+                                        onClick={() => handlePurchasePackage(pkg.type, pkg.price)}
                                         className={
-                                            pkg.type === 'Professional'
-                                                ? 'h-10 rounded-lg !bg-white !bg-gradient-to-r !font-bold !text-blue-800 transition hover:!from-blue-800 hover:!to-blue-500 hover:!text-white md:h-12'
-                                                : 'h-10 rounded-lg !bg-blue-900 !bg-gradient-to-r !font-bold !text-white transition hover:from-blue-200 hover:to-blue-500 md:h-12'
+                                            isBestSeller
+                                                ? 'h-12 rounded-lg !bg-white !font-bold !text-blue-800 hover:!bg-blue-50'
+                                                : 'h-12 rounded-lg !bg-blue-900 !font-bold !text-white hover:!bg-blue-800'
                                         }
-                                        style={{
-                                            fontSize: isMobile
-                                                ? '14px'
-                                                : '16px',
-                                            border: 'none',
-                                        }}
                                     >
                                         MUA NGAY
                                     </Button>
-                                </Card>
+                                </div>
+                            </Card>
+                        </div>
+                    </Col>
+                )}
+            )}
+        </Row>
+    )
+
+    const renderInsurancePackages = () => (
+        <Row gutter={[16, 24]} className="mt-8 flex justify-between">
+            {insurancePackages.map((pkg) => (
+                <Col
+                    key={pkg.type}
+                    xs={24}
+                    sm={24}
+                    md={8}
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Card
+                        className="w-full h-full flex flex-col justify-between relative pb-24"
+                        style={{
+                            borderRadius: '12px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, rgba(230, 250, 255, 0.7) 0%, rgba(222, 235, 249, 0.7) 100%)',
+                        }}
+                    >
+                        <div className="flex flex-col">
+                            <Typography.Title
+                                level={4}
+                                style={{
+                                    textAlign: 'center',
+                                    color: '#1D3D85',
+                                    marginBottom: '8px',
+                                }}
+                            >
+                                {pkg.name}
+                            </Typography.Title>
+                            <Typography.Paragraph
+                                style={{
+                                    textAlign: 'center',
+                                    color: '#666',
+                                    fontSize: '14px',
+                                    minHeight: '42px',
+                                    margin: '0 0 16px 0',
+                                }}
+                            >
+                                {pkg.description}
+                            </Typography.Paragraph>
+                            <div className="text-center">
+                                <div className="text-lg font-semibold text-blue-900">
+                                    Phí bảo hiểm: {pkg.insuranceFee}% giá trị đơn thuê
+                                </div>
+                                <div className="mt-2 text-base text-gray-600">
+                                    Mức chi trả: {pkg.maxCoverage}
+                                </div>
                             </div>
-                        </Col>
-                    )
-                })}
-            </Row>
+                        </div>
+                        <div className="absolute bottom-6 left-6 right-6">
+                            <Button
+                                type="primary"
+                                block
+                                onClick={() => handlePurchasePackage(pkg.type, 0)}
+                                className="h-12 rounded-lg !bg-blue-900 !font-bold !text-white hover:!bg-blue-800"
+                            >
+                                MUA NGAY
+                            </Button>
+                        </div>
+                    </Card>
+                </Col>
+            ))}
+        </Row>
+    )
+
+    return (
+        <div className="pt-14">
+            <h1 className="mb-2 text-center text-3xl font-bold text-blue-950">
+                {activeTab === 'rental' ? 'Chọn gói Đăng Tin Cho Thuê theo nhu cầu' : 'Chọn gói Bảo Hiểm theo nhu cầu'}
+            </h1>
+            <p className="text-center text-base italic text-gray-600">
+                Lưu ý: Gói có hiệu lực trong 30 ngày kể từ ngày kích hoạt
+            </p>
+
+            <div className="mt-8 flex justify-center">
+                <Tabs
+                    activeKey={activeTab}
+                    onChange={setActiveTab}
+                    items={[
+                        {
+                            key: 'rental',
+                            label: 'Đăng tin cho thuê',
+                            children: renderRentalPackages(),
+                        },
+                        {
+                            key: 'insurance',
+                            label: 'Gói bảo hiểm',
+                            children: renderInsurancePackages(),
+                        },
+                    ]}
+                    className="w-full max-w-screen-xl"
+                />
+            </div>
         </div>
     )
 }

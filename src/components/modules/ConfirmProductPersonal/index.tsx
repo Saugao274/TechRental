@@ -432,11 +432,14 @@ export default function ConfirmProductsPersonal() {
         message.info('Đã xóa video')
     }
 
-    const handleChangeToBeforeDeadLine = async (
+    const handleChangeToCompleted = async (
         orderId: string,
         customerId: string,
     ): Promise<void> => {
         try {
+            // Đơn đang ở trạng thái 'Cần xác nhận' (pending_confirmation),
+            // ta duyệt để chuyển sang 'pending_payment'.
+
             await putRequest(
                 orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
                 {
@@ -510,8 +513,8 @@ export default function ConfirmProductsPersonal() {
                 evidenceType: 'delivery',
                 images: allImageUrls,
                 videos: allVideoUrls,
-                description: notes || 'Kiểm tra thiết bị trước khi giao hàng',
-                submittedBy: 'owner',
+                description: notes || 'Kiểm tra thiết bị trước khi nhận hàng',
+                submittedBy: 'renter',
                 status: 'approved'
             }
 
@@ -519,14 +522,15 @@ export default function ConfirmProductsPersonal() {
                 data: evidenceData
             })
 
-            message.success('Đã gửi minh chứng thành công!')
+            message.success('Đã gửi báo cáo kiểm tra thành công!')
+            // Optionally redirect or clear form
             if (orderData?.customerId?._id) {
-                handleChangeToBeforeDeadLine(orderId as string, orderData.customerId._id)
+                handleChangeToCompleted(orderId as string, orderData.customerId._id)
             }
             router.back();
         } catch (error: any) {
             console.error('Error submitting evidence:', error)
-            message.error('Lỗi khi gửi: ' + (error.message || 'Vui lòng thử lại'))
+            message.error('Lỗi khi gửi báo cáo: ' + (error.message || 'Vui lòng thử lại'))
         } finally {
             setLoading(false)
         }
@@ -598,7 +602,7 @@ export default function ConfirmProductsPersonal() {
                 <Space direction="vertical" size="large" className="w-full">
                     <div>
                         <Title level={3} className="!mb-2 !text-blue-900">
-                            Ghi nhận tình trạng trước khi giao hàng
+                            Ghi nhận tình trạng trước khi nhận thiết bị
                         </Title>
                         <Text type="secondary">
                             Xác minh tình trạng thiết bị để làm minh chứng nếu

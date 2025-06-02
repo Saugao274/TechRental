@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
 import { getRequest, postRequest, putRequest } from '@/request'
-import { orderEndpoint } from '@/settings/endpoints'
+import { orderEndpoint } from '@/settings/endpoints' 
 import {
     Card,
     Tabs,
@@ -15,7 +15,6 @@ import {
     Spin,
     Empty,
     message,
-    Modal,
 } from 'antd'
 import {
     SearchOutlined,
@@ -28,7 +27,6 @@ import { useState, useEffect, useMemo } from 'react'
 import currency from 'currency.js'
 import { ColumnType } from 'antd/es/table'
 import { useRouter } from 'next/navigation'
-import ButtonCommon from '@/components/core/common/ButtonCommon'
 
 dayjs.locale('vi')
 
@@ -43,13 +41,13 @@ export type OrderStatusAPI =
     | 'before_deadline'
 
 export type OrderStatusVN =
-    | 'Đã hủy'
-    | 'Cần thanh toán'
     | 'Đã hoàn thành'
-    | 'Chờ xác nhận'
-    | 'Chờ giao hàng'
-    | 'Cần trả hàng'
+    | 'Đã hủy'
+    | 'Chờ thanh toán'
+    | 'Cần xác nhận'
+    | 'Cần giao hàng'
     | 'Đã giao hàng'
+    | 'Chờ trả hàng'
 
 type Order = {
     id: string
@@ -64,6 +62,7 @@ type Order = {
 
 /* ------------------ mock fallback (bật QUICK DEMO = true) ------------------ */
 const USE_MOCK = false // ➜ đổi thành true nếu muốn xem UI nhanh khi offline
+
 const mockOrders: Order[] = [
     {
         id: 'ORD-001',
@@ -80,21 +79,21 @@ const mockOrders: Order[] = [
 
 export const STATUS_VN: Record<OrderStatusAPI, OrderStatusVN> = {
     completed: 'Đã hoàn thành',
-    pending_payment: 'Cần thanh toán',
-    pending_confirmation: 'Chờ xác nhận',
-    in_delivery: 'Chờ giao hàng',
-    return_product: 'Cần trả hàng',
+    pending_payment: 'Chờ thanh toán',
+    pending_confirmation: 'Cần xác nhận',
+    in_delivery: 'Cần giao hàng',
+    return_product: 'Chờ trả hàng',
     canceled: 'Đã hủy',
     before_deadline: 'Đã giao hàng',
 }
 const STATUS_COLOR: Record<OrderStatusVN, string> = {
-    'Đã hủy': 'red',
-    'Cần thanh toán': 'orange',
     'Đã hoàn thành': 'green',
-    'Chờ xác nhận': 'orange',
-    'Chờ giao hàng': 'blue',
-    'Cần trả hàng': 'orange',
-    'Đã giao hàng': 'purple',
+    'Cần xác nhận': 'orange',
+    'Cần giao hàng': 'blue',
+    'Chờ trả hàng': 'blue',
+    'Đã hủy': 'red',
+    'Đã giao hàng': 'green',
+    'Chờ thanh toán': 'orange',
 }
 
 export const STATUS_API: Record<OrderStatusVN, OrderStatusAPI> =
@@ -107,7 +106,7 @@ const { Title, Text } = Typography
 const { TabPane } = Tabs
 const { useBreakpoint } = Grid
 
-export default function OrderManagement() {
+export default function OrderManagementRental() {
     const { user } = useAuth()
     const isOwner = user?.roles?.includes('owner')
     const screens = useBreakpoint()
@@ -125,7 +124,10 @@ export default function OrderManagement() {
         try {
             setLoading(true)
             const { data } = await getRequest(
-                orderEndpoint.GET_ORDER_BY_USER_ID.replace(':userId', user._id),
+                orderEndpoint.GET_ORDER_BY_RENTER_ID.replace(
+                    ':renterId',
+                    user._id,
+                ),
             )
 
             // convert
@@ -173,23 +175,55 @@ export default function OrderManagement() {
         [orders, search],
     )
 
+    const handleApprove = async (
+        orderId: string,
+        customerId: string,
+    ): Promise<void> => {
+        try {
+            setLoading(true)
+
+            // Đơn đang ở trạng thái 'Cần xác nhận' (pending_confirmation),
+            // ta duyệt để chuyển sang 'pending_payment'.
+            const nstatus: OrderStatusAPI = 'pending_payment'
+
+            await putRequest(
+                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                {
+                    data: {
+                        status: nstatus,
+                        toId: customerId,
+                    },
+                },
+            )
+
+            message.success('Đơn hàng đã được duyệt!')
+            await fetchOrders() // refresh lại bảng
+        } catch (error) {
+            console.error(error)
+            message.error('Duyệt đơn hàng thất bại!')
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const handleChangeToInDelivery = async (
         orderId: string,
         customerId: string,
     ): Promise<void> => {
         try {
-            // Đơn đang ở trạng thái 'Chờ xác nhận' (pending_confirmation),
+            // Đơn đang ở trạng thái 'Cần xác nhận' (pending_confirmation),
             // ta duyệt để chuyển sang 'pending_payment'.
 
             await putRequest(
                 orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
                 {
                     data: {
-                        status: 'com',
+                        status: 'in_delivery',
                         toId: customerId,
                     },
                 },
             )
+
             message.success('Đơn hàng đã được duyệt!')
             await fetchOrders()
         } catch (error) {
@@ -204,7 +238,6 @@ export default function OrderManagement() {
         orderId: string,
         customerId: string,
     ) => {
-        console.log("cehclkl", total)
         try {
             const numberOnly = total.replace(/[^\d]/g, '')
 
@@ -213,11 +246,10 @@ export default function OrderManagement() {
             const res = await postRequest(orderEndpoint.CREATE_ORDER, {
                 data: {
                     amount: cleanAmount.toString(),
-                    orderId,
-                    customerId,
                 },
             })
             window.open(res?.data, '_blank')
+            handleChangeToInDelivery(orderId, customerId)
         } catch (error) {
             message.error('Vui lòng thử lại sau!')
         }
@@ -228,15 +260,15 @@ export default function OrderManagement() {
         if (activeTab === 'pending')
             return searched.filter(
                 (o) =>
-                    o.status === 'Chờ xác nhận' ||
-                    o.status === 'Cần thanh toán',
+                    o.status === 'Cần xác nhận' ||
+                    o.status === 'Chờ thanh toán',
             )
         if (activeTab === 'processing')
             return searched.filter(
                 (o) =>
-                    o.status === 'Chờ giao hàng' ||
-                    o.status === 'Đã giao hàng' ||
-                    o.status === 'Cần trả hàng',
+                    o.status === 'Cần giao hàng' ||
+                    o.status === 'Chờ trả hàng' ||
+                    o.status === 'Đã giao hàng',
             )
         if (activeTab === 'completed')
             return searched.filter((o) => o.status === 'Đã hoàn thành')
@@ -244,7 +276,6 @@ export default function OrderManagement() {
             return searched.filter((o) => o.status === 'Đã hủy')
         return searched
     }, [searched, activeTab])
-    const [returnInfoRecord, setReturnInfoRecord] = useState<Order | null>(null)
 
     const desktopCols: ColumnType<Order>[] = [
         {
@@ -267,76 +298,57 @@ export default function OrderManagement() {
             title: 'Hành động',
             render: (record: Order) => {
                 switch (record.status) {
-                    case 'Cần thanh toán':
+                    case 'Cần xác nhận':
                         return (
                             <Button
-                                type="link"
+                                type="text"
                                 onClick={() =>
-                                    handlePayment(
-                                        record.total,
-                                        record.id,
-                                        record.customerId,
-                                    )
+                                    handleApprove(record.id, record.customerId)
                                 }
                             >
-                                Thanh toán
+                                Xác nhận
                             </Button>
                         )
-                    case 'Chờ xác nhận':
+                    case 'Chờ trả hàng':
                         return (
-                            <Button
-                                type="link"
-                                onClick={() => window.open('/chat', '_blank')}
-                            >
-                                Liên hệ shop
-                            </Button>
-                        )
-                    case 'Cần trả hàng':
-                        return (
-                            <>
+                            <div className="flex flex-col gap-2">
                                 <Button
                                     type="link"
-                                    onClick={() => setReturnInfoRecord(record)}
+                                    onClick={() =>
+                                        router.push(
+                                            `/manage-orders/${record.id}/return-info`,
+                                        )
+                                    }
                                 >
-                                    Thông tin
+                                    Báo cáo
                                 </Button>
-                                {returnInfoRecord?.id === record.id && (
-                                    <Modal
-                                        visible={true}
-                                        title="Thông tin Shop"
-                                        onCancel={() => setReturnInfoRecord(null)}
-                                        footer={[
-                                            <Button key="cancel" onClick={() => setReturnInfoRecord(null)}>
-                                                Đóng
-                                            </Button>,
-                                            <Button key="confirm" type="primary" >
-                                                Xác nhận đã hoàn tất
-                                            </Button>
-                                        ]}
-                                        centered
-                                    >
-                                        {/* Display shop information here */}
-                                        <p>Shop: {record.production}</p>
-                                        {/* Add more shop information as needed */}
-                                    </Modal>
-                                )}
-                            </>
+                                <Button
+                                    type="link"
+                                    onClick={() =>
+                                        router.push(
+                                            `/manage-orders/${record.id}/return-info`,
+                                        )
+                                    }
+                                >
+                                    Hoàn tất đơn hàng?
+                                </Button>
+                            </div>
                         )
-                    case 'Đã giao hàng':
+                    case 'Cần giao hàng':
                         return (
                             <Button
                                 type="link"
                                 onClick={() =>
                                     router.push(
-                                        `/personal/${record.customerId}/orders/${record.id}/confirm`,
+                                        `/manage-orders/${record.id}/before`,
                                     )
                                 }
                             >
-                                Đã nhận hàng?
+                                Đã giao hàng?
                             </Button>
                         )
                     default:
-                        return <Button type="link">Chi tiết</Button>
+                        return <Button type="default">_</Button>
                 }
             },
         },
@@ -358,58 +370,50 @@ export default function OrderManagement() {
                     </div>
                     <div className="mt-1 flex justify-between">
                         <Text strong>{r.total}</Text>
-                        {r.status === 'Cần thanh toán' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-orange-800"
-                                onClick={() =>
-                                    handlePayment(r.total, r.id, r.customerId)
-                                }
-                            >
-                                Thanh toán
-                            </Button>
-                        ) : r.status === 'Chờ giao hàng' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-blue-800"
-                                onClick={() =>
-                                    router.push(`/manage-orders/${r.id}/before`)
-                                }
-                            >
-                                Đã nhận hàng?
-                            </Button>
-                        ) : r.status === 'Cần trả hàng' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-green-800"
-                                onClick={() =>
-                                    router.push(
-                                        `/manage-orders/${r.id}/return-info`,
-                                    )
-                                }
-                            >
-                                Xem thông tin trả hàng
-                            </Button>
-                        ) : r.status === 'Chờ xác nhận' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-blue-800"
-                                onClick={() => window.open('/chat', '_blank')}
-                            >
-                                Liên hệ shop
-                            </Button>
-                        ) : (
-                            <Button type="link">Chi tiết</Button>
-                        )}
+                        <Button type="link" className="!p-0">
+                            Chi tiết
+                        </Button>
                     </div>
                 </div>
             ),
         },
     ]
+
+    mobileCols.push({
+        title: 'Hành động',
+        render: (record: Order) => {
+            if (record.status === 'Cần giao hàng') {
+                return (
+                    <Button type="primary" onClick={() => {}}>
+                        Giao hàng
+                    </Button>
+                )
+            }
+        }
+    })
+
+
+    if (isOwner) {
+        mobileCols.push({
+            title: 'Duyệt đơn',
+            render: (r: Order) =>
+                r.status === 'Cần xác nhận' ? (
+                    <Button
+                        type="primary"
+                        onClick={() => handleApprove(r.id, r.customerId)}
+                    >
+                        Duyệt
+                    </Button>
+                ) : (
+                    <Text>Đã duyệt</Text>
+                ),
+        })
+    }
+
     /* ---------------------------- tab labels ---------------------------- */
     const tabItems = [
         { key: 'all', label: 'Tất cả' },
-        { key: 'pending', label: 'Chờ xác nhận' },
+        { key: 'pending', label: 'Cần xác nhận' },
         { key: 'processing', label: 'Đang xử lý' },
         { key: 'completed', label: 'Đã hoàn thành' },
         { key: 'cancelled', label: 'Đã hủy' },
@@ -431,10 +435,11 @@ export default function OrderManagement() {
             <Card bodyStyle={{ padding: isMobile ? 12 : 24 }}>
                 {/* header */}
                 <div
-                    className={`flex ${isMobile
-                        ? 'flex-col gap-3'
-                        : 'items-center justify-between'
-                        } mb-4`}
+                    className={`flex ${
+                        isMobile
+                            ? 'flex-col gap-3'
+                            : 'items-center justify-between'
+                    } mb-4`}
                 >
                     <div>
                         <Title level={isMobile ? 5 : 4} className="!mb-0">
