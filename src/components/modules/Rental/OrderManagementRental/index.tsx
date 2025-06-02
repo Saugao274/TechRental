@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
 import { getRequest, postRequest, putRequest } from '@/request'
-import { orderEndpoint } from '@/settings/endpoints' 
+import { orderEndpoint } from '@/settings/endpoints'
 import {
     Card,
     Tabs,
@@ -15,6 +15,8 @@ import {
     Spin,
     Empty,
     message,
+    Modal,
+    Checkbox,
 } from 'antd'
 import {
     SearchOutlined,
@@ -27,6 +29,8 @@ import { useState, useEffect, useMemo } from 'react'
 import currency from 'currency.js'
 import { ColumnType } from 'antd/es/table'
 import { useRouter } from 'next/navigation'
+import TermsModal from '@/components/core/elements/TermsModal'
+import PrivacyModal from '@/components/core/elements/PrivacyModal'
 
 dayjs.locale('vi')
 
@@ -107,6 +111,7 @@ const { TabPane } = Tabs
 const { useBreakpoint } = Grid
 
 export default function OrderManagementRental() {
+
     const { user } = useAuth()
     const isOwner = user?.roles?.includes('owner')
     const screens = useBreakpoint()
@@ -174,18 +179,16 @@ export default function OrderManagementRental() {
             ),
         [orders, search],
     )
+    const [approveModalVisible, setApproveModalVisible] = useState(false)
+    const [selectedRecord, setSelectedRecord] = useState<Order | null>(null)
+    const [termsModalVisible, setTermsModalVisible] = useState(false)
+    const [privacyModalVisible, setPrivacyModalVisible] = useState(false)
 
-    const handleApprove = async (
-        orderId: string,
-        customerId: string,
-    ): Promise<void> => {
+    // Existing functions, fetchOrders, handleApprove, etc.
+    const handleApprove = async (orderId: string, customerId: string): Promise<void> => {
         try {
             setLoading(true)
-
-            // Đơn đang ở trạng thái 'Cần xác nhận' (pending_confirmation),
-            // ta duyệt để chuyển sang 'pending_payment'.
             const nstatus: OrderStatusAPI = 'pending_payment'
-
             await putRequest(
                 orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
                 {
@@ -195,63 +198,13 @@ export default function OrderManagementRental() {
                     },
                 },
             )
-
-            message.success('Đơn hàng đã được duyệt!')
-            await fetchOrders() // refresh lại bảng
-        } catch (error) {
-            console.error(error)
-            message.error('Duyệt đơn hàng thất bại!')
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleChangeToInDelivery = async (
-        orderId: string,
-        customerId: string,
-    ): Promise<void> => {
-        try {
-            // Đơn đang ở trạng thái 'Cần xác nhận' (pending_confirmation),
-            // ta duyệt để chuyển sang 'pending_payment'.
-
-            await putRequest(
-                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
-                {
-                    data: {
-                        status: 'in_delivery',
-                        toId: customerId,
-                    },
-                },
-            )
-
-            message.success('Đơn hàng đã được duyệt!')
+            message.success('Đơn hàng đã được xác nhận!')
             await fetchOrders()
         } catch (error) {
             console.error(error)
-            message.error('Duyệt đơn hàng thất bại!')
+            message.error('Xác nhận đơn hàng thất bại!')
         } finally {
-        }
-    }
-
-    const handlePayment = async (
-        total: string,
-        orderId: string,
-        customerId: string,
-    ) => {
-        try {
-            const numberOnly = total.replace(/[^\d]/g, '')
-
-            const cleanAmount = Number(numberOnly).toLocaleString('vi-VN')
-
-            const res = await postRequest(orderEndpoint.CREATE_ORDER, {
-                data: {
-                    amount: cleanAmount.toString(),
-                },
-            })
-            window.open(res?.data, '_blank')
-            handleChangeToInDelivery(orderId, customerId)
-        } catch (error) {
-            message.error('Vui lòng thử lại sau!')
+            setLoading(false)
         }
     }
 
@@ -302,9 +255,10 @@ export default function OrderManagementRental() {
                         return (
                             <Button
                                 type="text"
-                                onClick={() =>
-                                    handleApprove(record.id, record.customerId)
-                                }
+                                onClick={() => {
+                                    setSelectedRecord(record)
+                                    setApproveModalVisible(true)
+                                }}
                             >
                                 Xác nhận
                             </Button>
@@ -384,7 +338,7 @@ export default function OrderManagementRental() {
         render: (record: Order) => {
             if (record.status === 'Cần giao hàng') {
                 return (
-                    <Button type="primary" onClick={() => {}}>
+                    <Button type="primary" onClick={() => { }}>
                         Giao hàng
                     </Button>
                 )
@@ -400,7 +354,10 @@ export default function OrderManagementRental() {
                 r.status === 'Cần xác nhận' ? (
                     <Button
                         type="primary"
-                        onClick={() => handleApprove(r.id, r.customerId)}
+                        onClick={() => {
+                            setSelectedRecord(r)
+                            setApproveModalVisible(true)
+                        }}
                     >
                         Duyệt
                     </Button>
@@ -419,10 +376,79 @@ export default function OrderManagementRental() {
         { key: 'cancelled', label: 'Đã hủy' },
     ]
     const router = useRouter()
+    const [agreed, setAgreed] = useState(false) // new state for checkbox
 
     /* ---------------------------- render UI ---------------------------- */
     return (
         <div className="flex flex-col gap-5">
+            <TermsModal
+                open={termsModalVisible}
+                onClose={() => setTermsModalVisible(false)}
+            />
+            <PrivacyModal
+                open={privacyModalVisible}
+                onClose={() => setPrivacyModalVisible(false)}
+            />
+            {approveModalVisible && selectedRecord && (
+                <Modal
+                    open={approveModalVisible}
+                    title="Đợi một chút..."
+                    onCancel={() => {
+                        setApproveModalVisible(false)
+                        setAgreed(false)
+                    }}
+
+                    footer={[
+                        <Button key="cancel" onClick={() => {
+                            setApproveModalVisible(false)
+                            setAgreed(false)
+                        }}>
+                            Hủy
+                        </Button>,
+                        <Button
+                            key="agree"
+                            type="primary"
+                            onClick={async () => {
+                                await handleApprove(selectedRecord.id, selectedRecord.customerId)
+                                setApproveModalVisible(false)
+                                setAgreed(false)
+                            }}
+                            disabled={!agreed}
+                        >
+                            Xác nhận
+                        </Button>,
+                    ]}
+                    centered
+                >
+                    <div className='flex gap-2 mb-6 mt-4'>
+                        <img
+                            src="/images/Products/Recomment/robotNoti.png"
+                            width={50}
+                            height={50}
+                            className="animate-bounce"
+                        />
+                        <p>
+                            Việc xác nhận đơn hàng đồng nghĩa với bạn đồng ý với{' '}
+                            <a
+                                onClick={() => setTermsModalVisible(true)}
+                                className="underline cursor-pointer"
+                            >
+                                chính sách
+                            </a>{' '}
+                            của TechRental
+                        </p>
+
+                    </div>
+
+                    <Checkbox
+                        checked={agreed}
+                        onChange={(e) => setAgreed(e.target.checked)}
+                        className="mt-4 "
+                    >
+                        Tôi đã nhận được thông tin và đồng ý
+                    </Checkbox>
+                </Modal>
+            )}
             <div className="px-4 md:px-0">
                 <Title level={isMobile ? 4 : 3} className="!mb-1">
                     Quản lý đơn hàng
@@ -435,11 +461,10 @@ export default function OrderManagementRental() {
             <Card bodyStyle={{ padding: isMobile ? 12 : 24 }}>
                 {/* header */}
                 <div
-                    className={`flex ${
-                        isMobile
-                            ? 'flex-col gap-3'
-                            : 'items-center justify-between'
-                    } mb-4`}
+                    className={`flex ${isMobile
+                        ? 'flex-col gap-3'
+                        : 'items-center justify-between'
+                        } mb-4`}
                 >
                     <div>
                         <Title level={isMobile ? 5 : 4} className="!mb-0">

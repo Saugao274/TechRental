@@ -173,32 +173,6 @@ export default function OrderManagement() {
         [orders, search],
     )
 
-    const handleChangeToInDelivery = async (
-        orderId: string,
-        customerId: string,
-    ): Promise<void> => {
-        try {
-            // Đơn đang ở trạng thái 'Chờ xác nhận' (pending_confirmation),
-            // ta duyệt để chuyển sang 'pending_payment'.
-
-            await putRequest(
-                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
-                {
-                    data: {
-                        status: 'com',
-                        toId: customerId,
-                    },
-                },
-            )
-            message.success('Đơn hàng đã được duyệt!')
-            await fetchOrders()
-        } catch (error) {
-            console.error(error)
-            message.error('Duyệt đơn hàng thất bại!')
-        } finally {
-        }
-    }
-
     const handlePayment = async (
         total: string,
         orderId: string,
