@@ -297,9 +297,9 @@ export default function OrderManagement() {
                             <>
                                 <Button
                                     type="link"
-                                    onClick={() => setReturnInfoRecord(record)}
+                                // onClick={}
                                 >
-                                    Thông tin
+                                    Đã hoàn tất?
                                 </Button>
                                 {returnInfoRecord?.id === record.id && (
                                     <Modal

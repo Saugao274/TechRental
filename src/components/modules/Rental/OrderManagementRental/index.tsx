@@ -238,7 +238,28 @@ export default function OrderManagementRental() {
             setLoading(false)
         }
     }
-
+    const handleComplete = async (orderId: string, customerId: string): Promise<void> => {
+        try {
+            setLoading(true)
+            const nstatus: OrderStatusAPI = 'completed'
+            await putRequest(
+                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                {
+                    data: {
+                        status: nstatus,
+                        toId: customerId,
+                    },
+                },
+            )
+            message.success('Đơn hàng đã hoàn thành!')
+            await fetchOrders()
+        } catch (error) {
+            console.error(error)
+            message.error('Đơn hàng thất bại!')
+        } finally {
+            setLoading(false)
+        }
+    }
     const tabOrders = useMemo(() => {
         if (activeTab === 'all') return searched
         if (activeTab === 'pending')
@@ -309,11 +330,7 @@ export default function OrderManagementRental() {
                                 </Button>
                                 <Button
                                     type="link"
-                                    onClick={() =>
-                                        router.push(
-                                            `/manage-orders/${record.id}/return-info`,
-                                        )
-                                    }
+                                    onClick={() => handleComplete(record.id, record.customerId)}
                                 >
                                     Hoàn tất đơn hàng?
                                 </Button>
