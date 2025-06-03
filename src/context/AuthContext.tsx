@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 webStorageClient.get(constants.ACCESS_TOKEN),
             ),
         )
-        if (response) setUser(response)
+        if (response) setUser(response?.user)
     }
     const registeredLessor = async (values: any): Promise<string | null> => {
         try {
