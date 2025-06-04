@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
 import { getRequest, postRequest, putRequest } from '@/request'
-import { orderEndpoint } from '@/settings/endpoints'
+import { orderEndpoint, storeEndpoint } from '@/settings/endpoints'
 import {
     Card,
     Tabs,
@@ -16,6 +16,7 @@ import {
     Empty,
     message,
     Modal,
+    List,
     Checkbox,
 } from 'antd'
 import {
@@ -62,6 +63,8 @@ type Order = {
     duration: string
     status: OrderStatusVN
     total: string
+    image: string
+    rawProducts?: any[]
 }
 
 /* ------------------ mock fallback (bật QUICK DEMO = true) ------------------ */
@@ -77,6 +80,7 @@ const mockOrders: Order[] = [
         duration: '5 ngày',
         status: 'Đã hoàn thành',
         total: '2.500.000 ₫',
+        image: ''
     },
     // ...
 ]
@@ -124,7 +128,20 @@ export default function OrderManagementRental() {
         'all' | 'pending' | 'processing' | 'completed' | 'cancelled'
     >('all')
 
-
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+    const [alwaysAgree, setAlwaysAgree] = useState(false)
+    const [skipConfirmation, setSkipConfirmation] = useState(false)
+    useEffect(() => {
+        async function fetchSkipConfirmation() {
+            try {
+                const res = await getRequest(storeEndpoint.GET_MY_SHOP)
+                setSkipConfirmation(res.metadata?.skipConfirmation)
+            } catch (error) {
+                console.error('Lấy thông tin skipConfirmation thất bại', error)
+            }
+        }
+        fetchSkipConfirmation()
+    }, [])
     const fetchOrders = async () => {
         if (USE_MOCK || !user?._id) return
         try {
@@ -136,25 +153,20 @@ export default function OrderManagementRental() {
                 ),
             )
 
-            // convert
             const mapped: Order[] = data.map((o: any) => {
                 const firstTitle = o.products[0]?.title ?? 'Sản phẩm'
-                const more =
-                    o.products.length > 1 ? ` (+${o.products.length - 1})` : ''
+                const more = o.products.length > 1 ? ` (+${o.products.length - 1})` : ''
                 return {
-                    id: o._id, // ví dụ ABC2F0
+                    id: o._id,
                     customerId: o.customerId,
                     production: firstTitle + more,
+                    rawProducts: o.products,
                     products: o.products.map((p: any) => p.title),
                     date: dayjs(o.createdAt).format('DD/MM/YYYY'),
                     duration: `${o.duration} ngày`,
-                    status:
-                        STATUS_VN[o.status as OrderStatusAPI] ?? 'Đang xử lý',
-                    total:
-                        currency(o.totalPrice, {
-                            symbol: '',
-                            precision: 0,
-                        }).format() + ' ₫',
+                    status: STATUS_VN[o.status as OrderStatusAPI] ?? 'Đang xử lý',
+                    total: currency(o.totalPrice, { symbol: '', precision: 0 }).format() + ' ₫',
+                    image: o.products.map((p: any) => p.productId.images[0]),
                 }
             })
             setOrders(mapped)
@@ -288,9 +300,20 @@ export default function OrderManagementRental() {
             dataIndex: 'id',
             render: (id: string) => <div>{id.slice(-6).toUpperCase()}</div>,
         },
+        {
+            title: 'Hình ảnh sản phẩm',
+            dataIndex: 'image',
+            render: (image: string) => (
+                <img
+                    src={image}
+                    alt="Hình ảnh sản phẩm"
+                    style={{ width: 60, height: 60, objectFit: 'cover' }}
+                />
+            )
+        },
         { title: 'Sản phẩm', dataIndex: 'production' },
-        { title: 'Ngày đặt', dataIndex: 'date' },
-        { title: 'Thời gian thuê', dataIndex: 'duration' },
+        // { title: 'Ngày đặt', dataIndex: 'date' },
+        // { title: 'Thời gian thuê', dataIndex: 'duration' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -298,7 +321,15 @@ export default function OrderManagementRental() {
                 <Badge color={STATUS_COLOR[st]} text={st} />
             ),
         },
-        { title: 'Tổng tiền', dataIndex: 'total' },
+        // { title: 'Tổng tiền', dataIndex: 'total' },
+        {
+            title: 'Chi tiết sản phẩm',
+            render: (record: Order) => {
+                return <Button type="text"
+                    onClick={() => setSelectedOrder(record)}
+                >Xem</Button>
+            }
+        },
         {
             title: 'Hành động',
             render: (record: Order) => {
@@ -307,9 +338,13 @@ export default function OrderManagementRental() {
                         return (
                             <Button
                                 type="text"
-                                onClick={() => {
-                                    setSelectedRecord(record)
-                                    setApproveModalVisible(true)
+                                onClick={async () => {
+                                    if (skipConfirmation) {
+                                        await handleApprove(record.id, record.customerId)
+                                    } else {
+                                        setSelectedRecord(record)
+                                        setApproveModalVisible(true)
+                                    }
                                 }}
                             >
                                 Xác nhận
@@ -377,7 +412,8 @@ export default function OrderManagementRental() {
                         }
                     }
                     default:
-                        return <Button type="default">_</Button>
+                        return <p
+                        >_</p>
                 }
             },
         },
@@ -451,8 +487,6 @@ export default function OrderManagementRental() {
         { key: 'cancelled', label: 'Đã hủy' },
     ]
     const router = useRouter()
-    const [agreed, setAgreed] = useState(false) // new state for checkbox
-
     /* ---------------------------- render UI ---------------------------- */
     return (
         <div className="flex flex-col gap-5">
@@ -470,13 +504,11 @@ export default function OrderManagementRental() {
                     title="Đợi một chút..."
                     onCancel={() => {
                         setApproveModalVisible(false)
-                        setAgreed(false)
                     }}
 
                     footer={[
                         <Button key="cancel" onClick={() => {
                             setApproveModalVisible(false)
-                            setAgreed(false)
                         }}>
                             Hủy
                         </Button>,
@@ -484,11 +516,14 @@ export default function OrderManagementRental() {
                             key="agree"
                             type="primary"
                             onClick={async () => {
+                                if (alwaysAgree) {
+                                    await putRequest(storeEndpoint.UPDATE_CONFIRM)
+                                    setSkipConfirmation(true)
+                                }
                                 await handleApprove(selectedRecord.id, selectedRecord.customerId)
                                 setApproveModalVisible(false)
-                                setAgreed(false)
+                                setAlwaysAgree(false)
                             }}
-                            disabled={!agreed}
                         >
                             Xác nhận
                         </Button>,
@@ -514,13 +549,12 @@ export default function OrderManagementRental() {
                         </p>
 
                     </div>
-
                     <Checkbox
-                        checked={agreed}
-                        onChange={(e) => setAgreed(e.target.checked)}
-                        className="mt-4 "
+                        checked={alwaysAgree}
+                        onChange={(e) => setAlwaysAgree(e.target.checked)}
+                        className="mt-4"
                     >
-                        Tôi đã nhận được thông tin và đồng ý
+                        Luôn đồng ý với chính sách của TechRental
                     </Checkbox>
                 </Modal>
             )}
@@ -628,6 +662,53 @@ export default function OrderManagementRental() {
                     </Tabs>
                 )}
             </Card>
+            <Modal
+                open={!!selectedOrder}
+                title="Chi tiết đơn hàng"
+                onCancel={() => setSelectedOrder(null)}
+                footer={[
+                    <Button key="close" onClick={() => setSelectedOrder(null)}>
+                        Đóng
+                    </Button>,
+                ]}
+                centered
+            >
+                <>
+                    {selectedOrder?.rawProducts && (
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={selectedOrder.rawProducts}
+                            renderItem={(item: any) => {
+                                const prod = item.productId
+                                return (
+                                    <List.Item>
+                                        <List.Item.Meta
+                                            avatar={
+                                                <img
+                                                    src={prod.images[0]}
+                                                    alt={prod.title}
+                                                    style={{ width: 60, height: 60, objectFit: 'cover' }}
+                                                />
+                                            }
+                                            title={<Button className='!p-0' type='link' onClick={() => router.push(`/products/${prod._id}`)}>{prod.title}</Button>}
+                                            description={
+                                                <>
+                                                    <div>Thời gian thuê: {selectedOrder.duration}</div>
+                                                    <div>Trạng thái: {selectedOrder.status}</div>
+                                                    <div>Ngày đặt: {selectedOrder.date}</div>
+                                                    <div> Tổng tiền: <span className='font-bold'>
+                                                        {selectedOrder.total}                                                    </span></div>
+                                                </>
+                                            }
+                                        />
+                                    </List.Item>
+                                )
+                            }}
+                        />
+                    )}
+                </>
+
+            </Modal>
         </div>
     )
 }

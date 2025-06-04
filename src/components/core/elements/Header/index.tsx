@@ -51,7 +51,7 @@ export default function Header() {
         setBellVisible(false)
     }
 
-    const totalCount = cartItems.reduce((sum, i) => sum + i.quantity, 0)
+    const totalCount = cartItems.length
     useMotionValueEvent(scrollY, 'change', (latest) => {
         if (latest < 10) {
             setIsVisible(true)
@@ -530,22 +530,22 @@ export default function Header() {
                             onClick={() => user && setBellVisible(true)}
                         >
                             <Bell />
-                            {user && (
+                            {/* {user && (
                                 <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                     <p className="text-[10px] text-white">2</p>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                         <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
                             onClick={goToChat}
                         >
                             <MessageCircle />
-                            {user && (
+                            {/* {user && (
                                 <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                     <p className="text-[10px] text-white">7</p>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                         {/* <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"

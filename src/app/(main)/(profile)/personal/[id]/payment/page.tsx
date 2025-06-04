@@ -9,6 +9,7 @@ import { useAuth } from '@/context/AuthContext'
 import { getRequest, patchRequest, postRequest } from '@/request'
 import { orderEndpoint } from '@/settings/endpoints'
 import { OrderPayload } from '@/types/payload'
+import { useCart } from '@/context/CartContext'
 
 // Define the CartItem interface
 interface CartItem {
@@ -34,7 +35,7 @@ const PaymentPage = () => {
         acc[item.shop].push(item)
         return acc
     }, {} as Record<string, CartItem[]>)
-
+    const { removeItem } = useCart()
     useEffect(() => {
         const productsParam = searchParams.get('products')
         if (productsParam) {
@@ -105,10 +106,12 @@ const PaymentPage = () => {
                 deliveryDate: new Date().toISOString(),
             }
             // Make API request to confirm the order
-            const res = await postRequest(orderEndpoint.POST_ORDER, {
+            await postRequest(orderEndpoint.POST_ORDER, {
                 data: payload,
             })
-            console.log(res)
+            cartItems.forEach((item) => {
+                removeItem(item.id)
+            })
             setIsModalVisible(true)
         } catch (error) {
             console.error('Failed to confirm order', error)

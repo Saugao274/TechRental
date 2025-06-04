@@ -26,7 +26,7 @@ const storeEndpoint = {
     CREATE: `${prefixBase}/shopDetail`,
     GET_MY_SHOP: `${prefixBase}/shopDetail/me`,
     UPDATE_PACKAGE: `${prefixBase}/shopDetail/packages`,
-
+    UPDATE_CONFIRM: `${prefixBase}/shopDetail/skipConfirm`,
 }
 const categoryEndpoint = {
     GET_ALL: `${prefixBase}/category`,
