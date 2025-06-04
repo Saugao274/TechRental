@@ -38,9 +38,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const checkToken = async () => {
         try {
             setLoading(true)
+            // if (!user) {
+            //     localStorage.clear()
+            //     return setUser(null)
+            // }
             const response: any = await getRequest(userEndpoint.GET_MY_USER)
             if (response === 'Unauthorized') {
-                console.log('first', response)
                 localStorage.clear()
                 return setUser(null)
             }
@@ -71,11 +74,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null)
         localStorage.clear()
         router.push('/')
-        useEffect(() => {
-            if (!user?.roles?.includes('owner')) {
-                localStorage.removeItem('shopId')
-            }
-        }, [user])
     }
 
     const updateUser = (newUser: User) => {
@@ -89,7 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 webStorageClient.get(constants.ACCESS_TOKEN),
             ),
         )
-        if (response) setUser(response)
+        if (response) setUser(response?.user)
     }
     const registeredLessor = async (values: any): Promise<string | null> => {
         try {

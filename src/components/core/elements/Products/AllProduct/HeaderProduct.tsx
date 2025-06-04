@@ -26,6 +26,7 @@ const HeaderProducts = () => {
                 <img
                     src={images[current]}
                     className="h-72 w-auto rounded-2xl object-cover"
+                    fetchPriority='high'
                 />
 
                 <button

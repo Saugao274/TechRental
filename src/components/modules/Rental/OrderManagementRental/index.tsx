@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
 import { getRequest, postRequest, putRequest } from '@/request'
-import { orderEndpoint } from '@/settings/endpoints'
+import { orderEndpoint, storeEndpoint } from '@/settings/endpoints'
 import {
     Card,
     Tabs,
@@ -17,6 +17,7 @@ import {
     message,
     Modal,
     List,
+    Checkbox,
 } from 'antd'
 import {
     SearchOutlined,
@@ -29,7 +30,8 @@ import { useState, useEffect, useMemo } from 'react'
 import currency from 'currency.js'
 import { ColumnType } from 'antd/es/table'
 import { useRouter } from 'next/navigation'
-import ButtonCommon from '@/components/core/common/ButtonCommon'
+import TermsModal from '@/components/core/elements/TermsModal'
+import PrivacyModal from '@/components/core/elements/PrivacyModal'
 
 dayjs.locale('vi')
 
@@ -44,29 +46,30 @@ export type OrderStatusAPI =
     | 'before_deadline'
 
 export type OrderStatusVN =
-    | 'Đã hủy'
-    | 'Cần thanh toán'
     | 'Đã hoàn thành'
-    | 'Chờ xác nhận'
-    | 'Chờ giao hàng'
-    | 'Cần trả hàng'
+    | 'Đã hủy'
+    | 'Chờ thanh toán'
+    | 'Cần xác nhận'
+    | 'Cần giao hàng'
     | 'Đã giao hàng'
+    | 'Chờ trả hàng'
 
 type Order = {
     id: string
     customerId: string
     production: string
-    products: string[]  // list of product titles
-    rawProducts?: any[] // full details from API response
+    products: string[]
     date: string
     duration: string
     status: OrderStatusVN
     total: string
     image: string
+    rawProducts?: any[]
 }
 
 /* ------------------ mock fallback (bật QUICK DEMO = true) ------------------ */
-const USE_MOCK = false
+const USE_MOCK = false // ➜ đổi thành true nếu muốn xem UI nhanh khi offline
+
 const mockOrders: Order[] = [
     {
         id: 'ORD-001',
@@ -77,28 +80,28 @@ const mockOrders: Order[] = [
         duration: '5 ngày',
         status: 'Đã hoàn thành',
         total: '2.500.000 ₫',
-        image: ""
+        image: ''
     },
     // ...
 ]
 
 export const STATUS_VN: Record<OrderStatusAPI, OrderStatusVN> = {
     completed: 'Đã hoàn thành',
-    pending_payment: 'Cần thanh toán',
-    pending_confirmation: 'Chờ xác nhận',
-    in_delivery: 'Chờ giao hàng',
-    return_product: 'Cần trả hàng',
+    pending_payment: 'Chờ thanh toán',
+    pending_confirmation: 'Cần xác nhận',
+    in_delivery: 'Cần giao hàng',
+    return_product: 'Chờ trả hàng',
     canceled: 'Đã hủy',
     before_deadline: 'Đã giao hàng',
 }
 const STATUS_COLOR: Record<OrderStatusVN, string> = {
-    'Đã hủy': 'red',
-    'Cần thanh toán': 'orange',
     'Đã hoàn thành': 'green',
-    'Chờ xác nhận': 'orange',
-    'Chờ giao hàng': 'blue',
-    'Cần trả hàng': 'orange',
-    'Đã giao hàng': 'purple',
+    'Cần xác nhận': 'orange',
+    'Cần giao hàng': 'blue',
+    'Chờ trả hàng': 'blue',
+    'Đã hủy': 'red',
+    'Đã giao hàng': 'green',
+    'Chờ thanh toán': 'orange',
 }
 
 export const STATUS_API: Record<OrderStatusVN, OrderStatusAPI> =
@@ -111,12 +114,12 @@ const { Title, Text } = Typography
 const { TabPane } = Tabs
 const { useBreakpoint } = Grid
 
-export default function OrderManagement() {
+export default function OrderManagementRental() {
+
     const { user } = useAuth()
     const isOwner = user?.roles?.includes('owner')
     const screens = useBreakpoint()
     const isMobile = !screens.md
-    const router = useRouter()
 
     const [orders, setOrders] = useState<Order[]>(USE_MOCK ? mockOrders : [])
     const [loading, setLoading] = useState(false)
@@ -125,38 +128,45 @@ export default function OrderManagement() {
         'all' | 'pending' | 'processing' | 'completed' | 'cancelled'
     >('all')
 
-    // State for displaying order details
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-
+    const [alwaysAgree, setAlwaysAgree] = useState(false)
+    const [skipConfirmation, setSkipConfirmation] = useState(false)
+    useEffect(() => {
+        async function fetchSkipConfirmation() {
+            try {
+                const res = await getRequest(storeEndpoint.GET_MY_SHOP)
+                setSkipConfirmation(res.metadata?.skipConfirmation)
+            } catch (error) {
+                console.error('Lấy thông tin skipConfirmation thất bại', error)
+            }
+        }
+        fetchSkipConfirmation()
+    }, [])
     const fetchOrders = async () => {
         if (USE_MOCK || !user?._id) return
         try {
             setLoading(true)
             const { data } = await getRequest(
-                orderEndpoint.GET_ORDER_BY_USER_ID.replace(':userId', user._id),
+                orderEndpoint.GET_ORDER_BY_RENTER_ID.replace(
+                    ':renterId',
+                    user._id,
+                ),
             )
 
-            // convert data and save full products details as rawProducts for later use
             const mapped: Order[] = data.map((o: any) => {
-                const firstTitle = o.products[0]?.productId?.title ?? 'Sản phẩm'
-                const more =
-                    o.products.length > 1 ? ` (+${o.products.length - 1})` : ''
+                const firstTitle = o.products[0]?.title ?? 'Sản phẩm'
+                const more = o.products.length > 1 ? ` (+${o.products.length - 1})` : ''
                 return {
                     id: o._id,
                     customerId: o.customerId,
                     production: firstTitle + more,
-                    products: o.products.map((p: any) => p.productId.title),
                     rawProducts: o.products,
+                    products: o.products.map((p: any) => p.title),
                     date: dayjs(o.createdAt).format('DD/MM/YYYY'),
                     duration: `${o.duration} ngày`,
+                    status: STATUS_VN[o.status as OrderStatusAPI] ?? 'Đang xử lý',
+                    total: currency(o.totalPrice, { symbol: '', precision: 0 }).format() + ' ₫',
                     image: o.products.map((p: any) => p.productId.images[0]),
-                    status:
-                        STATUS_VN[o.status as OrderStatusAPI] ?? 'Đang xử lý',
-                    total:
-                        currency(o.totalPrice, {
-                            symbol: '',
-                            precision: 0,
-                        }).format() + ' ₫',
                 }
             })
             setOrders(mapped)
@@ -171,15 +181,15 @@ export default function OrderManagement() {
         fetchOrders()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user])
-
     const [evidenceMap, setEvidenceMap] = useState<Record<string, boolean>>({});
 
     // When orders change, fetch evidence for orders in "Chờ giao hàng" status
     useEffect(() => {
         const fetchEvidenceForOrders = async () => {
             const newEvidenceMap: Record<string, boolean> = {};
+            // Filter orders with status "Chờ giao hàng"
             const awaitingEvidence = orders.filter(
-                (o) => o.status === "Chờ giao hàng"
+                (o) => o.status === "Cần giao hàng"
             );
             await Promise.all(
                 awaitingEvidence.map(async (order) => {
@@ -187,7 +197,8 @@ export default function OrderManagement() {
                         const res = await getRequest(
                             orderEndpoint.GET_ORDER_EVIDENCE_BY_ORDERID(order.id)
                         );
-                        newEvidenceMap[order.id] = res?.data?.[0]?.submittedBy === "renter";
+                        // Update evidenceMap: set to true if evidence exists and submittedBy is "renter"
+                        newEvidenceMap[order.id] = res?.data?.[0]?.submittedBy === "owner";
                     } catch (error) {
                         console.error("Error fetching evidence for order", order.id, error);
                     }
@@ -211,42 +222,70 @@ export default function OrderManagement() {
             ),
         [orders, search],
     )
+    const [approveModalVisible, setApproveModalVisible] = useState(false)
+    const [selectedRecord, setSelectedRecord] = useState<Order | null>(null)
+    const [termsModalVisible, setTermsModalVisible] = useState(false)
+    const [privacyModalVisible, setPrivacyModalVisible] = useState(false)
 
-    const handlePayment = async (
-        total: string,
-        orderId: string,
-        customerId: string,
-    ) => {
+    // Existing functions, fetchOrders, handleApprove, etc.
+    const handleApprove = async (orderId: string, customerId: string): Promise<void> => {
         try {
-            const numberOnly = total.replace(/[^\d]/g, '')
-            const cleanAmount = Number(numberOnly).toLocaleString('vi-VN')
-            const res = await postRequest(orderEndpoint.CREATE_ORDER, {
-                data: {
-                    amount: cleanAmount.toString(),
-                    orderId,
-                    customerId,
+            setLoading(true)
+            const nstatus: OrderStatusAPI = 'pending_payment'
+            await putRequest(
+                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                {
+                    data: {
+                        status: nstatus,
+                        toId: customerId,
+                    },
                 },
-            })
-            window.open(res?.data, '_blank')
+            )
+            message.success('Đơn hàng đã được xác nhận!')
+            await fetchOrders()
         } catch (error) {
-            message.error('Vui lòng thử lại sau!')
+            console.error(error)
+            message.error('Xác nhận đơn hàng thất bại!')
+        } finally {
+            setLoading(false)
         }
     }
-
+    const handleComplete = async (orderId: string, customerId: string): Promise<void> => {
+        try {
+            setLoading(true)
+            const nstatus: OrderStatusAPI = 'completed'
+            await putRequest(
+                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                {
+                    data: {
+                        status: nstatus,
+                        toId: customerId,
+                    },
+                },
+            )
+            message.success('Đơn hàng đã hoàn thành!')
+            await fetchOrders()
+        } catch (error) {
+            console.error(error)
+            message.error('Đơn hàng thất bại!')
+        } finally {
+            setLoading(false)
+        }
+    }
     const tabOrders = useMemo(() => {
         if (activeTab === 'all') return searched
         if (activeTab === 'pending')
             return searched.filter(
                 (o) =>
-                    o.status === 'Chờ xác nhận' ||
-                    o.status === 'Cần thanh toán',
+                    o.status === 'Cần xác nhận' ||
+                    o.status === 'Chờ thanh toán',
             )
         if (activeTab === 'processing')
             return searched.filter(
                 (o) =>
-                    o.status === 'Chờ giao hàng' ||
-                    o.status === 'Đã giao hàng' ||
-                    o.status === 'Cần trả hàng',
+                    o.status === 'Cần giao hàng' ||
+                    o.status === 'Chờ trả hàng' ||
+                    o.status === 'Đã giao hàng',
             )
         if (activeTab === 'completed')
             return searched.filter((o) => o.status === 'Đã hoàn thành')
@@ -255,7 +294,6 @@ export default function OrderManagement() {
         return searched
     }, [searched, activeTab])
 
-    // Desktop Table columns
     const desktopCols: ColumnType<Order>[] = [
         {
             title: 'Mã đơn',
@@ -273,14 +311,7 @@ export default function OrderManagement() {
                 />
             )
         },
-        {
-            title: 'Sản phẩm', dataIndex: 'production',
-            render: (production: string) => (
-                <p className='line-clamp-2'>
-                    {production}
-                </p>
-            )
-        },
+        { title: 'Sản phẩm', dataIndex: 'production' },
         // { title: 'Ngày đặt', dataIndex: 'date' },
         // { title: 'Thời gian thuê', dataIndex: 'duration' },
         {
@@ -303,46 +334,68 @@ export default function OrderManagement() {
             title: 'Hành động',
             render: (record: Order) => {
                 switch (record.status) {
-                    case 'Cần thanh toán':
+                    case 'Cần xác nhận':
                         return (
                             <Button
-                                type="link"
-                                onClick={() =>
-                                    handlePayment(
-                                        record.total,
-                                        record.id,
-                                        record.customerId,
-                                    )
-                                }
+                                type="text"
+                                onClick={async () => {
+                                    if (skipConfirmation) {
+                                        await handleApprove(record.id, record.customerId)
+                                    } else {
+                                        setSelectedRecord(record)
+                                        setApproveModalVisible(true)
+                                    }
+                                }}
                             >
-                                Thanh toán
+                                Xác nhận
                             </Button>
                         )
-                    case 'Chờ xác nhận':
+                    case 'Chờ trả hàng':
                         return (
-                            <Button
-                                type="link"
-                                onClick={() => window.open('/chat', '_blank')}
-                            >
-                                Liên hệ shop
-                            </Button>
-                        )
-                    case 'Cần trả hàng':
-                        return (
-                            <>
-                                <Button type="link">
-                                    Đã hoàn tất?
+                            <div className="flex flex-col gap-2">
+                                <Button
+                                    type="link"
+                                    onClick={() =>
+                                        router.push(
+                                            `/manage-orders/${record.id}/return-info`,
+                                        )
+                                    }
+                                >
+                                    Báo cáo
                                 </Button>
-                            </>
+                                <Button
+                                    type="link"
+                                    onClick={() => handleComplete(record.id, record.customerId)}
+                                >
+                                    Hoàn tất đơn hàng?
+                                </Button>
+                            </div>
                         )
-                    case 'Chờ giao hàng': {
-                        const hasEvidence = evidenceMap[record.id]
+                    // case 'Cần giao hàng':
+                    //     return (
+                    //         <Button
+                    //             type="link"
+                    //             onClick={() =>
+                    //                 router.push(
+                    //                     `/manage-orders/${record.id}/before`,
+                    //                 )
+                    //             }
+                    //         >
+                    //             Đã giao hàng?
+                    //         </Button>
+                    //     )
+                    case 'Cần giao hàng': {
+                        // Kiểm tra trạng thái evidence đã được lưu trong evidenceMap
+                        console.log('Record:', record.id, record.status);
+                        const hasEvidence = evidenceMap[record.id];
+                        console.log('Record:', record.id, hasEvidence);
+
                         if (hasEvidence) {
                             return (
                                 <span className="text-sm text-gray-500">
-                                    Người cho thuê đang cập nhật minh chứng
+                                    Người thuê đang cập nhật minh chứng
                                 </span>
-                            )
+                            );
                         } else {
                             return (
                                 <Button
@@ -353,19 +406,19 @@ export default function OrderManagement() {
                                         )
                                     }
                                 >
-                                    Đã nhận hàng?
+                                    Đã giao hàng?
                                 </Button>
-                            )
+                            );
                         }
                     }
                     default:
-                        return <>_</>
+                        return <p
+                        >_</p>
                 }
             },
         },
     ]
 
-    // Mobile Table columns
     const mobileCols: ColumnType<Order>[] = [
         {
             title: 'Đơn hàng',
@@ -382,66 +435,129 @@ export default function OrderManagement() {
                     </div>
                     <div className="mt-1 flex justify-between">
                         <Text strong>{r.total}</Text>
-                        {r.status === 'Cần thanh toán' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-orange-800"
-                                onClick={() =>
-                                    handlePayment(r.total, r.id, r.customerId)
-                                }
-                            >
-                                Thanh toán
-                            </Button>
-                        ) : r.status === 'Chờ giao hàng' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-blue-800"
-                                onClick={() =>
-                                    router.push(`/manage-orders/${r.id}/before`)
-                                }
-                            >
-                                Đã nhận hàng?
-                            </Button>
-                        ) : r.status === 'Cần trả hàng' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-green-800"
-                                onClick={() =>
-                                    router.push(
-                                        `/manage-orders/${r.id}/return-info`,
-                                    )
-                                }
-                            >
-                                Xem thông tin trả hàng
-                            </Button>
-                        ) : r.status === 'Chờ xác nhận' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-blue-800"
-                                onClick={() => window.open('/chat', '_blank')}
-                            >
-                                Liên hệ shop
-                            </Button>
-                        ) : (
-                            <Button type="link">Chi tiết</Button>
-                        )}
+                        <Button type="link" className="!p-0">
+                            Chi tiết
+                        </Button>
                     </div>
                 </div>
             ),
         },
     ]
 
+    mobileCols.push({
+        title: 'Hành động',
+        render: (record: Order) => {
+            if (record.status === 'Cần giao hàng') {
+                return (
+                    <Button type="primary" onClick={() => { }}>
+                        Giao hàng
+                    </Button>
+                )
+            }
+        }
+    })
+
+
+    if (isOwner) {
+        mobileCols.push({
+            title: 'Duyệt đơn',
+            render: (r: Order) =>
+                r.status === 'Cần xác nhận' ? (
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            setSelectedRecord(r)
+                            setApproveModalVisible(true)
+                        }}
+                    >
+                        Duyệt
+                    </Button>
+                ) : (
+                    <Text>Đã duyệt</Text>
+                ),
+        })
+    }
+
+    /* ---------------------------- tab labels ---------------------------- */
     const tabItems = [
         { key: 'all', label: 'Tất cả' },
-        { key: 'pending', label: 'Chờ xác nhận' },
+        { key: 'pending', label: 'Cần xác nhận' },
         { key: 'processing', label: 'Đang xử lý' },
         { key: 'completed', label: 'Đã hoàn thành' },
         { key: 'cancelled', label: 'Đã hủy' },
     ]
-
+    const router = useRouter()
     /* ---------------------------- render UI ---------------------------- */
     return (
         <div className="flex flex-col gap-5">
+            <TermsModal
+                open={termsModalVisible}
+                onClose={() => setTermsModalVisible(false)}
+            />
+            <PrivacyModal
+                open={privacyModalVisible}
+                onClose={() => setPrivacyModalVisible(false)}
+            />
+            {approveModalVisible && selectedRecord && (
+                <Modal
+                    open={approveModalVisible}
+                    title="Đợi một chút..."
+                    onCancel={() => {
+                        setApproveModalVisible(false)
+                    }}
+
+                    footer={[
+                        <Button key="cancel" onClick={() => {
+                            setApproveModalVisible(false)
+                        }}>
+                            Hủy
+                        </Button>,
+                        <Button
+                            key="agree"
+                            type="primary"
+                            onClick={async () => {
+                                if (alwaysAgree) {
+                                    await putRequest(storeEndpoint.UPDATE_CONFIRM)
+                                    setSkipConfirmation(true)
+                                }
+                                await handleApprove(selectedRecord.id, selectedRecord.customerId)
+                                setApproveModalVisible(false)
+                                setAlwaysAgree(false)
+                            }}
+                        >
+                            Xác nhận
+                        </Button>,
+                    ]}
+                    centered
+                >
+                    <div className='flex gap-2 mb-6 mt-4'>
+                        <img
+                            src="/images/Products/Recomment/robotNoti.png"
+                            width={50}
+                            height={50}
+                            className="animate-bounce"
+                        />
+                        <p>
+                            Việc xác nhận đơn hàng đồng nghĩa với bạn đồng ý với{' '}
+                            <a
+                                onClick={() => setTermsModalVisible(true)}
+                                className="underline cursor-pointer"
+                            >
+                                chính sách
+                            </a>{' '}
+                            của TechRental
+                        </p>
+
+                    </div>
+                    <Checkbox
+                        checked={alwaysAgree}
+                        onChange={(e) => setAlwaysAgree(e.target.checked)}
+                        className="mt-4"
+                    >
+                        Luôn đồng ý với chính sách của TechRental
+                    </Checkbox>
+                </Modal>
+            )}
             <div className="px-4 md:px-0">
                 <Title level={isMobile ? 4 : 3} className="!mb-1">
                     Quản lý đơn hàng
@@ -546,10 +662,8 @@ export default function OrderManagement() {
                     </Tabs>
                 )}
             </Card>
-
-            {/* Modal to show order product details */}
             <Modal
-                visible={!!selectedOrder}
+                open={!!selectedOrder}
                 title="Chi tiết đơn hàng"
                 onCancel={() => setSelectedOrder(null)}
                 footer={[
@@ -559,39 +673,41 @@ export default function OrderManagement() {
                 ]}
                 centered
             >
-                {selectedOrder?.rawProducts && (
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={selectedOrder.rawProducts}
-                        renderItem={(item: any) => {
-                            const prod = item.productId
-                            return (
-                                <List.Item>
-                                    <List.Item.Meta
-                                        avatar={
-                                            <img
-                                                src={prod.images[0]}
-                                                alt={prod.title}
-                                                style={{ width: 60, height: 60, objectFit: 'cover' }}
-                                            />
-                                        }
-                                        title={<Button className='!p-0' type='link' onClick={() => router.push(`/products/${prod._id}`)}>{prod.title}</Button>}
-                                        description={
-                                            <>
-                                                <div>Thời gian thuê: {selectedOrder.duration}</div>
-                                                <div>Trạng thái: {selectedOrder.status}</div>
-                                                <div>Ngày đặt: {selectedOrder.date}</div>
-                                                <div> Tổng tiền: <span className='font-bold'>
-                                                    {selectedOrder.total}                                                    </span></div>
+                <>
+                    {selectedOrder?.rawProducts && (
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={selectedOrder.rawProducts}
+                            renderItem={(item: any) => {
+                                const prod = item.productId
+                                return (
+                                    <List.Item>
+                                        <List.Item.Meta
+                                            avatar={
+                                                <img
+                                                    src={prod.images[0]}
+                                                    alt={prod.title}
+                                                    style={{ width: 60, height: 60, objectFit: 'cover' }}
+                                                />
+                                            }
+                                            title={<Button className='!p-0' type='link' onClick={() => router.push(`/products/${prod._id}`)}>{prod.title}</Button>}
+                                            description={
+                                                <>
+                                                    <div>Thời gian thuê: {selectedOrder.duration}</div>
+                                                    <div>Trạng thái: {selectedOrder.status}</div>
+                                                    <div>Ngày đặt: {selectedOrder.date}</div>
+                                                    <div> Tổng tiền: <span className='font-bold'>
+                                                        {selectedOrder.total}                                                    </span></div>
+                                                </>
+                                            }
+                                        />
+                                    </List.Item>
+                                )
+                            }}
+                        />
+                    )}
+                </>
 
-                                            </>
-                                        }
-                                    />
-                                </List.Item>
-                            )
-                        }}
-                    />
-                )}
             </Modal>
         </div>
     )

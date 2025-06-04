@@ -31,7 +31,7 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
     const streamRef = useRef<MediaStream | null>(null)
     const { updateIdentifier, user } = useAuth()
     const router = useRouter()
-
+    const [loading, setLoading] = useState(false)
     const beforeUpload = (file: File) => {
         stopCamera()
         const reader = new FileReader()
@@ -118,8 +118,8 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
 
                 <ul className="mb-4 list-disc pl-5 text-left text-sm text-gray-700">
                     <li>
-                        Hệ thống sẽ quay một đoạn video ngắn để xác minh bạn là
-                        người thật.
+                        Hệ thống sẽ chụp gương mặt và so sánh với căn cước công
+                        dân để xác minh bạn là người thật.
                     </li>
                     <li>Làm theo hướng dẫn trên màn hình</li>
                     <li>
@@ -147,58 +147,74 @@ export default function FacialAuthentication1st({ setStep }: StepProps) {
                     Quay lại
                 </ButtonCommon>
                 <ButtonCommon
+                    loading={loading}
+                    disabled={loading}
                     type="primary"
                     className="w-1/3 rounded-lg bg-primary px-4 py-2 text-white hover:bg-blue-700"
                     htmlType="submit"
                     onClick={async () => {
-                        if (!phase1st || !videoRef.current) {
-                            message.warning('Vui lòng xác nhận khuôn mặt trước')
-                            return
-                        }
+                        try {
+                            setLoading(true)
+                            if (!phase1st || !videoRef.current) {
+                                message.warning(
+                                    'Vui lòng xác nhận khuôn mặt trước',
+                                )
+                                return
+                            }
 
-                        await loadFaceApiModels()
+                            await loadFaceApiModels()
 
-                        const webcamDesc = await getFaceDescriptorFromVideo(
-                            videoRef.current,
-                        )
-                        if (!webcamDesc) {
-                            message.error(
-                                'Không nhận diện được khuôn mặt từ camera.',
+                            const webcamDesc = await getFaceDescriptorFromVideo(
+                                videoRef.current,
                             )
-                            return
-                        }
+                            if (!webcamDesc) {
+                                message.error(
+                                    'Không nhận diện được khuôn mặt từ camera.',
+                                )
+                                return
+                            }
 
-                        const cccdImageUrl =
-                            localStorage.getItem(FONT_INFO_IMAGE)
-                        if (!cccdImageUrl) {
-                            message.error('Không tìm thấy ảnh CCCD.')
-                            return
-                        }
+                            const cccdImageUrl =
+                                localStorage.getItem(FONT_INFO_IMAGE)
+                            if (!cccdImageUrl) {
+                                message.error('Không tìm thấy ảnh CCCD.')
+                                return
+                            }
 
-                        const cccdDesc =
-                            await getFaceDescriptorFromImageURL(cccdImageUrl)
-                        if (!cccdDesc) {
-                            message.error(
-                                'Không nhận diện được khuôn mặt từ CCCD.',
+                            const cccdDesc =
+                                await getFaceDescriptorFromImageURL(
+                                    cccdImageUrl,
+                                )
+                            if (!cccdDesc) {
+                                message.error(
+                                    'Không nhận diện được khuôn mặt từ CCCD.',
+                                )
+                                return
+                            }
+
+                            const isMatch = compareFaceDescriptors(
+                                webcamDesc,
+                                cccdDesc,
                             )
-                            return
-                        }
+                            if (isMatch) {
+                                message.success(
+                                    'Xác minh khuôn mặt thành công!',
+                                )
+                                updateIdentifier()
+                                localStorage.removeItem(VERIFY_COUNTRY_KEY)
+                                localStorage.removeItem(VERIFY_INFO_KEY)
+                                localStorage.removeItem(VERIFY_DOC_KEY)
+                                localStorage.removeItem(FONT_INFO_IMAGE)
 
-                        const isMatch = compareFaceDescriptors(
-                            webcamDesc,
-                            cccdDesc,
-                        )
-                        if (isMatch) {
-                            message.success('Xác minh khuôn mặt thành công!')
-                            updateIdentifier()
-                            localStorage.removeItem(VERIFY_COUNTRY_KEY)
-                            localStorage.removeItem(VERIFY_INFO_KEY)
-                            localStorage.removeItem(VERIFY_DOC_KEY)
-                            localStorage.removeItem(FONT_INFO_IMAGE)
-
-                            router.push(`/personal/${user?._id}`)
-                        } else {
-                            message.error('Khuôn mặt không khớp với ảnh CCCD.')
+                                router.push(`/personal/${user?._id}`)
+                            } else {
+                                message.error(
+                                    'Khuôn mặt không khớp với ảnh CCCD.',
+                                )
+                            }
+                        } catch (error) {
+                        } finally {
+                            setLoading(false)
                         }
                     }}
                 >
