@@ -47,6 +47,7 @@ const orderEndpoint = {
     CREATE_ORDER: `${prefixBase}/orders/create-payment-url`,
     RETURN_ORDER: `${prefixBase}/orders/vnpay-return`,
     POST_ORDER: `${prefixBase}/orders`,
+    CHECK_ORDER: `${prefixBase}/orders/check`,
     GET_ORDER_BY_USER_ID: `${prefixBase}/orders/user/:userId`,
     UPDATE_STATUS: `${prefixBase}/orders/:id/status`,
     GET_ORDER_BY_RENTER_ID: `${prefixBase}/orders/renter/:renterId`,

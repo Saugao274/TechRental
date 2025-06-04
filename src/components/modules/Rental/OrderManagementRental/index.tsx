@@ -371,7 +371,7 @@ export default function OrderManagementRental() {
                                         )
                                     }
                                 >
-                                    Đã nhận hàng?
+                                    Đã giao hàng?
                                 </Button>
                             );
                         }

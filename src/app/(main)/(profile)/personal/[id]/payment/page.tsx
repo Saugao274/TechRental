@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { CheckCircleFilled } from '@ant-design/icons'
 import { useAuth } from '@/context/AuthContext'
-import { patchRequest, postRequest } from '@/request'
+import { getRequest, patchRequest, postRequest } from '@/request'
 import { orderEndpoint } from '@/settings/endpoints'
 import { OrderPayload } from '@/types/payload'
 
@@ -80,6 +80,17 @@ const PaymentPage = () => {
                 message.warning(
                     'Bạn phải thêm địa chỉ để có thể đặt hàng',
                 )
+                return
+            }
+            const dataProduct = {
+                products: cartItems.map((item) => item.id),
+            }
+            const checkProduct = await postRequest(orderEndpoint.CHECK_ORDER, {
+                data: dataProduct,
+            })
+            console.log("checkProduct", checkProduct)
+            if (checkProduct.success != true) {
+                message.warning('Có một số sản phẩm hiện tại đang cho thuê, vui lòng liên hệ shop hoặc chọn sản phẩm tương tự ở shop khác')
                 return
             }
             const payload: OrderPayload = {

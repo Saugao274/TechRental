@@ -190,8 +190,8 @@ export default function ProductDetail() {
     ]
     const currentImageTemp =
         productDetail &&
-        productDetail.images &&
-        productDetail.images?.length > 0
+            productDetail.images &&
+            productDetail.images?.length > 0
             ? productDetail.images
             : getRandomFallbackImageArray(5)
 
@@ -206,6 +206,10 @@ export default function ProductDetail() {
         const res = await getRequest(`${storeEndpoint.GET_MY_SHOP}`)
         if (res?.metadata) {
             message.warning('Bạn không thể mua hàng từ shop của mình')
+            return
+        }
+        if (productDetail?.soldCount === productDetail?.stock) {
+            message.warning('Sản phẩm này hiện tại đang cho thuê, vui lòng liên hệ shop hoặc chọn sản phẩm tương tự ở shop khác')
             return
         }
         addItem(

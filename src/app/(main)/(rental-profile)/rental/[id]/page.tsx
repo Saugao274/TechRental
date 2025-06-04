@@ -287,7 +287,7 @@ export default function ProductManagement() {
                         style={{ marginBottom: '16px' }}
                     >
                         <TabPane tab="Sản phẩm có sẵn" key="available" />
-                        <TabPane tab="Sản phẩm đang chờ duyệt" key="pending" />
+                        {/* <TabPane tab="Sản phẩm đang chờ duyệt" key="pending" /> */}
                         <TabPane tab="Sản phẩm đã cho thuê" key="rented" />
                     </Tabs>
                     {renderTabContent()}

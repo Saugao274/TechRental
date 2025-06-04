@@ -265,7 +265,7 @@ export default function ProductCreateForm() {
                 return
             }
 
-            message.success('Tạo sản phẩm thành công, chờ admin duyệt')
+            message.success('Tạo sản phẩm thành công')
             router.push(`/rental/${id}`)
         } catch (error) {
             console.error('Error while creating product:', error)
