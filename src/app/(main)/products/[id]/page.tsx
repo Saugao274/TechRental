@@ -137,15 +137,16 @@ export default function ProductDetail() {
 
     const calculateDiscountedPrice = (selectedDays: number) => {
         const price = productDetail?.price ?? 0
-        const discount = discountRates.find(
-            (item) => item.days === selectedDays.toString(),
-        )
-        if (!discount) return price * selectedDays
+        // const discount = discountRates.find(
+        //     (item) => item.days === selectedDays.toString(),
+        // )
+        // if (!discount) return price * selectedDays
 
-        const discountValue = discount.value
-        const discountedPrice =
-            (price * selectedDays * (100 - discountValue)) / 100
-        return discountedPrice
+        // const discountValue = discount.value
+        // const discountedPrice =
+        //     (price * selectedDays * (100 - discountValue)) / 100
+        // return discountedPrice
+        return price * selectedDays
     }
     const handleDaysChange = (e: RadioChangeEvent) => {
         const val = e.target.value as string
@@ -324,18 +325,21 @@ export default function ProductDetail() {
                             )}
                         </div>
                         <div className="mt-2 flex items-center gap-3">
-                            <span className="rounded bg-white px-2 py-1 text-sm font-bold text-red-500">
+                            {/* <span className="rounded bg-white px-2 py-1 text-sm font-bold text-red-500">
                                 {discountNumber}%
+                            </span> */}
+                            <span className="rounded bg-white px-2 py-1 text-sm font-bold text-red-500">
+                                Giá bán
                             </span>
                             <span className="text-xl font-bold text-red-500">
                                 {totalPrice.toLocaleString('vi-VN')}
                             </span>
-                            <span className="ml-2 text-gray-500 line-through">
+                            {/* <span className="ml-2 text-gray-500 line-through">
                                 {(
                                     (productDetail?.price ?? 0) *
                                     parseInt(selectedDays)
                                 ).toLocaleString('vi-VN')}
-                            </span>
+                            </span> */}
                         </div>
                     </div>
                     <div>

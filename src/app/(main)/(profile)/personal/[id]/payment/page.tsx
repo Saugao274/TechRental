@@ -1,5 +1,5 @@
 'use client'
-import { Button, Form, Input, message, Modal } from 'antd'
+import { Button, Form, Input, message, Modal, Checkbox, Radio } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -51,12 +51,31 @@ const PaymentPage = () => {
     }, [searchParams])
     const [isModalVisible, setIsModalVisible] = useState(false)
 
-    // Calculate total price
+    // Tính tổng tiền giỏ hàng
     const totalPrice = cartItems.reduce(
         (total: number, item: CartItem) => total + item.price * item.quantity,
         0,
     )
 
+    // State cho bảo hiểm
+    const [insuranceChecked, setInsuranceChecked] = useState(true)
+    const [insuranceOption, setInsuranceOption] = useState<"basic" | "extended" | "comprehensive">("basic")
+
+    // Tính phí bảo hiểm và tổng tiền cuối
+    let insuranceFee = 0
+    if (insuranceChecked) {
+        if (insuranceOption === "basic") {
+            // Bảo hiểm cơ bản: miễn phí
+            insuranceFee = 0
+        } else if (insuranceOption === "extended") {
+            // Bảo hiểm mở rộng: 39.000đ/ giao dịch
+            insuranceFee = 39000
+        } else if (insuranceOption === "comprehensive") {
+            // Bảo hiểm toàn hiện: 89.000đ/ giao dịch
+            insuranceFee = 89000
+        }
+    }
+    const finalTotal = totalPrice + insuranceFee
     // Handle quantity change
     const handleQuantityChange = (id: string, delta: number) => {
         setCartItems(
@@ -97,7 +116,7 @@ const PaymentPage = () => {
             const payload: OrderPayload = {
                 customerId: user?._id!,
                 products: cartItems.map((item) => item.id),
-                totalPrice: totalPrice,
+                totalPrice: finalTotal,
                 status: 'pending_confirmation',
                 duration: cartItems.reduce(
                     (total: number, item: CartItem) => total + item.days,
@@ -285,7 +304,6 @@ const PaymentPage = () => {
                         <div className="flex flex-col items-center justify-between rounded-lg bg-white p-4 shadow-md md:flex-row mt-4">
                             <span className="text-sm font-semibold">
                                 Tổng số tiền
-
                             </span>
                             <span className="text-red-500">
                                 {shopTotal.toLocaleString()}đ
@@ -294,26 +312,79 @@ const PaymentPage = () => {
                     </motion.div>
                 )
             })}
-            {/* Summary and Confirm Button */}
+
+            {/* Summary, Insurance and Confirm Button */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex flex-col items-center justify-between rounded-lg bg-white p-4 shadow-md md:flex-row"
+                className="rounded-lg bg-white p-4 shadow-md"
             >
-                <div className="mb-4 md:mb-0">
+                <div className="mb-4 flex flex-col gap-2">
                     <p className="text-gray-500">Miễn phí giao hàng</p>
-                    <p className="text-gray-500">Nhập mã</p>
-                    <p className="text-gray-500">Áp dụng</p>
-
+                    <p className="text-gray-500">Mã khuyến mãi</p>
                 </div>
+                {insuranceChecked && (
+                    <p className="text-sm text-gray-500">
+                        Phí bảo hiểm: {insuranceFee.toLocaleString()}đ
+                    </p>
+                )}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="mb-6 rounded-lg bg-white p-4 shadow-md"
+                >
+                    <h2 className="mb-2 text-lg font-semibold text-blue-600">
+                        Chọn gói bảo hiểm
+                    </h2>
+                    <Radio.Group
+                        onChange={(e) => {
+                            setInsuranceOption(e.target.value)
+                            setInsuranceChecked(true)
+                        }}
+                        value={insuranceOption}
+                        className="space-y-2 flex flex-col"
+                    >
+                        <Radio value="basic">
+                            <span className="font-medium text-gray-800">Cơ bản</span>
+                            <div className="text-sm text-gray-600 flex flex-col">
+                                <span>
+                                    Bảo vệ lỗi nhẹ do người thuê gây ra trong quả trình sử dụng (xước nhẹ, hỏng phụ kiện).
+                                </span>
+                                <span>
+                                    Techrental hỗ trợ xử lý tranh chấp.
+                                </span>
+                                <strong>Miễn phí</strong>
+                            </div>
+                        </Radio>
+                        <Radio value="extended">
+                            <span className="font-medium text-gray-800">Tiêu chuẩn</span>
+                            <div className="text-sm text-gray-600">
+                                Bảo vệ hư hỏng phần cứng do sử dụng sai cách, lỗi phần mềm do cài đặt sai. <strong>+39.000đ</strong>.
+                            </div>
+                        </Radio>
+                        <Radio value="comprehensive">
+                            <span className="font-medium text-gray-800">Toàn diện</span>
+                            <div className="text-sm text-gray-600 flex flex-col">
+                                <span>
+                                    Mất trộm, thất lạc thiết bị (có xác minh từ công an), thiết bị hư hỏng nặng không thể phục hồi.
+                                </span>
+                                <span> Bao gồm đầy đủ quyền lợi của gói tiêu chuẩn. </span>
+                                <strong>+89.000đ</strong>.
+                            </div>
+                        </Radio>
+                    </Radio.Group>
+                </motion.div>
+
                 <div className='flex items-center flex-col gap-2'>
                     <p className="text-lg font-semibold">
                         Tổng cộng:{' '}
                         <span className="text-red-500">
-                            {totalPrice.toLocaleString()}đ
+                            {finalTotal.toLocaleString()}đ
                         </span>
                     </p>
+
                     <Button
                         type="primary"
                         className="bg-blue-500 hover:bg-blue-600"
@@ -321,9 +392,9 @@ const PaymentPage = () => {
                     >
                         XÁC NHẬN & ĐẶT HÀNG
                     </Button>
-
                 </div>
             </motion.div>
+
             <Modal
                 visible={isAddressModalVisible}
                 title="Cập nhật địa chỉ nhận hàng"

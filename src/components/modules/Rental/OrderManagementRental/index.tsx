@@ -32,6 +32,7 @@ import { ColumnType } from 'antd/es/table'
 import { useRouter } from 'next/navigation'
 import TermsModal from '@/components/core/elements/TermsModal'
 import PrivacyModal from '@/components/core/elements/PrivacyModal'
+import { ShopDetail } from '@/data/products'
 
 dayjs.locale('vi')
 
@@ -124,18 +125,19 @@ export default function OrderManagementRental() {
     const [orders, setOrders] = useState<Order[]>(USE_MOCK ? mockOrders : [])
     const [loading, setLoading] = useState(false)
     const [search, setSearch] = useState('')
+    const [shop, setShop] = useState<ShopDetail>()
+
     const [activeTab, setActiveTab] = useState<
         'all' | 'pending' | 'processing' | 'completed' | 'cancelled'
     >('all')
 
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
     const [alwaysAgree, setAlwaysAgree] = useState(false)
-    const [skipConfirmation, setSkipConfirmation] = useState(false)
     useEffect(() => {
         async function fetchSkipConfirmation() {
             try {
                 const res = await getRequest(storeEndpoint.GET_MY_SHOP)
-                setSkipConfirmation(res.metadata?.skipConfirmation)
+                setShop(res?.metadata)
             } catch (error) {
                 console.error('Lấy thông tin skipConfirmation thất bại', error)
             }
@@ -339,7 +341,7 @@ export default function OrderManagementRental() {
                             <Button
                                 type="text"
                                 onClick={async () => {
-                                    if (skipConfirmation) {
+                                    if (shop?.skipConfirmation) {
                                         await handleApprove(record.id, record.customerId)
                                     } else {
                                         setSelectedRecord(record)
@@ -518,7 +520,7 @@ export default function OrderManagementRental() {
                             onClick={async () => {
                                 if (alwaysAgree) {
                                     await putRequest(storeEndpoint.UPDATE_CONFIRM)
-                                    setSkipConfirmation(true)
+                                    setShop(prev => prev ? { ...prev, skipConfirmation: false } : prev);
                                 }
                                 await handleApprove(selectedRecord.id, selectedRecord.customerId)
                                 setApproveModalVisible(false)
@@ -527,7 +529,8 @@ export default function OrderManagementRental() {
                         >
                             Xác nhận
                         </Button>,
-                    ]}
+                    ]
+                    }
                     centered
                 >
                     <div className='flex gap-2 mb-6 mt-4'>
@@ -556,7 +559,7 @@ export default function OrderManagementRental() {
                     >
                         Luôn đồng ý với chính sách của TechRental
                     </Checkbox>
-                </Modal>
+                </Modal >
             )}
             <div className="px-4 md:px-0">
                 <Title level={isMobile ? 4 : 3} className="!mb-1">
@@ -692,14 +695,50 @@ export default function OrderManagementRental() {
                                             }
                                             title={<Button className='!p-0' type='link' onClick={() => router.push(`/products/${prod._id}`)}>{prod.title}</Button>}
                                             description={
-                                                <>
-                                                    <div>Thời gian thuê: {selectedOrder.duration}</div>
-                                                    <div>Trạng thái: {selectedOrder.status}</div>
-                                                    <div>Ngày đặt: {selectedOrder.date}</div>
-                                                    <div> Tổng tiền: <span className='font-bold'>
-                                                        {selectedOrder.total}                                                    </span></div>
-                                                </>
+                                                (() => {
+                                                    const insurance = shop?.packageInsurance?.[0];
+                                                    const originalPrice = prod.price || 0;
+
+                                                    let discount = 0;
+                                                    let label = '';
+
+                                                    switch (insurance) {
+                                                        case 'Basic':
+                                                            discount = 0.03;
+                                                            label = 'Cơ bản (-3%)';
+                                                            break;
+                                                        case 'Standard':
+                                                            discount = 0.05;
+                                                            label = 'Mở rộng (-5%)';
+                                                            break;
+                                                        case 'Premium':
+                                                            discount = 0.10;
+                                                            label = 'Toàn diện (-10%)';
+                                                            break;
+                                                        default:
+                                                            label = 'Không có bảo hiểm';
+                                                            break;
+                                                    }
+
+                                                    const finalPrice = Math.round(originalPrice * (1 - discount));
+
+                                                    return (
+                                                        <>
+                                                            <div>Thời gian thuê: {selectedOrder.duration}</div>
+                                                            <div>Trạng thái: {selectedOrder.status}</div>
+                                                            <div>Ngày đặt: {selectedOrder.date}</div>
+                                                            <div>Người thuê trả số tiền: <span >{selectedOrder.total.toLocaleString()} ₫</span></div>
+                                                            <div>Giá sản phẩm: <span className="font-bold">{originalPrice.toLocaleString()} ₫</span></div>
+                                                            <div>Gói bảo hiểm: {label}</div>
+                                                            <div className="font-semibold text-green-600">
+                                                                Bạn sẽ nhận: {finalPrice.toLocaleString()} ₫ sau khi kết thúc đơn hàng
+                                                            </div>
+                                                        </>
+                                                    );
+                                                })()
                                             }
+
+
                                         />
                                     </List.Item>
                                 )
@@ -709,6 +748,6 @@ export default function OrderManagementRental() {
                 </>
 
             </Modal>
-        </div>
+        </div >
     )
 }

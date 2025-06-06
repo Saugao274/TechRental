@@ -69,6 +69,10 @@ export interface ShopDetail {
     operatingHours?: string
     createdAt?: Date
     updatedAt?: Date
+    skipConfirmation?: Boolean
+    packagePost?: ('Free' | 'Basic' | 'Advanced' | 'Business')[];
+    packageInsurance?: ('Basic' | 'Standard' | 'Premium')[];
+
 }
 
 export const shopDetails: ShopDetail[] = [
