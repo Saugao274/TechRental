@@ -340,41 +340,45 @@ const PaymentPage = () => {
                     </h2>
                     <Radio.Group
                         onChange={(e) => {
-                            setInsuranceOption(e.target.value)
-                            setInsuranceChecked(true)
+                            setInsuranceOption(e.target.value);
+                            setInsuranceChecked(true);
                         }}
                         value={insuranceOption}
-                        className="space-y-2 flex flex-col"
+                        className="flex flex-col gap-4"
                     >
-                        <Radio value="basic">
-                            <span className="font-medium text-gray-800">Cơ bản</span>
-                            <div className="text-sm text-gray-600 flex flex-col">
-                                <span>
-                                    Bảo vệ lỗi nhẹ do người thuê gây ra trong quả trình sử dụng (xước nhẹ, hỏng phụ kiện).
+                        <Radio value="basic" className="!p-4 rounded-md border border-gray-200 hover:border-blue-500 w-full">
+                            <div className="flex flex-col gap-1">
+                                <span className="font-semibold text-base text-blue-800">Cơ bản</span>
+                                <span className="text-sm text-gray-700">
+                                    Bảo vệ lỗi nhẹ do người thuê gây ra trong quá trình sử dụng (xước nhẹ, hỏng phụ kiện).
                                 </span>
-                                <span>
-                                    Techrental hỗ trợ xử lý tranh chấp.
-                                </span>
-                                <strong>Miễn phí</strong>
+                                <span className="text-sm text-gray-700">Techrental hỗ trợ xử lý tranh chấp.</span>
+                                <span className="text-sm font-medium text-green-600">Miễn phí</span>
                             </div>
                         </Radio>
-                        <Radio value="extended">
-                            <span className="font-medium text-gray-800">Tiêu chuẩn</span>
-                            <div className="text-sm text-gray-600">
-                                <span>Bảo vệ hư hỏng phần cứng do sử dụng sai cách, lỗi phần mềm do cài đặt sai.</span>   <strong>+39.000đ</strong>.
+
+                        <Radio value="extended" className="!p-4 rounded-md border border-gray-200 hover:border-blue-500 w-full">
+                            <div className="flex flex-col gap-1">
+                                <span className="font-semibold text-base text-yellow-700">Tiêu chuẩn</span>
+                                <span className="text-sm text-gray-700">
+                                    Bảo vệ hư hỏng phần cứng do sử dụng sai cách, lỗi phần mềm do cài đặt sai.
+                                </span>
+                                <span className="text-sm font-medium text-yellow-600">+39.000đ</span>
                             </div>
                         </Radio>
-                        <Radio value="comprehensive">
-                            <span className="font-medium text-gray-800">Toàn diện</span>
-                            <div className="text-sm text-gray-600 flex flex-col">
-                                <span>
+
+                        <Radio value="comprehensive" className="!p-4 rounded-md border border-gray-200 hover:border-blue-500 w-full">
+                            <div className="flex flex-col gap-1">
+                                <span className="font-semibold text-base text-red-700">Toàn diện</span>
+                                <span className="text-sm text-gray-700">
                                     Mất trộm, thất lạc thiết bị (có xác minh từ công an), thiết bị hư hỏng nặng không thể phục hồi.
                                 </span>
-                                <span> Bao gồm đầy đủ quyền lợi của gói tiêu chuẩn. </span>
-                                <strong>+89.000đ</strong>.
+                                <span className="text-sm text-gray-700">Bao gồm đầy đủ quyền lợi của gói tiêu chuẩn.</span>
+                                <span className="text-sm font-medium text-red-600">+89.000đ</span>
                             </div>
                         </Radio>
                     </Radio.Group>
+
                 </motion.div>
 
                 <div className='flex items-center flex-col gap-2'>

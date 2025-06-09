@@ -12,6 +12,7 @@ import {
 import {
     BadgeCheckIcon,
     BadgeX,
+    ShieldCheck, Crown, Wrench
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getRequest, putRequest } from '@/request'
@@ -137,21 +138,21 @@ export default function PackageNews({ id }: PackageNewsProps) {
             name: 'Gói Cơ bản',
             insuranceFee: 3,
             maxCoverage: 'Tối đa 1 triệu VND/trường hợp',
-            description: 'Dành cho máy ảnh cơ bản, tai nghe, điện thoại phổ thông',
+            description: 'Lỗi nhẹ do người thuê gây ra trong quá trình sử dụng (xước nhẹ, hỏng phụ kiện). Techrental hỗ trợ xử lý tranh chấp.',
         },
         {
             type: 'Standard',
             name: 'Gói Tiêu chuẩn',
             insuranceFee: 5,
             maxCoverage: 'Tối đa 5 triệu VND/trường hợp',
-            description: 'Dành cho iPhone, Mirrorless, thiết bị chuyên dụng',
+            description: 'Hư hỏng phần cứng do sử dụng sai cách.Lỗi phần mềm do cài đặt sai',
         },
         {
             type: 'Premium',
             name: 'Gói Toàn diện',
             insuranceFee: 10,
             maxCoverage: 'Tối đa 80% giá trị thiết bị hoặc thay thế tương đương',
-            description: 'Dành cho lens đắt tiền, camera quay phim, thiết bị studio',
+            description: 'Mất trộm, thất lạc thiết bị (có xác minh từ. công an). Thiết bị hư hỏng nặng hoặc không thể phục hồi. Gồm toàn bộ phạm vi của gói Tiêu chuẩn',
         },
     ]
     useEffect(() => {
@@ -319,96 +320,105 @@ export default function PackageNews({ id }: PackageNewsProps) {
         </Row>
     )
 
-    const renderInsurancePackages = () => (
 
-        <Row gutter={[16, 24]} className="mt-8 flex justify-between">
-            {insurancePackages.map((pkg) => {
-                const ownInsurance =
-                    shop?.packageInsurance && Array.isArray(shop.packageInsurance)
-                        ? shop.packageInsurance.map((p: string) => p.toLowerCase()).includes(pkg.type.toLowerCase())
-                        : false
-                return (
 
-                    <Col
-                        key={pkg.type}
-                        xs={24}
-                        sm={24}
-                        md={8}
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <Card
-                            className="w-full h-full flex flex-col justify-between relative pb-24"
-                            style={{
-                                borderRadius: '12px',
-                                border: 'none',
-                                background: 'linear-gradient(135deg, rgba(230, 250, 255, 0.7) 0%, rgba(222, 235, 249, 0.7) 100%)',
-                            }}
-                        >
-                            <div className="flex flex-col">
-                                <Typography.Title
-                                    level={4}
-                                    style={{
-                                        textAlign: 'center',
-                                        color: '#1D3D85',
-                                        marginBottom: '8px',
-                                    }}
-                                >
-                                    {pkg.name}
-                                </Typography.Title>
-                                <Typography.Paragraph
-                                    style={{
-                                        textAlign: 'center',
-                                        color: '#666',
-                                        fontSize: '14px',
-                                        minHeight: '42px',
-                                        margin: '0 0 16px 0',
-                                    }}
-                                >
-                                    {pkg.description}
-                                </Typography.Paragraph>
-                                <div className="text-center flex flex-col gap-2">
-                                    <Button className="!p-4 !border-gray-50 !text-xs   !bg-blue-200 !text-blue-800 ">
-                                        Phí bảo hiểm: <span className='font-bold'>{pkg.insuranceFee}% giá trị đơn thuê</span>
-                                    </Button>
-                                    <Button className="!px-0 !py-6 !border-gray-50 !text-xs !bg-blue-200 !text-blue-800 !whitespace-normal !break-words !items-center ">
-                                        <p>
-                                            Mức chi trả: <span className='font-bold'> {pkg.maxCoverage}</span>
-                                        </p>
-                                    </Button>
+
+
+    type InsuranceType = 'Basic' | 'Standard' | 'Premium';
+
+    interface InsurancePackage {
+        type: InsuranceType;
+        name: string;
+        description: string;
+        insuranceFee: number;
+        maxCoverage: string;
+    }
+    const iconMap: Record<InsuranceType, JSX.Element> = {
+        Basic: <Wrench size={24} />,
+        Standard: <ShieldCheck size={24} />,
+        Premium: <Crown size={24} />,
+    };
+
+    const colorMap: Record<InsuranceType, { bg: string; color: string }> = {
+        Basic: { bg: '#E0F2FE', color: '#4774ef' },
+        Standard: { bg: '#d4fec3', color: '#54e038' },
+        Premium: { bg: '#FCE7F3', color: '#f869a5' },
+    };
+    const renderInsurancePackages = () => {
+        return (
+            <Row gutter={[16, 24]} className="mt-8" align="stretch">
+                {insurancePackages.map((pkg) => {
+                    const ownInsurance = shop?.packageInsurance?.map((p: string) => p.toLowerCase()).includes(pkg.type.toLowerCase());
+                    const { bg, color } = colorMap[pkg.type];
+                    const icon = iconMap[pkg.type];
+
+                    return (
+                        <Col key={pkg.type} xs={24} sm={24} md={8} className="flex">
+                            <Card
+                                className="w-full flex flex-col justify-between p-6 shadow-md"
+                                style={{
+                                    borderRadius: '16px',
+                                    border: `2px solid ${color}`,
+                                    background: 'white',
+                                    minHeight: 500,
+                                }}
+                            >
+                                {/* Header icon + title */}
+                                <div className="text-center mb-4">
+                                    <div
+                                        className="mx-auto mb-3 flex items-center justify-center"
+                                        style={{
+                                            width: 48,
+                                            height: 48,
+                                            borderRadius: '50%',
+                                            backgroundColor: bg,
+                                            color: color,
+                                        }}
+                                    >
+                                        {icon}
+                                    </div>
+                                    <Typography.Title level={4} style={{ color, marginBottom: 8 }}>
+                                        {pkg.name}
+                                    </Typography.Title>
                                 </div>
-                            </div>
-                            <div className="mt-6 bottom-6 left-6 right-6">
-                                {ownInsurance ? (
-                                    <Button
-                                        block
-                                        disabled
-                                        className="h-12 rounded-lg !bg-gray-400 !font-bold !text-white"
-                                    >
-                                        Đã sở hữu
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        type="primary"
-                                        block
-                                        onClick={() => handlePurchasePackage(pkg.type, 300000, false)}
-                                        className="h-12 rounded-lg !bg-blue-900 !font-bold !text-white hover:!bg-blue-800"
-                                    >
-                                        MUA NGAY
-                                    </Button>
-                                )}
-                            </div>
-                        </Card>
-                    </Col>
-                )
 
-            }
+                                {/* Nội dung mô tả và info */}
+                                <div className="flex-grow flex flex-col gap-3 text-sm text-center" style={{ minHeight: 150 }}>
+                                    <Typography.Paragraph style={{ color: '#555', minHeight: 110 }}>{pkg.description}</Typography.Paragraph>
+                                    <div className='min-h-40 gap-3 flex flex-col '>
+                                        <div className="rounded-md px-3 py-2 bg-gray-50 border text-gray-800 text-sm">
+                                            Phí bảo hiểm: <strong>{pkg.insuranceFee}% giá trị đơn thuê</strong>
+                                        </div>
+                                        <div className="rounded-md px-3 py-2 bg-gray-50 border text-gray-800 text-sm ">
+                                            Mức chi trả: <strong>{pkg.maxCoverage}</strong>
+                                        </div>
+                                    </div>
+                                </div>
 
-            )}
-        </Row>
-    )
+                                {/* Button */}
+                                <div className="mt-6">
+                                    {ownInsurance ? (
+                                        <Button block disabled className="h-12 rounded-lg bg-gray-400 font-bold text-white">
+                                            Đã sở hữu
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            block
+                                            onClick={() => handlePurchasePackage(pkg.type, 300000, false)}
+                                            className="h-12 rounded-lg text-white font-bold"
+                                            style={{ backgroundColor: color }}
+                                        >
+                                            MUA NGAY
+                                        </Button>
+                                    )}
+                                </div>
+                            </Card>
+                        </Col>
+                    );
+                })}
+            </Row>
+        );
+    };
 
     return (
         <div className="pt-14">
