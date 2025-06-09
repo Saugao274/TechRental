@@ -361,7 +361,7 @@ const PaymentPage = () => {
                         <Radio value="extended">
                             <span className="font-medium text-gray-800">Tiêu chuẩn</span>
                             <div className="text-sm text-gray-600">
-                                Bảo vệ hư hỏng phần cứng do sử dụng sai cách, lỗi phần mềm do cài đặt sai. <strong>+39.000đ</strong>.
+                                <span>Bảo vệ hư hỏng phần cứng do sử dụng sai cách, lỗi phần mềm do cài đặt sai.</span>   <strong>+39.000đ</strong>.
                             </div>
                         </Radio>
                         <Radio value="comprehensive">

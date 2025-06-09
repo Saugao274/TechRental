@@ -14,7 +14,7 @@ import {
     BadgeX,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { getRequest } from '@/request'
+import { getRequest, putRequest } from '@/request'
 import { storeEndpoint } from '@/settings/endpoints'
 
 interface RentalPackage {
@@ -154,11 +154,30 @@ export default function PackageNews({ id }: PackageNewsProps) {
             description: 'Dành cho lens đắt tiền, camera quay phim, thiết bị studio',
         },
     ]
-
-    const handlePurchasePackage = (packageType: string, price: number, packagePost: boolean) => {
+    useEffect(() => {
+        const savedTab = localStorage.getItem('activeTab')
+        if (savedTab) {
+            setActiveTab(savedTab)
+            localStorage.removeItem('activeTab')
+        }
+    }, [])
+    const handlePurchasePackage = async (packageType: string, price: number, packagePost: boolean) => {
         message.success(`Đã chọn ${packageType}`)
-        router.push(`/rental/${id}/package/payment?price=${price.toLocaleString('vi-VN')}&type=${packageType}&packagePost=${packagePost}`)
+
+        if (packagePost) {
+            router.push(`/rental/${id}/package/payment?price=${price}&type=${packageType}&packagePost=${packagePost}`)
+        } else {
+            await putRequest(storeEndpoint.UPDATE_PACKAGE, {
+                data: { packageInsurance: [packageType] }
+            })
+
+            localStorage.setItem('activeTab', 'insurance')
+
+            // Reload lại trang
+            window.location.reload()
+        }
     }
+
 
     const renderRentalPackages = () => (
         <Row gutter={[16, 24]} className="mt-8 flex justify-between">

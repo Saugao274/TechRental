@@ -727,7 +727,7 @@ export default function OrderManagementRental() {
                                                             <div>Thời gian thuê: {selectedOrder.duration}</div>
                                                             <div>Trạng thái: {selectedOrder.status}</div>
                                                             <div>Ngày đặt: {selectedOrder.date}</div>
-                                                            <div>Người thuê trả số tiền: <span >{selectedOrder.total.toLocaleString()} ₫</span></div>
+                                                            <div>Người thuê trả số tiền: <span >{selectedOrder.total.toLocaleString()}</span></div>
                                                             <div>Giá sản phẩm: <span className="font-bold">{originalPrice.toLocaleString()} ₫</span></div>
                                                             <div>Gói bảo hiểm: {label}</div>
                                                             <div className="font-semibold text-green-600">
