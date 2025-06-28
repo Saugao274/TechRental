@@ -6,17 +6,47 @@ import { Form, Input, message, Skeleton } from 'antd'
 import { Lock, Mail } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
 import { postRequest } from '@/request'
 import constants from '@/settings/constants'
 import webStorageClient from '@/utils/webStorageClient'
 
 const SignIn = () => {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const { login } = useAuth()
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
+    const [googleLoading, setGoogleLoading] = useState(false)
+
+    // Handle OAuth errors from URL parameters
+    useEffect(() => {
+        const error = searchParams.get('error')
+        if (error) {
+            const errorMessage = handleOAuthError(error)
+            message.error(errorMessage)
+            // Clean up the URL
+            router.replace('/signIn')
+        }
+    }, [searchParams, router])
+
+    const handleOAuthError = (error: string) => {
+        switch (error) {
+            case 'oauth_failed':
+                return 'Đăng nhập Google thất bại'
+            case 'server_error':
+                return 'Lỗi máy chủ'
+            case 'no_token':
+                return 'Không nhận được token'
+            case 'invalid_data':
+                return 'Dữ liệu không hợp lệ'
+            case 'callback_error':
+                return 'Lỗi xử lý callback'
+            default:
+                return 'Có lỗi xảy ra'
+        }
+    }
 
     const onSubmit = async (values: { email: string; password: string }) => {
         try {
@@ -66,6 +96,19 @@ const SignIn = () => {
             message.error(msg)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleGoogleLogin = async () => {
+        try {
+            setGoogleLoading(true)
+            // Redirect đến backend để bắt đầu OAuth flow
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/google`
+        } catch (error: any) {
+            console.error('[GOOGLE LOGIN ERROR]', error)
+            message.error('Đăng nhập Google thất bại, vui lòng thử lại.')
+        } finally {
+            setGoogleLoading(false)
         }
     }
 
@@ -187,21 +230,25 @@ const SignIn = () => {
                             {/* Đăng nhập xã hội & chuyển trang đăng ký */}
                             <div className="mt-5 flex flex-col items-center gap-2 pb-[20px]">
                                 <div className="flex flex-row items-center gap-2">
-                                    <p>Hoặc đăng nhập với</p>
                                     <div className="flex gap-5">
-                                        <img
-                                            src="/social/google.png"
-                                            alt="google"
-                                            className="h-[30px] w-[30px]"
-                                        />
-                                        <img
-                                            src="/social/facebook.png"
-                                            alt="facebook"
-                                            className="h-[30px] w-[30px]"
-                                        />
+                                        <button
+                                            onClick={handleGoogleLogin}
+                                            disabled={googleLoading}
+                                            className="flex items-center gap-3 rounded-lg border border-gray-300 bg-white px-5 py-2 shadow-sm transition hover:shadow-md hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-60"
+                                            style={{ minWidth: 180 }}
+                                        >
+                                            <img
+                                                src="/social/google.png"
+                                                alt="Google logo"
+                                                className="h-6 w-6"
+                                                style={{ background: 'white', borderRadius: '50%' }}
+                                            />
+                                            <span className="font-medium text-gray-700 text-base">
+                                                {googleLoading ? 'Đang xử lý...' : 'Đăng nhập với Google'}
+                                            </span>
+                                        </button>
                                     </div>
                                 </div>
-
                                 <div>
                                     Bạn đã có tài khoản chưa?{' '}
                                     <span
