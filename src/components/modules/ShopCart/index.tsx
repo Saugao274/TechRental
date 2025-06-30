@@ -201,8 +201,8 @@ export default function CartPage() {
                                 <span className="w-1/3">Sản phẩm</span>
                                 <div className="flex w-2/3 justify-between">
                                     <span className="w-24 text-center">Đơn giá</span>
-                                    <span className="w-24 text-center">Số lượng</span>
                                     <span className="w-24 text-center">Thời gian thuê</span>
+                                    <span className="w-24 text-center">Số lượng</span>
                                     <span className="w-24 text-center">Thành tiền</span>
                                 </div>
                             </div>

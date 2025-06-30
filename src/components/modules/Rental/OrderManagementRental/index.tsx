@@ -274,6 +274,28 @@ export default function OrderManagementRental() {
             setLoading(false)
         }
     }
+    const handleCancel = async (orderId: string, customerId: string): Promise<void> => {
+        try {
+            setLoading(true)
+            const nstatus: OrderStatusAPI = 'canceled'
+            await putRequest(
+                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                {
+                    data: {
+                        status: nstatus,
+                        toId: customerId,
+                    },
+                },
+            )
+            message.success('Đơn hàng đã bị hủy!')
+            await fetchOrders()
+        } catch (error) {
+            console.error(error)
+            message.error('Hủy đơn hàng thất bại!')
+        } finally {
+            setLoading(false)
+        }
+    }
     const tabOrders = useMemo(() => {
         if (activeTab === 'all') return searched
         if (activeTab === 'pending')
@@ -338,19 +360,31 @@ export default function OrderManagementRental() {
                 switch (record.status) {
                     case 'Cần xác nhận':
                         return (
-                            <Button
-                                type="text"
-                                onClick={async () => {
-                                    if (shop?.skipConfirmation) {
-                                        await handleApprove(record.id, record.customerId)
-                                    } else {
-                                        setSelectedRecord(record)
-                                        setApproveModalVisible(true)
-                                    }
-                                }}
-                            >
-                                Xác nhận
-                            </Button>
+                            <div className="flex gap-2">
+                                <Button
+                                    type="text"
+                                    onClick={async () => {
+                                        if (shop?.skipConfirmation) {
+                                            await handleApprove(record.id, record.customerId)
+                                        } else {
+                                            setSelectedRecord(record)
+                                            setApproveModalVisible(true)
+                                        }
+                                    }}
+                                >
+                                    Xác nhận
+                                </Button>
+                                <Button
+                                    type="text"
+                                    danger
+                                    loading={loading}
+                                    onClick={async () => {
+                                        await handleCancel(record.id, record.customerId)
+                                    }}
+                                >
+                                    Hủy
+                                </Button>
+                            </div>
                         )
                     case 'Chờ trả hàng':
                         return (

@@ -11,6 +11,9 @@ const userEndpoint = {
     VERIFY_USER: (token: string) => `${prefixBase}/auth/verify/${token}`,
     GET_MY_USER: `${prefixBase}/users/me`,
     REGISTER_LESSOR: `${prefixBase}/users/become-owner`,
+    COUNT: `${prefixBase}/users/count`,
+    WITH_PRODUCTS: `${prefixBase}/users/with-products`,
+    ALL: `${prefixBase}/users`,
 }
 const productEndpoint = {
     GET_ALL: `${prefixBase}/product`,
@@ -54,7 +57,7 @@ const orderEndpoint = {
     GET_ORDER_BY_ID: (id: string) => `${prefixBase}/orders/${id}`,
     ORDER_EVIDENCE: `${prefixBase}/order-evidence`,
     GET_ORDER_EVIDENCE_BY_ORDERID: (id: string) => `${prefixBase}/order-evidence/order/${id}`,
-
+    COMPLETED: `${prefixBase}/orders/completed`,
 }
 
 export const chatEndpoint = {
