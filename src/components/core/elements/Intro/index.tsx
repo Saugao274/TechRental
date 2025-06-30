@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import SectionCommon from '../../common/SectionCommon'
 import ButtonCommon from '../../common/ButtonCommon'
-import { StarFilled, UserAddOutlined } from '@ant-design/icons'
+import { StarFilled, UserAddOutlined, HeartFilled } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { Avatar } from 'antd'
+import { useAuth } from "@/context/AuthContext"
 
 const Intro = () => {
+    const { user } = useAuth()
+
     const floatingVariants = {
         floating1: {
             y: [0, -10, 0],
@@ -92,8 +95,15 @@ const Intro = () => {
                     type="primary"
                     className="flex items-center !gap-2 !rounded-lg !border-white !px-4 !py-4 !text-base !shadow-[-6px_-6px_12px_#fff]"
                 >
-                    <span>Đăng ký để trải nghiệm</span>
-                    <UserAddOutlined />
+                    {!user ? (
+                        <a href="/signUp">Đăng ký để trải nghiệm</a>
+                    ) : (
+                        <>
+                          <span>Chào mừng bạn trở lại!</span>
+                          <HeartFilled style={{ color: 'white', fontSize: 20, marginLeft: 8, verticalAlign: 'middle' }} />
+                        </>
+                    )}
+                    {!user && <UserAddOutlined />}
                 </ButtonCommon>
             </div>
             <div className="flex items-center gap-2 text-xs">

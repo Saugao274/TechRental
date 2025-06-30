@@ -233,6 +233,28 @@ export default function OrderManagement() {
         }
     }
 
+    const handleCancelOrder = async (orderId: string, customerId: string) => {
+        try {
+            setLoading(true)
+            await putRequest(
+                orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                {
+                    data: {
+                        status: 'canceled',
+                        toId: customerId,
+                    },
+                },
+            )
+            message.success('Đơn hàng đã được hủy thành công!')
+            await fetchOrders()
+        } catch (error) {
+            console.error(error)
+            message.error('Hủy đơn hàng thất bại!')
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const tabOrders = useMemo(() => {
         if (activeTab === 'all') return searched
         if (activeTab === 'pending')
@@ -305,27 +327,55 @@ export default function OrderManagement() {
                 switch (record.status) {
                     case 'Cần thanh toán':
                         return (
-                            <Button
-                                type="link"
-                                onClick={() =>
-                                    handlePayment(
-                                        record.total,
-                                        record.id,
-                                        record.customerId,
-                                    )
-                                }
-                            >
-                                Thanh toán
-                            </Button>
+                            <div className="flex flex-col gap-1">
+                                <Button
+                                    type="link"
+                                    onClick={() =>
+                                        handlePayment(
+                                            record.total,
+                                            record.id,
+                                            record.customerId,
+                                        )
+                                    }
+                                >
+                                    Thanh toán
+                                </Button>
+                                <Button
+                                    type="link"
+                                    danger
+                                    onClick={() =>
+                                        handleCancelOrder(
+                                            record.id,
+                                            record.customerId,
+                                        )
+                                    }
+                                >
+                                    Hủy đơn
+                                </Button>
+                            </div>
                         )
                     case 'Chờ xác nhận':
                         return (
-                            <Button
-                                type="link"
-                                onClick={() => window.open('/chat', '_blank')}
-                            >
-                                Liên hệ shop
-                            </Button>
+                            <div className="flex flex-col gap-1">
+                                <Button
+                                    type="link"
+                                    onClick={() => window.open('/chat', '_blank')}
+                                >
+                                    Liên hệ shop
+                                </Button>
+                                <Button
+                                    type="link"
+                                    danger
+                                    onClick={() =>
+                                        handleCancelOrder(
+                                            record.id,
+                                            record.customerId,
+                                        )
+                                    }
+                                >
+                                    Hủy đơn
+                                </Button>
+                            </div>
                         )
                     case 'Cần trả hàng':
                         return (
@@ -383,15 +433,25 @@ export default function OrderManagement() {
                     <div className="mt-1 flex justify-between">
                         <Text strong>{r.total}</Text>
                         {r.status === 'Cần thanh toán' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-orange-800"
-                                onClick={() =>
-                                    handlePayment(r.total, r.id, r.customerId)
-                                }
-                            >
-                                Thanh toán
-                            </Button>
+                            <div className="flex gap-1">
+                                <Button
+                                    type="primary"
+                                    className="!bg-orange-800"
+                                    onClick={() =>
+                                        handlePayment(r.total, r.id, r.customerId)
+                                    }
+                                >
+                                    Thanh toán
+                                </Button>
+                                <Button
+                                    danger
+                                    onClick={() =>
+                                        handleCancelOrder(r.id, r.customerId)
+                                    }
+                                >
+                                    Hủy
+                                </Button>
+                            </div>
                         ) : r.status === 'Chờ giao hàng' ? (
                             <Button
                                 type="primary"
@@ -415,13 +475,23 @@ export default function OrderManagement() {
                                 Xem thông tin trả hàng
                             </Button>
                         ) : r.status === 'Chờ xác nhận' ? (
-                            <Button
-                                type="primary"
-                                className="!bg-blue-800"
-                                onClick={() => window.open('/chat', '_blank')}
-                            >
-                                Liên hệ shop
-                            </Button>
+                            <div className="flex gap-1">
+                                <Button
+                                    type="primary"
+                                    className="!bg-blue-800"
+                                    onClick={() => window.open('/chat', '_blank')}
+                                >
+                                    Liên hệ shop
+                                </Button>
+                                <Button
+                                    danger
+                                    onClick={() =>
+                                        handleCancelOrder(r.id, r.customerId)
+                                    }
+                                >
+                                    Hủy
+                                </Button>
+                            </div>
                         ) : (
                             <Button type="link">Chi tiết</Button>
                         )}
@@ -439,7 +509,6 @@ export default function OrderManagement() {
         { key: 'cancelled', label: 'Đã hủy' },
     ]
 
-    /* ---------------------------- render UI ---------------------------- */
     return (
         <div className="flex flex-col gap-5">
             <div className="px-4 md:px-0">

@@ -89,8 +89,9 @@ export default function ProductDetail() {
         { label: '30 ngày', value: '30' },
     ]
     const handleIncreaseQuantity = () => {
-        if (quantity >= (productDetail?.stock ?? 0)) {
-            message.warning('Không thể thuê nhiều hơn số lượng trong kho hàng')
+        const availableQuantity = (productDetail?.stock ?? 0) - (productDetail?.soldCount ?? 0)
+        if (quantity >= availableQuantity) {
+            message.warning('Không thể thuê nhiều hơn số lượng còn có thể cho thuê')
             return
         }
         setQuantity(quantity + 1)
@@ -204,12 +205,13 @@ export default function ProductDetail() {
             return
         }
         if (!productDetail) return
-        const res = await getRequest(`${storeEndpoint.GET_MY_SHOP}`)
-        if (res?.metadata) {
+        
+        if (productDetail.idShop?.idUser === user?._id) {
             message.warning('Bạn không thể mua hàng từ shop của mình')
             return
         }
-        if (productDetail?.soldCount === productDetail?.stock) {
+        
+        if (productDetail?.soldCount >= productDetail?.stock) {
             message.warning('Sản phẩm này hiện tại đang cho thuê, vui lòng liên hệ shop hoặc chọn sản phẩm tương tự ở shop khác')
             return
         }
@@ -321,6 +323,12 @@ export default function ProductDetail() {
                                 <span className="text-gray-500">
                                     <span className="font-bold">Kho hàng:</span>{' '}
                                     {productDetail?.stock} sản phẩm
+                                </span>
+                            )}
+                            {productDetail?.stock && productDetail?.soldCount !== undefined && (
+                                <span className="text-gray-500">
+                                    <span className="font-bold">Số lượng chưa cho thuê:</span>{' '}
+                                    {productDetail?.stock - productDetail?.soldCount} sản phẩm
                                 </span>
                             )}
                         </div>

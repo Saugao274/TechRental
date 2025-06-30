@@ -28,6 +28,7 @@ export type ProductDetail = {
     priceMonth: number
     images?: string[]
     view: number
+    idUser:string
     idShop: ShopDetail
     details: string
     shortDetails: string
@@ -49,6 +50,7 @@ export type ProductDetail = {
 }
 export interface ShopDetail {
     _id: string
+    idUser: string
     name: string
     avatar?: string
     cover?: string
@@ -72,12 +74,12 @@ export interface ShopDetail {
     skipConfirmation?: Boolean
     packagePost?: ('Free' | 'Basic' | 'Advanced' | 'Business')[];
     packageInsurance?: ('Basic' | 'Standard' | 'Premium')[];
-
 }
 
 export const shopDetails: ShopDetail[] = [
     {
         _id: 's001',
+        idUser: 'user001',
         name: 'Tech Store',
         avatar: '/images/Intro/avt1.png',
         responseRate: 95,
@@ -89,6 +91,7 @@ export const shopDetails: ShopDetail[] = [
     },
     {
         _id: ' shopDetails[1]',
+        idUser: 'user002',
         name: 'Mobile World',
         avatar: '/images/Intro/avt2.png',
         responseRate: 90,
@@ -100,6 +103,7 @@ export const shopDetails: ShopDetail[] = [
     },
     {
         _id: 's003',
+        idUser: 'user003',
         name: 'Gadget Hub',
         avatar: '/images/Intro/avt3.png',
         responseRate: 92,
@@ -111,6 +115,7 @@ export const shopDetails: ShopDetail[] = [
     },
     {
         _id: 's004',
+        idUser: 'user004',
         name: 'Creative Zone',
         avatar: '/images/Intro/avt4.png',
         responseRate: 88,
