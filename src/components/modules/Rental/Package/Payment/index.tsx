@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, Tabs, Button, Typography, Divider } from 'antd'
+import { Card, Tabs, Button, Typography, Divider, message } from 'antd'
 import { AlertCircle, ArrowLeft, ChevronLeft, QrCode } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { postRequest, putRequest } from '@/request'
+import { orderEndpoint, storeEndpoint } from '@/settings/endpoints'
 
 const { Title, Text } = Typography
 
@@ -22,6 +24,8 @@ const PaymentPackage = () => {
 
     const price = searchParams.get('price')
     const type = searchParams.get('type')
+    const packagePost = searchParams.get('packagePost')
+
     useEffect(() => {
         if (!price || !type) {
             router.push('/rental/package')
@@ -35,6 +39,34 @@ const PaymentPackage = () => {
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text)
+    }
+
+    const handlePayment = async () => {
+        try {
+            const price = searchParams.get('price')
+            const res = await postRequest(orderEndpoint.CREATE_ORDER, {
+                data: {
+                    amount: price,
+                },
+            })
+            console.log("fgdfdfsdfsdf", res?.data)
+            window.open(res?.data, '_blank')
+
+            if (packagePost) {
+                const resDatt = await putRequest(storeEndpoint.UPDATE_PACKAGE, {
+                    data: { packagePost: [type] },
+                })
+                console.log("111", resDatt)
+            } else {
+                const resDatt = await putRequest(storeEndpoint.UPDATE_PACKAGE, {
+                    data: { packageInsurance: [type] }
+                })
+                console.log(resDatt)
+            }
+
+        } catch (error) {
+            message.error('Vui lòng thử lại sau!')
+        }
     }
 
     const qrCodeTab = (
@@ -215,6 +247,7 @@ const PaymentPackage = () => {
                             type="primary"
                             size="large"
                             className="!hover:bg-blue-200 mt-16 w-full border-blue-200 !bg-white/50 !font-bold !text-primary"
+                            onClick={handlePayment}
                         >
                             Xác nhận thanh toán
                         </Button>

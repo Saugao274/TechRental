@@ -29,9 +29,9 @@ export default function CartPage() {
         () =>
             shouldPaginate
                 ? items.slice(
-                      (currentPage - 1) * productsPerPage,
-                      currentPage * productsPerPage,
-                  )
+                    (currentPage - 1) * productsPerPage,
+                    currentPage * productsPerPage,
+                )
                 : items,
         [items, currentPage, shouldPaginate],
     )
@@ -78,9 +78,11 @@ export default function CartPage() {
         if (mounted && !loading && !user) router.replace('/signIn')
     }, [mounted, loading, user, router])
 
+    // Updated ProductItem component with consistent column widths
     const ProductItem = ({ product }: { product: CartItem }) => (
-        <div className="product-item flex flex-col items-start justify-between border-b border-gray-200 bg-transparent px-4 py-4 md:flex-row md:items-center md:px-6">
-            <div className="mb-3 flex w-full items-center gap-2 md:mb-0 md:w-auto md:gap-4">
+        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-4 md:px-6">
+            {/* Left: Product details */}
+            <div className="w-1/3 flex items-center gap-2">
                 <div className="flex items-center gap-2">
                     <input
                         type="checkbox"
@@ -103,84 +105,52 @@ export default function CartPage() {
                         alt={product.name}
                     />
                 </div>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0">
                     <h3 className="line-clamp-1 text-xs font-medium text-gray-800 md:text-sm">
                         {product.name}
                     </h3>
-                    <p className="line-clamp-1 text-xs text-gray-500 md:line-clamp-2">
+                    <p className="line-clamp-1 text-xs text-gray-500 md:text-sm">
                         {product.shop}
                     </p>
                 </div>
             </div>
-
-            <div className="grid w-full grid-cols-2 items-start gap-3 md:flex md:w-auto md:items-center md:gap-4">
-                <div className="flex flex-col md:block">
-                    <span className="text-xs font-medium text-gray-600 md:hidden">
-                        Đơn giá:
-                    </span>
-                    <span className="text-xs font-medium text-gray-800 md:w-24 md:text-center md:text-sm">
-                        {product.price.toLocaleString('vi-VN')}đ
-                    </span>
-                </div>
-
-                <div className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
-                    <span className="text-xs font-medium text-gray-600 md:hidden">
-                        Số lượng:
-                    </span>
+            {/* Right: Price, Quantity, Days, Total */}
+            <div className="w-2/3 flex items-center justify-between">
+                <span className="w-24 text-center text-xs font-medium text-gray-800 md:text-sm">
+                    {product.price.toLocaleString('vi-VN')}đ
+                </span>
+                <div className="w-24">
                     <Input
                         value={product.quantity}
                         onChange={(e) =>
                             handleInput(product.id, 'quantity', e.target.value)
                         }
-                        className="h-8 w-10 rounded-none border-gray-300 text-center text-xs md:h-10 md:text-sm"
+                        className="h-8 w-full rounded-none border-gray-300 text-center text-xs md:h-10 md:text-sm"
                     />
                 </div>
-
-                <div className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
-                    <span className="text-xs font-medium text-gray-600 md:hidden">
-                        Thời gian thuê:
-                    </span>
-                    <div className="flex items-center gap-1">
-                        <div>
-                            <Input
-                                value={product.days}
-                                onChange={(e) =>
-                                    handleInput(
-                                        product.id,
-                                        'days',
-                                        e.target.value,
-                                    )
-                                }
-                                className="h-8 w-10 rounded-none border-gray-300 text-center text-xs md:h-10 md:text-sm"
-                            />
-                        </div>
-
-                        <span className="text-xs text-gray-600 md:text-sm">
-                            ngày
-                        </span>
-                    </div>
+                <div className="w-24 flex items-center justify-center">
+                    <Input
+                        value={product.days}
+                        onChange={(e) =>
+                            handleInput(product.id, 'days', e.target.value)
+                        }
+                        className="h-8 w-full rounded-none border-gray-300 text-center text-xs md:h-10 md:text-sm"
+                    />
                 </div>
-
-                <div className="flex flex-col md:block">
-                    <span className="text-xs font-medium text-gray-600 md:hidden">
-                        Thành tiền:
-                    </span>
-                    <span className="text-xs font-medium text-gray-800 md:w-24 md:text-center md:text-sm">
-                        {(
-                            product.price *
-                            product.quantity *
-                            product.days
-                        ).toLocaleString('vi-VN')}
-                        đ
-                    </span>
-                </div>
+                <span className="w-24 text-center text-xs font-medium text-gray-800 md:text-sm">
+                    {(product.price *
+                        product.quantity *
+                        product.days
+                    ).toLocaleString('vi-VN')}
+                    đ
+                </span>
             </div>
         </div>
     )
 
     const ShopSection = ({ shop }: { shop: string }) => (
         <div className="shop-section mb-4 bg-white/80 shadow-sm md:mb-6">
-            <div className="flex h-10 items-center gap-2 border-b bg-transparent px-4 md:h-12 md:px-6">
+            <div className="flex h-10 items-center gap-2 border-b bg-white/80 rounded-t-lg border-gray-200 px-4 py-4 text-sm font-semibold text-gray-600 md:h-12 md:px-6">
                 <input
                     type="checkbox"
                     checked={items
@@ -193,7 +163,6 @@ export default function CartPage() {
                     {shop} <span className="text-blue-500">⨯</span>
                 </span>
             </div>
-
             {currentProducts
                 .filter((p) => p.shop === shop)
                 .map((p) => (
@@ -227,21 +196,14 @@ export default function CartPage() {
                 ) : (
                     <div className="flex flex-col gap-4 md:gap-8">
                         <div className="rounded-lg shadow-sm bg-white/80">
+                            {/* Header for desktop */}
                             <div className="hidden items-center justify-between border-b bg-white/80 rounded-t-lg border-gray-200 px-6 py-4 text-sm font-semibold text-gray-600 md:flex">
                                 <span className="w-1/3">Sản phẩm</span>
                                 <div className="flex w-2/3 justify-between">
-                                    <span className="w-24 text-center">
-                                        Đơn giá
-                                    </span>
-                                    <span className="w-24 text-center">
-                                        Số lượng
-                                    </span>
-                                    <span className="w-24 text-center">
-                                        Thời gian thuê
-                                    </span>
-                                    <span className="w-24 text-center">
-                                        Thành tiền
-                                    </span>
+                                    <span className="w-24 text-center">Đơn giá</span>
+                                    <span className="w-24 text-center">Thời gian thuê</span>
+                                    <span className="w-24 text-center">Số lượng</span>
+                                    <span className="w-24 text-center">Thành tiền</span>
                                 </div>
                             </div>
 
@@ -257,9 +219,7 @@ export default function CartPage() {
                                     <Input
                                         placeholder="Nhập mã"
                                         value={couponCode}
-                                        onChange={(e) =>
-                                            setCouponCode(e.target.value)
-                                        }
+                                        onChange={(e) => setCouponCode(e.target.value)}
                                         className="h-8 w-full rounded-none border-gray-300 md:h-10 md:w-48"
                                     />
                                     <Button
@@ -271,7 +231,6 @@ export default function CartPage() {
                                         Áp dụng
                                     </Button>
                                 </div>
-
                                 <Button
                                     danger
                                     onClick={clear}

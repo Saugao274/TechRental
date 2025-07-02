@@ -51,7 +51,7 @@ export default function Header() {
         setBellVisible(false)
     }
 
-    const totalCount = cartItems.reduce((sum, i) => sum + i.quantity, 0)
+    const totalCount = cartItems.length
     useMotionValueEvent(scrollY, 'change', (latest) => {
         if (latest < 10) {
             setIsVisible(true)
@@ -92,108 +92,108 @@ export default function Header() {
 
     const items: MenuProps['items'] = user
         ? [
-              {
-                  key: '1',
-                  label: (
-                      <span
-                          onClick={() => router.push(`/personal/${user._id}`)}
-                      >
-                          Trang cá nhân
-                      </span>
-                  ),
-              },
-              // {
-              //     key: '2',
-              //     label: (
-              //         <p
-              //             className="block cursor-pointer text-[14px] text-primary"
-              //             onClick={() => {
-              //                 router.push(`/personal/payment`)
-              //                 setMobileMenuOpen(false)
-              //             }}
-              //         >
-              //             Thanh toán
-              //         </p>
-              //     ),
-              // },
-              {
-                  key: '3',
-                  label: <span onClick={logout}>Đăng xuất</span>,
-              },
-              {
-                  key: 'update',
-                  label: (
-                      <p
-                          className="block cursor-pointer text-[14px] text-primary"
-                          onClick={() => {
-                              router.push(`/personal/${user._id}/update-info`)
-                              setMobileMenuOpen(false)
-                          }}
-                      >
-                          Cập nhật thông tin cá nhân
-                      </p>
-                  ),
-              },
+            {
+                key: '1',
+                label: (
+                    <span
+                        onClick={() => router.push(`/personal/${user._id}`)}
+                    >
+                        Trang cá nhân
+                    </span>
+                ),
+            },
+            // {
+            //     key: '2',
+            //     label: (
+            //         <p
+            //             className="block cursor-pointer text-[14px] text-primary"
+            //             onClick={() => {
+            //                 router.push(`/personal/payment`)
+            //                 setMobileMenuOpen(false)
+            //             }}
+            //         >
+            //             Thanh toán
+            //         </p>
+            //     ),
+            // },
+            {
+                key: '3',
+                label: <span onClick={logout}>Đăng xuất</span>,
+            },
+            {
+                key: 'update',
+                label: (
+                    <p
+                        className="block cursor-pointer text-[14px] text-primary"
+                        onClick={() => {
+                            router.push(`/personal/${user._id}/update-info`)
+                            setMobileMenuOpen(false)
+                        }}
+                    >
+                        Cập nhật thông tin cá nhân
+                    </p>
+                ),
+            },
 
-              {
-                  key: '5',
-                  label: (
-                      <p
-                          className="block cursor-pointer text-[14px] text-primary"
-                          onClick={() => {
-                              router.push(
-                                  `/personal/${user._id}/rental-registry`,
-                              )
-                              setMobileMenuOpen(false)
-                          }}
-                      >
-                          Đăng ký làm người cho thuê
-                      </p>
-                  ),
-              },
-              {
-                  key: '6',
-                  label: (
-                      <p
-                          className="block cursor-pointer text-[14px] text-primary"
-                          onClick={() => {
-                              router.push(`/personal/${user._id}/orders`)
-                              setMobileMenuOpen(false)
-                          }}
-                      >
-                          Đơn hàng của tôi
-                      </p>
-                  ),
-              },
-              {
-                  key: '7',
-                  label: (
-                      <p
-                          className="block cursor-pointer text-[14px] text-primary"
-                          onClick={() => {
-                              router.push(`/personal/${user._id}/password`)
-                              setMobileMenuOpen(false)
-                          }}
-                      >
-                          Thay đổi mật khẩu
-                      </p>
-                  ),
-              },
-              {
-                  key: '8',
-                  label: (
-                      <p
-                          className="block cursor-pointer text-[14px] text-primary"
-                          onClick={() => {
-                              router.push(`/rental/${shopId}`)
-                              setMobileMenuOpen(false)
-                          }}
-                      >
-                          Chế độ người cho thuê
-                      </p>
-                  ),
-              },
-          ]
+            {
+                key: '5',
+                label: (
+                    <p
+                        className="block cursor-pointer text-[14px] text-primary"
+                        onClick={() => {
+                            router.push(
+                                `/personal/${user._id}/rental-registry`,
+                            )
+                            setMobileMenuOpen(false)
+                        }}
+                    >
+                        Đăng ký làm người cho thuê
+                    </p>
+                ),
+            },
+            {
+                key: '6',
+                label: (
+                    <p
+                        className="block cursor-pointer text-[14px] text-primary"
+                        onClick={() => {
+                            router.push(`/personal/${user._id}/orders`)
+                            setMobileMenuOpen(false)
+                        }}
+                    >
+                        Đơn hàng của tôi
+                    </p>
+                ),
+            },
+            {
+                key: '7',
+                label: (
+                    <p
+                        className="block cursor-pointer text-[14px] text-primary"
+                        onClick={() => {
+                            router.push(`/personal/${user._id}/password`)
+                            setMobileMenuOpen(false)
+                        }}
+                    >
+                        Thay đổi mật khẩu
+                    </p>
+                ),
+            },
+            {
+                key: '8',
+                label: (
+                    <p
+                        className="block cursor-pointer text-[14px] text-primary"
+                        onClick={() => {
+                            router.push(`/rental/${shopId}`)
+                            setMobileMenuOpen(false)
+                        }}
+                    >
+                        Chế độ người cho thuê
+                    </p>
+                ),
+            },
+        ]
         : []
     const itemsRental: MenuProps['items'] = [
         {
@@ -530,22 +530,22 @@ export default function Header() {
                             onClick={() => user && setBellVisible(true)}
                         >
                             <Bell />
-                            {user && (
+                            {/* {user && (
                                 <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                     <p className="text-[10px] text-white">2</p>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                         <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
                             onClick={goToChat}
                         >
                             <MessageCircle />
-                            {user && (
+                            {/* {user && (
                                 <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                     <p className="text-[10px] text-white">7</p>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                         {/* <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
@@ -818,7 +818,7 @@ export default function Header() {
                                                                 delay:
                                                                     0.2 +
                                                                     index *
-                                                                        0.05,
+                                                                    0.05,
                                                             }}
                                                         >
                                                             {item?.label}
@@ -971,7 +971,7 @@ export default function Header() {
                                                                 delay:
                                                                     0.2 +
                                                                     index *
-                                                                        0.05,
+                                                                    0.05,
                                                             }}
                                                         >
                                                             {item?.label}

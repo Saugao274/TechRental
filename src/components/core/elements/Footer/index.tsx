@@ -74,7 +74,7 @@ export default function Footer() {
                             />
                         </a>
                         <a
-                            href="https://www.facebook.com"
+                            href="https://www.facebook.com/profile.php?id=61577577607705"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
