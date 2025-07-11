@@ -30,6 +30,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useCart } from '@/context/CartContext'
 import { getRequest } from '@/request'
 import { useChat } from '@/context/ChatContext'
+import SearchSuggestion from './SearchSuggestion'
 
 export default function Header() {
     const { user, logout, loading } = useAuth()
@@ -92,108 +93,108 @@ export default function Header() {
 
     const items: MenuProps['items'] = user
         ? [
-            {
-                key: '1',
-                label: (
-                    <span
-                        onClick={() => router.push(`/personal/${user._id}`)}
-                    >
-                        Trang cá nhân
-                    </span>
-                ),
-            },
-            // {
-            //     key: '2',
-            //     label: (
-            //         <p
-            //             className="block cursor-pointer text-[14px] text-primary"
-            //             onClick={() => {
-            //                 router.push(`/personal/payment`)
-            //                 setMobileMenuOpen(false)
-            //             }}
-            //         >
-            //             Thanh toán
-            //         </p>
-            //     ),
-            // },
-            {
-                key: '3',
-                label: <span onClick={logout}>Đăng xuất</span>,
-            },
-            {
-                key: 'update',
-                label: (
-                    <p
-                        className="block cursor-pointer text-[14px] text-primary"
-                        onClick={() => {
-                            router.push(`/personal/${user._id}/update-info`)
-                            setMobileMenuOpen(false)
-                        }}
-                    >
-                        Cập nhật thông tin cá nhân
-                    </p>
-                ),
-            },
+              {
+                  key: '1',
+                  label: (
+                      <span
+                          onClick={() => router.push(`/personal/${user._id}`)}
+                      >
+                          Trang cá nhân
+                      </span>
+                  ),
+              },
+              // {
+              //     key: '2',
+              //     label: (
+              //         <p
+              //             className="block cursor-pointer text-[14px] text-primary"
+              //             onClick={() => {
+              //                 router.push(`/personal/payment`)
+              //                 setMobileMenuOpen(false)
+              //             }}
+              //         >
+              //             Thanh toán
+              //         </p>
+              //     ),
+              // },
+              {
+                  key: '3',
+                  label: <span onClick={logout}>Đăng xuất</span>,
+              },
+              {
+                  key: 'update',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(`/personal/${user._id}/update-info`)
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Cập nhật thông tin cá nhân
+                      </p>
+                  ),
+              },
 
-            {
-                key: '5',
-                label: (
-                    <p
-                        className="block cursor-pointer text-[14px] text-primary"
-                        onClick={() => {
-                            router.push(
-                                `/personal/${user._id}/rental-registry`,
-                            )
-                            setMobileMenuOpen(false)
-                        }}
-                    >
-                        Đăng ký làm người cho thuê
-                    </p>
-                ),
-            },
-            {
-                key: '6',
-                label: (
-                    <p
-                        className="block cursor-pointer text-[14px] text-primary"
-                        onClick={() => {
-                            router.push(`/personal/${user._id}/orders`)
-                            setMobileMenuOpen(false)
-                        }}
-                    >
-                        Đơn hàng của tôi
-                    </p>
-                ),
-            },
-            {
-                key: '7',
-                label: (
-                    <p
-                        className="block cursor-pointer text-[14px] text-primary"
-                        onClick={() => {
-                            router.push(`/personal/${user._id}/password`)
-                            setMobileMenuOpen(false)
-                        }}
-                    >
-                        Thay đổi mật khẩu
-                    </p>
-                ),
-            },
-            {
-                key: '8',
-                label: (
-                    <p
-                        className="block cursor-pointer text-[14px] text-primary"
-                        onClick={() => {
-                            router.push(`/rental/${shopId}`)
-                            setMobileMenuOpen(false)
-                        }}
-                    >
-                        Chế độ người cho thuê
-                    </p>
-                ),
-            },
-        ]
+              {
+                  key: '5',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(
+                                  `/personal/${user._id}/rental-registry`,
+                              )
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Đăng ký làm người cho thuê
+                      </p>
+                  ),
+              },
+              {
+                  key: '6',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(`/personal/${user._id}/orders`)
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Đơn hàng của tôi
+                      </p>
+                  ),
+              },
+              {
+                  key: '7',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(`/personal/${user._id}/password`)
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Thay đổi mật khẩu
+                      </p>
+                  ),
+              },
+              {
+                  key: '8',
+                  label: (
+                      <p
+                          className="block cursor-pointer text-[14px] text-primary"
+                          onClick={() => {
+                              router.push(`/rental/${shopId}`)
+                              setMobileMenuOpen(false)
+                          }}
+                      >
+                          Chế độ người cho thuê
+                      </p>
+                  ),
+              },
+          ]
         : []
     const itemsRental: MenuProps['items'] = [
         {
@@ -396,14 +397,12 @@ export default function Header() {
         }
     }, [mobileMenuOpen])
 
-    const handleClickSearchButton = (): void => {
-        setMobileMenuOpen(true)
+    const [searchTerm, setSearchTerm] = useState('')
 
-        const debouncedFocus = _.debounce(() => {
-            searchInputRef.current?.focus()
-        }, 1000)
-
-        debouncedFocus()
+    const handleSearch = () => {
+        if (searchTerm.trim()) {
+            router.push(`/products?search=${encodeURIComponent(searchTerm)}`)
+        }
     }
     const path = usePathname()
     if (loading) {
@@ -483,17 +482,8 @@ export default function Header() {
                     onClose={handleBellClose}
                 />
                 {/* Search bar - hidden on smallest screens, visible on sm and up */}
-                <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[308px]">
-                    <Search size={16} className="text-primary" />
-                    <input
-                        className="w-full bg-transparent outline-none placeholder:text-primary placeholder:text-opacity-60"
-                        placeholder="Nhập nội dung cần tìm..."
-                    ></input>
-                    <div className="absolute right-[-1px] top-[-1px] h-full">
-                        <Button className="!rounded-none !rounded-br-[10px] !rounded-tr-[10px] !border-primary !bg-primary !p-[19px] !text-white">
-                            <Search />
-                        </Button>
-                    </div>
+                <div className="/* ← giảm padding dọc */ hidden sm:relative sm:flex sm:h-fit sm:w-[150px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[2px] md:w-[300px] lg:w-[308px]">
+                    <SearchSuggestion />
                 </div>
 
                 {/* Desktop navigation */}
@@ -614,7 +604,7 @@ export default function Header() {
                     </div>
                     <div
                         className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
-                        onClick={() => handleClickSearchButton()}
+                        onClick={() => setMobileMenuOpen(true)}
                     >
                         <Search size={20} />
                     </div>
@@ -685,8 +675,18 @@ export default function Header() {
                                         className="w-full outline-none placeholder:text-primary placeholder:text-opacity-60"
                                         placeholder="Nhập nội dung cần tìm..."
                                         ref={searchInputRef}
+                                        value={searchTerm}
+                                        onChange={(e) =>
+                                            setSearchTerm(e.target.value)
+                                        }
+                                        onKeyDown={(e) =>
+                                            e.key === 'Enter' && handleSearch()
+                                        }
                                     ></input>
-                                    <Button className="!rounded-[10px] !border-primary !bg-primary !p-[8px] !text-white">
+                                    <Button
+                                        className="!rounded-[10px] !border-primary !bg-primary !p-[8px] !text-white"
+                                        onClick={handleSearch}
+                                    >
                                         <Search size={16} />
                                     </Button>
                                 </div>
@@ -818,7 +818,7 @@ export default function Header() {
                                                                 delay:
                                                                     0.2 +
                                                                     index *
-                                                                    0.05,
+                                                                        0.05,
                                                             }}
                                                         >
                                                             {item?.label}
@@ -971,7 +971,7 @@ export default function Header() {
                                                                 delay:
                                                                     0.2 +
                                                                     index *
-                                                                    0.05,
+                                                                        0.05,
                                                             }}
                                                         >
                                                             {item?.label}

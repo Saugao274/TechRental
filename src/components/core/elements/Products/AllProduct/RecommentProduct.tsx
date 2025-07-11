@@ -1,16 +1,22 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Pagination, Skeleton } from 'antd'
 import FilterSidebar from './FilterSidebar'
 import ProductCard from '@/components/core/common/CardCommon/ProductCard'
 import SectionCommon from '@/components/core/common/SectionCommon'
 import { useProducts } from '@/context/ProductContext'
 
-const RecommentProduct = () => {
+const RecommentProduct = ({ products }: { products?: any[] }) => {
     const [currentPage, setCurrentPage] = useState(1)
     const { productsData, loading } = useProducts()
-    const [filteredProducts, setFilteredProducts] = useState(productsData)
+    const [filteredProducts, setFilteredProducts] = useState(
+        products || productsData,
+    )
+
+    useEffect(() => {
+        setFilteredProducts(products || productsData)
+    }, [products, productsData])
 
     const pageSize =
         typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 9
