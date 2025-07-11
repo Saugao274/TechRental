@@ -14,16 +14,17 @@ import {
 } from 'antd'
 import { UploadOutlined, EditOutlined } from '@ant-design/icons'
 import type { UploadFile, UploadProps } from 'antd'
+import axios from 'axios'
 
 export default function ShopProfilePage() {
     const [shop, setShop] = useState({
-        name: 'TechRental',
+        name: 'Shop Name',
         avatar: 'https://via.placeholder.com/100',
         scale: '5-20',
         operatingArea: 'Hà Nội',
         businessType: 'personal',
         businessAddress: 'Bình Thuận / Huyện Phú Quí / Xã Tam Thanh',
-        invoiceEmail: 'techrental@example.com',
+        invoiceEmail: 'email@example.com',
         taxCode: '0123456789',
         isVerified: true,
     })
@@ -32,18 +33,58 @@ export default function ShopProfilePage() {
     const [form] = Form.useForm()
     const [avatarFile, setAvatarFile] = useState<UploadFile | null>(null)
 
-    const onFinish = (values: any) => {
-        setShop((prev) => ({
-            ...prev,
-            ...values,
-            avatar: avatarFile
-                ? URL.createObjectURL(avatarFile.originFileObj as Blob)
-                : prev.avatar,
-        }))
-        message.success('Thông tin shop đã được cập nhật thành công!')
-        setIsEditModalOpen(false)
-        form.resetFields()
-        setAvatarFile(null)
+    const onFinish = async (values: any) => {
+        let avatarUrl = shop.avatar
+        // Nếu có avatarFile mới và là file ảnh, upload lên backend hoặc lấy URL
+        if (
+            avatarFile &&
+            avatarFile.originFileObj &&
+            avatarFile.originFileObj instanceof Blob
+        ) {
+            // Giả sử backend nhận file upload tại /upload và trả về { url: '...' }
+            const formData = new FormData()
+            formData.append('file', avatarFile.originFileObj)
+            try {
+                const uploadRes = await axios.post('/upload', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                })
+                avatarUrl = uploadRes.data.url
+            } catch (err) {
+                message.error('Upload ảnh thất bại!')
+                return
+            }
+        }
+
+        // Lấy token từ localStorage (hoặc context nếu bạn dùng context)
+        const token = localStorage.getItem('token')
+        const data = {
+            name: values.name,
+            avatar: avatarUrl,
+            cover: values.cover || '', // Nếu có trường cover
+            description: values.description || '', // Nếu có trường description
+            location: values.operatingArea, // Đảm bảo là 1 trong 3 giá trị hợp lệ
+            contact: {
+                phone: values.phone || '', // Nếu có trường phone
+                email: values.invoiceEmail,
+            },
+            operatingHours: values.operatingHours || '',
+        }
+        try {
+            await axios.put('/shopDetail/', data, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            setShop((prev) => ({
+                ...prev,
+                ...values,
+                avatar: avatarUrl,
+            }))
+            message.success('Thông tin shop đã được cập nhật thành công!')
+            setIsEditModalOpen(false)
+            form.resetFields()
+            setAvatarFile(null)
+        } catch (error) {
+            message.error('Cập nhật shop thất bại!')
+        }
     }
 
     const onFinishFailed = (errorInfo: any) => {
@@ -95,8 +136,8 @@ export default function ShopProfilePage() {
             )}
 
             <div className="rounded-md bg-white p-6 shadow-md">
-                <div className="mb-6 flex flex-col  md:flex-row gap-5 items-center justify-between">
-                    <Space >
+                <div className="mb-6 flex flex-col items-center justify-between gap-5 md:flex-row">
+                    <Space>
                         <Avatar src={shop.avatar} size={100} />
                         <div>
                             <Typography.Title level={3} style={{ margin: 0 }}>
@@ -108,7 +149,7 @@ export default function ShopProfilePage() {
                         </div>
                     </Space>
                     <Button
-                        className='w-full md:w-auto'
+                        className="w-full md:w-auto"
                         type="primary"
                         icon={<EditOutlined />}
                         onClick={() => setIsEditModalOpen(true)}
@@ -256,14 +297,19 @@ export default function ShopProfilePage() {
                         rules={[
                             {
                                 required: true,
-                                message: 'Vui lòng nhập khu vực hoạt động!',
+                                message: 'Vui lòng chọn khu vực hoạt động!',
                             },
                         ]}
                     >
-                        <Input
-                            placeholder="VD: Hà Nội, TP.HCM..."
-                            className="h-12"
-                        />
+                        <Select placeholder="Chọn khu vực">
+                            <Select.Option value="Hà Nội">Hà Nội</Select.Option>
+                            <Select.Option value="Hồ Chí Minh">
+                                Hồ Chí Minh
+                            </Select.Option>
+                            <Select.Option value="Đà Nẵng">
+                                Đà Nẵng
+                            </Select.Option>
+                        </Select>
                     </Form.Item>
 
                     <Form.Item

@@ -13,6 +13,7 @@ import { getRequest, postRequest } from '@/request'
 import { chatEndpoint } from '@/settings/endpoints'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 interface ChatContextType {
     userRooms: any[]
@@ -30,6 +31,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [ownerRooms, setOwnerRooms] = useState<any[]>([])
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+    const searchParams = useSearchParams();
 
     const fetchUserRooms = useCallback(async () => {
         setLoading(true)
@@ -44,18 +46,31 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [user?._id])
 
     const fetchOwnerRooms = useCallback(async () => {
-        const shopId = localStorage.getItem('shopId')
+        let shopId = localStorage.getItem('shopId')
+        const isShopMode = searchParams.get('shopMode') === '1'
+        // Nếu đang ở shop mode mà chưa có shopId, tự động lấy từ API
+        if (isShopMode && !shopId && user && user.roles?.includes('owner')) {
+            try {
+                const res = await getRequest('/api/shopDetail/me')
+                shopId = res.metadata._id
+                localStorage.setItem('shopId', shopId || '')
+            } catch (err) {
+                console.error('❌ Lỗi lấy shopId:', err)
+                return
+            }
+        }
         if (!shopId) return
         setLoading(true)
         try {
-            const data = await getRequest(chatEndpoint.GET_SHOP_ROOMS(shopId))
+            if (!shopId || typeof shopId !== 'string') return;
+            const data = await getRequest(chatEndpoint.GET_SHOP_ROOMS(shopId as string))
             setOwnerRooms(Array.isArray(data) ? data : [])
         } catch (err) {
             console.error('❌ Lỗi lấy rooms shop:', err)
         } finally {
             setLoading(false)
         }
-    }, [user?._id])
+    }, [user?._id, searchParams])
 
     const refreshRooms = useCallback(() => {
         fetchUserRooms()
