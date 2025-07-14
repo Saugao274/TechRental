@@ -143,7 +143,7 @@ export default function OrderManagement() {
                     o.products.length > 1 ? ` (+${o.products.length - 1})` : ''
                 return {
                     id: o._id,
-                    customerId: o.customerId,
+                    customerId: typeof o.customerId === 'object' ? o.customerId._id : o.customerId,
                     production: firstTitle + more,
                     products: o.products.map((p: any) => p.productId.title),
                     rawProducts: o.products,

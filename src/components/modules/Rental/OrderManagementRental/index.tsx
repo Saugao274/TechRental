@@ -160,7 +160,7 @@ export default function OrderManagementRental() {
                 const more = o.products.length > 1 ? ` (+${o.products.length - 1})` : ''
                 return {
                     id: o._id,
-                    customerId: o.customerId,
+                    customerId: typeof o.customerId === 'object' ? o.customerId._id : o.customerId,
                     production: firstTitle + more,
                     rawProducts: o.products,
                     products: o.products.map((p: any) => p.title),

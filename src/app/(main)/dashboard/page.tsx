@@ -1,11 +1,13 @@
 "use client"
-import { Card, Row, Col, Table, Typography, Statistic, Modal, Button } from 'antd';
+import { Card, Row, Col, Table, Typography, Statistic, Modal, Button, message, Spin } from 'antd';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import { getRequest } from '@/request';
 import { userEndpoint, orderEndpoint } from '@/settings/endpoints';
 import SectionCommon from '@/components/core/common/SectionCommon';
-import { UserOutlined, ShoppingCartOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { UserOutlined, ShoppingCartOutlined, CheckCircleOutlined, DollarOutlined, CloseCircleOutlined, RiseOutlined, UserAddOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/navigation';
+import AuthContext from '@/context/AuthContext';
 
 const { Title } = Typography;
 
@@ -40,12 +42,45 @@ export default function Dashboard() {
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>([]);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [userModalOpen, setUserModalOpen] = useState(false);
-
+  const [summary, setSummary] = useState<any>(null);
+  const [loadingSummary, setLoadingSummary] = useState(true);
+  const router = useRouter();
+  const { user, loading } = useContext(AuthContext) || {};
+const [isAdmin, setIsAdmin] = useState(true)
+  const hasWarned = useRef(false);
+  // Kiểm tra quyền admin, nếu không phải thì redirect về home (chỉ 1 lần)
   useEffect(() => {
-    getRequest(userEndpoint.COUNT).then(res => setUserCount(res.data.count));
-    getRequest(userEndpoint.WITH_PRODUCTS).then(res => setUsersWithProducts(res.data));
-    getRequest(orderEndpoint.COMPLETED).then(res => setCompletedOrders(res.data));
-  }, []);
+    if (!loading && user && (!user.roles || !user.roles.includes('admin'))) {
+      if (!hasWarned.current) {
+        message.warning('Bạn không có quyền truy cập trang này!');
+        hasWarned.current = true;
+        router.replace('/');
+      }
+    }
+  }, [user, loading, router]);
+
+  // Gọi API thống kê tổng hợp
+  async function fetchSummary(setSummary: any, setLoadingSummary: any) {
+    setLoadingSummary(true);
+    try {
+      const res = await getRequest('/api/admin/summary');
+      setSummary(res);
+    } catch (err) {
+      message.error('Không thể tải thống kê tổng hợp!');
+    } finally {
+      setLoadingSummary(false);
+    }
+  }
+
+  // Chỉ gọi API khi là admin
+  useEffect(() => {
+    if (!loading && user && user.roles && user.roles.includes('admin')) {
+      getRequest(userEndpoint.COUNT).then(res => setUserCount(res.data.count));
+      getRequest(userEndpoint.WITH_PRODUCTS).then(res => setUsersWithProducts(res.data));
+      getRequest(orderEndpoint.COMPLETED).then(res => setCompletedOrders(res.data));
+      fetchSummary(setSummary, setLoadingSummary);
+    }
+  }, [user, loading]);
 
   const productPieData = Array.isArray(usersWithProducts)
     ? usersWithProducts
@@ -77,12 +112,10 @@ export default function Dashboard() {
   const handleShowAllUsers = async () => {
     if (!Array.isArray(allUsers) || allUsers.length === 0) {
       const res = await getRequest(userEndpoint.ALL);
-      console.log('API response:', res);
       const users = Array.isArray(res.data?.users)
         ? res.data.users
         : (Array.isArray(res.users) ? res.users : []);
       setAllUsers(users);
-      console.log('All users:', users);
     }
     setUserModalOpen(true);
   };
@@ -94,46 +127,78 @@ export default function Dashboard() {
     { title: 'Trạng thái', dataIndex: 'isActive', render: (active: boolean) => active === false ? 'Khoá' : 'Hoạt động' },
   ];
 
+  if (loading) {
+    return <Spin size="large" />;
+  }
+
+  if (user && (!user.roles || !user.roles.includes('admin'))) {
+    return null;
+  }
+
   return (
-    <SectionCommon className="flex flex-col items-center gap-12 !pb-4 bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen">
+    <SectionCommon className="flex flex-col items-center gap-12 !pb-4  min-h-screen">
       <Title level={2} style={{ marginTop: 24, fontWeight: 700 }}>Thống kê hệ thống</Title>
       <Row gutter={[24, 24]} className="w-full max-w-5xl">
-        <Col xs={24} md={8}>
-          <Card
-            style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)', cursor: 'pointer' }}
-            onClick={handleShowAllUsers}
-            hoverable
-          >
+        {/* Thống kê tổng hợp mới */}
+        <Col xs={24} md={6}>
+          <Card style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
             <Statistic
-              title={<span style={{ fontWeight: 500 }}>Tổng số tài khoản</span>}
-              value={userCount}
-              valueStyle={{ fontSize: 32, fontWeight: 700 }}
-              prefix={<UserOutlined style={{ color: '#1890ff', fontSize: 28, marginRight: 8 }} />}
+              title={<span style={{ fontWeight: 500 }}>Tổng doanh thu (30%)</span>}
+              value={summary?.totalRevenue || 0}
+              valueStyle={{ fontSize: 28, fontWeight: 700, color: '#27ae60' }}
+              prefix={<DollarOutlined style={{ color: '#27ae60', fontSize: 24, marginRight: 8 }} />}
+              suffix="₫"
+              loading={loadingSummary}
             />
           </Card>
         </Col>
-        <Col xs={24} md={8}>
+        <Col xs={24} md={6}>
           <Card style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
             <Statistic
-              title={<span style={{ fontWeight: 500 }}>Tài khoản có sản phẩm</span>}
-              value={usersWithProducts?.length}
-              valueStyle={{ fontSize: 32, fontWeight: 700 }}
-              prefix={<ShoppingCartOutlined style={{ color: '#52c41a', fontSize: 28, marginRight: 8 }} />}
+              title={<span style={{ fontWeight: 500 }}>Sản phẩm đang cho thuê</span>}
+              value={summary?.productsRented || 0}
+              valueStyle={{ fontSize: 28, fontWeight: 700, color: '#1890ff' }}
+              prefix={<RiseOutlined style={{ color: '#1890ff', fontSize: 24, marginRight: 8 }} />}
+              loading={loadingSummary}
             />
           </Card>
         </Col>
-        <Col xs={24} md={8}>
+        <Col xs={24} md={6}>
           <Card style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
             <Statistic
-              title={<span style={{ fontWeight: 500 }}>Đơn hàng đã hoàn thành</span>}
-              value={completedOrders?.length}
-              valueStyle={{ fontSize: 32, fontWeight: 700 }}
-              prefix={<CheckCircleOutlined style={{ color: '#faad14', fontSize: 28, marginRight: 8 }} />}
+              title={<span style={{ fontWeight: 500 }}>Đơn hàng bị huỷ</span>}
+              value={summary?.ordersCanceled || 0}
+              valueStyle={{ fontSize: 28, fontWeight: 700, color: '#e74c3c' }}
+              prefix={<CloseCircleOutlined style={{ color: '#e74c3c', fontSize: 24, marginRight: 8 }} />}
+              loading={loadingSummary}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} md={6}>
+          <Card style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+            <Statistic
+              title={<span style={{ fontWeight: 500 }}>User mới trong tháng</span>}
+              value={summary?.newUsersThisMonth || 0}
+              valueStyle={{ fontSize: 28, fontWeight: 700, color: '#faad14' }}
+              prefix={<UserAddOutlined style={{ color: '#faad14', fontSize: 24, marginRight: 8 }} />}
+              loading={loadingSummary}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} md={6}>
+          <Card style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+            <Statistic
+              title={<span style={{ fontWeight: 500 }}>Tổng số user</span>}
+              value={summary?.totalUsers || 0}
+              valueStyle={{ fontSize: 28, fontWeight: 700, color: '#1890ff' }}
+              prefix={<UserOutlined style={{ color: '#1890ff', fontSize: 24, marginRight: 8 }} />}
+              loading={loadingSummary}
             />
           </Card>
         </Col>
       </Row>
 
+      {/* Các thống kê cũ giữ nguyên */}
       <Row gutter={[24, 24]} className="w-full max-w-5xl">
         <Col xs={24} md={12}>
           <Card title={<b>Phân bố sản phẩm theo tài khoản</b>} style={{ borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>

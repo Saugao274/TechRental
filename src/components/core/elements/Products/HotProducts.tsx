@@ -2,32 +2,41 @@ import React, { useEffect, useState } from 'react'
 import PageHader from '../../common/PageHeader'
 import ProductCard from '../../common/CardCommon/ProductCard'
 import SectionCommon from '../../common/SectionCommon'
+import { getRequest } from '@/request'
+import { productEndpoint } from '@/settings/endpoints'
 import { Skeleton } from 'antd'
-import { useProducts } from '@/context/ProductContext'
-import { Input } from 'antd'
 
 const HotProducts = () => {
-    const { productsData, loading } = useProducts()
-    const [searchTerm, setSearchTerm] = React.useState('')
-    const hotProducts = productsData?.filter((p: any) => p.isHotProduct)
-    const filteredProducts = hotProducts?.filter((product: any) =>
-        product.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+    const [productsData, setProductsData] = useState<any[]>([])
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true)
+            try {
+                const responseAllProduct = await getRequest(
+                    productEndpoint.GET_ALL,
+                )
+                setProductsData(responseAllProduct.metadata)
+            } catch (error) {
+                console.error('Error fetching products:', error)
+            }
+            setLoading(false)
+        }
+
+        fetchProducts()
+    }, [])
+    const hotProductssData = productsData?.filter(
+        (product) => product.isHotProduct,
     )
     return (
         <SectionCommon className="flex flex-col gap-10">
             <PageHader title="Sản phẩm nổi bật" />
-            <Input
-                placeholder="Tìm kiếm sản phẩm nổi bật..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                allowClear
-                className="mb-4"
-            />
             {!loading ? (
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-                    {filteredProducts
+                    {hotProductssData
                         ?.slice(0, 4)
-                        .map((product: any, index: number) => (
+                        .map((product, index) => (
                             <ProductCard product={product} key={index} />
                         ))}
                 </div>
@@ -40,9 +49,9 @@ const HotProducts = () => {
                     <SectionCommon className="flex flex-col gap-10">
                         <PageHader title="Sản phẩm nổi bật" />
                         <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-                            {filteredProducts
+                            {hotProductssData
                                 .slice(0, 4)
-                                .map((product: any, index: number) => (
+                                .map((product, index) => (
                                     <ProductCard
                                         product={product}
                                         key={index}

@@ -482,9 +482,9 @@ export default function Header() {
                     onClose={handleBellClose}
                 />
                 {/* Search bar - hidden on smallest screens, visible on sm and up */}
-                <div className="/* ← giảm padding dọc */ hidden sm:relative sm:flex sm:h-fit sm:w-[150px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[2px] md:w-[300px] lg:w-[308px]">
+               
                     <SearchSuggestion />
-                </div>
+              
 
                 {/* Desktop navigation */}
                 <div className="hidden md:flex md:flex-row md:items-center md:gap-5">

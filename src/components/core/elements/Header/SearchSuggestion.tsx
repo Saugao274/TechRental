@@ -47,6 +47,7 @@ export default function SearchSuggestion() {
             />
             {showDropdown && searchTerm && (
                 <div
+
                     style={{
                         position: 'absolute',
                         top: 30,
@@ -79,29 +80,86 @@ export default function SearchSuggestion() {
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                padding: 8,
+                                padding: 12,
                                 cursor: 'pointer',
                                 borderBottom: '1px solid #f5f5f5',
+                                transition: 'all 0.2s ease',
+                                backgroundColor: '#fff',
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#f8f9fa'
+                                e.currentTarget.style.transform = 'translateX(4px)'
+                                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = '#fff'
+                                e.currentTarget.style.transform = 'translateX(0)'
+                                e.currentTarget.style.boxShadow = 'none'
                             }}
                             onClick={() => {
                                 router.push(`/products/${product._id}`)
                                 setShowDropdown(false)
+                                setSearchTerm('')
                             }}
                         >
                             <img
                                 src={product.images?.[0] || '/placeholder.png'}
                                 alt={product.title}
-                                width={40}
-                                height={29}
-                                style={{ marginRight: 8, borderRadius: 4 }}
+                                width={45}
+                                height={35}
+                                style={{ 
+                                    marginRight: 12, 
+                                    borderRadius: 6,
+                                    objectFit: 'cover',
+                                    transition: 'transform 0.2s ease'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1.05)'
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1)'
+                                }}
                             />
-                            <div>
-                                <div style={{ fontWeight: 500 }}>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ 
+                                    fontWeight: 600, 
+                                    fontSize: '14px',
+                                    marginBottom: '4px',
+                                    color: '#333'
+                                }}>
                                     {product.title}
                                 </div>
-                                <div style={{ color: 'red' }}>
+                                <div style={{ 
+                                    color: '#e74c3c', 
+                                    fontWeight: 600,
+                                    fontSize: '13px'
+                                }}>
                                     {product.price?.toLocaleString('vi-VN')} đ
                                 </div>
+                                {product.brand && (
+                                    <div style={{ 
+                                        color: '#666', 
+                                        fontSize: '12px',
+                                        marginTop: '2px'
+                                    }}>
+                                        {product.brand}
+                                    </div>
+                                )}
+                            </div>
+                            <div style={{
+                                opacity: 0,
+                                transition: 'opacity 0.2s ease',
+                                color: '#007bff',
+                                fontSize: '12px',
+                                fontWeight: 500
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.opacity = '1'
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.opacity = '0'
+                            }}>
+                                Xem chi tiết →
                             </div>
                         </div>
                     ))}
