@@ -2,30 +2,12 @@ import React, { useEffect, useState } from 'react'
 import PageHader from '../../common/PageHeader'
 import ProductCard from '../../common/CardCommon/ProductCard'
 import SectionCommon from '../../common/SectionCommon'
-import { getRequest } from '@/request'
 import { productEndpoint } from '@/settings/endpoints'
 import { Skeleton } from 'antd'
+import { useProducts } from '@/context/ProductContext'
 
 const HotProducts = () => {
-    const [productsData, setProductsData] = useState<any[]>([])
-    const [loading, setLoading] = useState(false)
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true)
-            try {
-                const responseAllProduct = await getRequest(
-                    productEndpoint.GET_ALL,
-                )
-                setProductsData(responseAllProduct.metadata)
-            } catch (error) {
-                console.error('Error fetching products:', error)
-            }
-            setLoading(false)
-        }
-
-        fetchProducts()
-    }, [])
+    const { productsData, loading } = useProducts()
     const hotProductssData = productsData?.filter(
         (product) => product.isHotProduct,
     )
