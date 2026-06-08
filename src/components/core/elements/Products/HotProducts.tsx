@@ -9,7 +9,7 @@ import { useProducts } from '@/context/ProductContext'
 const HotProducts = () => {
     const { productsData, loading } = useProducts()
     const hotProductssData = productsData?.filter(
-        (product) => product.isHotProduct,
+        (product: any) => product.isHotProduct,
     )
     return (
         <SectionCommon className="flex flex-col gap-10">
@@ -18,7 +18,7 @@ const HotProducts = () => {
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
                     {hotProductssData
                         ?.slice(0, 4)
-                        .map((product, index) => (
+                        .map((product: any, index: number) => (
                             <ProductCard product={product} key={index} />
                         ))}
                 </div>
@@ -33,7 +33,7 @@ const HotProducts = () => {
                         <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
                             {hotProductssData
                                 .slice(0, 4)
-                                .map((product, index) => (
+                                .map((product: any, index: number) => (
                                     <ProductCard
                                         product={product}
                                         key={index}
