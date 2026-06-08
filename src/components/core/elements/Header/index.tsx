@@ -13,6 +13,7 @@ import {
     Search,
     ShoppingCart,
     X,
+    ChevronDown,
 } from 'lucide-react'
 import Image from 'next/image'
 import { Button, Dropdown, type MenuProps, Space, Spin, message } from 'antd'
@@ -30,6 +31,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useCart } from '@/context/CartContext'
 import { getRequest } from '@/request'
 import { useChat } from '@/context/ChatContext'
+import SearchSuggestion from './SearchSuggestion'
 
 export default function Header() {
     const { user, logout, loading } = useAuth()
@@ -51,7 +53,7 @@ export default function Header() {
         setBellVisible(false)
     }
 
-    const totalCount = cartItems.reduce((sum, i) => sum + i.quantity, 0)
+    const totalCount = cartItems.length
     useMotionValueEvent(scrollY, 'change', (latest) => {
         if (latest < 10) {
             setIsVisible(true)
@@ -396,14 +398,12 @@ export default function Header() {
         }
     }, [mobileMenuOpen])
 
-    const handleClickSearchButton = (): void => {
-        setMobileMenuOpen(true)
+    const [searchTerm, setSearchTerm] = useState('')
 
-        const debouncedFocus = _.debounce(() => {
-            searchInputRef.current?.focus()
-        }, 1000)
-
-        debouncedFocus()
+    const handleSearch = () => {
+        if (searchTerm.trim()) {
+            router.push(`/products?search=${encodeURIComponent(searchTerm)}`)
+        }
     }
     const path = usePathname()
     if (loading) {
@@ -432,7 +432,7 @@ export default function Header() {
                 ease: 'easeInOut',
             }}
         >
-            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between rounded-[16px] bg-blue-50 bg-opacity-95 !px-3 !py-3 shadow-lg">
+            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between gap-6 rounded-[16px] bg-blue-50 bg-opacity-95 !px-3 !py-3 shadow-lg">
                 <div className="flex items-center">
                     {/* Mobile menu button */}
                     <button
@@ -483,25 +483,16 @@ export default function Header() {
                     onClose={handleBellClose}
                 />
                 {/* Search bar - hidden on smallest screens, visible on sm and up */}
-                <div className="hidden sm:relative sm:flex sm:h-fit sm:w-[250px] sm:flex-row sm:items-center sm:gap-2 sm:!rounded-[10px] sm:border sm:border-primary sm:px-[10px] sm:py-[8px] md:w-[300px] lg:w-[308px]">
-                    <Search size={16} className="text-primary" />
-                    <input
-                        className="w-full bg-transparent outline-none placeholder:text-primary placeholder:text-opacity-60"
-                        placeholder="Nhập nội dung cần tìm..."
-                    ></input>
-                    <div className="absolute right-[-1px] top-[-1px] h-full">
-                        <Button className="!rounded-none !rounded-br-[10px] !rounded-tr-[10px] !border-primary !bg-primary !p-[19px] !text-white">
-                            <Search />
-                        </Button>
-                    </div>
-                </div>
+               
+                    <SearchSuggestion />
+              
 
                 {/* Desktop navigation */}
                 <div className="hidden md:flex md:flex-row md:items-center md:gap-5">
                     <div className="flex flex-row gap-[10px]">
                         <div>
                             <Link href={'/'}>
-                                <p className="cursor-pointer text-[16px] text-primary">
+                                <p className="cursor-pointer whitespace-nowrap text-[16px] text-primary">
                                     Trang chủ
                                 </p>
                             </Link>
@@ -514,12 +505,12 @@ export default function Header() {
                                     setMobileMenuOpen(false)
                                 }}
                             >
-                                <Space className="flex items-center text-[16px] text-primary">
-                                    <p>Sản phẩm</p>
-                                    {/* <ChevronDown
+                                <Space className="flex items-center text-[16px] text-primary whitespace-nowrap">
+                                    <p className="whitespace-nowrap">Hạng mục</p>
+                                    <ChevronDown
                                             size={18}
-                                            className="mt-1"
-                                        /> */}
+                                            className="mt-[2px]"
+                                        />
                                 </Space>
                             </a>
                         </div>
@@ -530,22 +521,22 @@ export default function Header() {
                             onClick={() => user && setBellVisible(true)}
                         >
                             <Bell />
-                            {user && (
+                            {/* {user && (
                                 <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                     <p className="text-[10px] text-white">2</p>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                         <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
                             onClick={goToChat}
                         >
                             <MessageCircle />
-                            {user && (
+                            {/* {user && (
                                 <div className="absolute right-[-5px] top-[-5px] flex h-[20px] w-[20px] items-center justify-center rounded-full bg-red-500">
                                     <p className="text-[10px] text-white">7</p>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                         {/* <div
                             className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
@@ -614,7 +605,7 @@ export default function Header() {
                     </div>
                     <div
                         className="relative cursor-pointer rounded p-2 text-primary transition-all hover:bg-gray-200"
-                        onClick={() => handleClickSearchButton()}
+                        onClick={() => setMobileMenuOpen(true)}
                     >
                         <Search size={20} />
                     </div>
@@ -685,8 +676,18 @@ export default function Header() {
                                         className="w-full outline-none placeholder:text-primary placeholder:text-opacity-60"
                                         placeholder="Nhập nội dung cần tìm..."
                                         ref={searchInputRef}
+                                        value={searchTerm}
+                                        onChange={(e) =>
+                                            setSearchTerm(e.target.value)
+                                        }
+                                        onKeyDown={(e) =>
+                                            e.key === 'Enter' && handleSearch()
+                                        }
                                     ></input>
-                                    <Button className="!rounded-[10px] !border-primary !bg-primary !p-[8px] !text-white">
+                                    <Button
+                                        className="!rounded-[10px] !border-primary !bg-primary !p-[8px] !text-white"
+                                        onClick={handleSearch}
+                                    >
                                         <Search size={16} />
                                     </Button>
                                 </div>

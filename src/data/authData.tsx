@@ -15,6 +15,8 @@ export interface User {
     gender: string
     rentedProducts?: number
     dateOfBirth: string
+    packagePost?: string
+    packageInsurance?: string
 }
 
 export const user = {

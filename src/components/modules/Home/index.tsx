@@ -12,19 +12,7 @@ import { Skeleton } from 'antd'
 import React, { useEffect, useState } from 'react'
 
 const Home = () => {
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false)
-        }, 1000)
-
-        return () => clearTimeout(timer)
-    }, [])
-
-    return loading ? (
-        <Loading />
-    ) : (
+    return (
         <div className="mx-auto max-w-full md:max-w-[1440px]">
             <Intro />
             <div>

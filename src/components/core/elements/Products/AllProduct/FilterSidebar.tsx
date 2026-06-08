@@ -11,12 +11,12 @@ const { Panel } = Collapse
 const { Option } = Select
 
 const priceOptions = [
-    '0 - 10 triệu',
-    '10 triệu - 20 triệu',
-    '20 triệu - 30 triệu',
-    '30 triệu - 40 triệu',
-    '40 triệu - 50 triệu',
-    '50 triệu trở lên',
+    '0 - 100.000',
+    '100.000 - 200.000',
+    '200.000 - 300.000',
+    '300.000 - 400.000',
+    '400.000 - 500.000',
+    '500.000 trở lên',
 ]
 
 const locationOptions = ['Hà Nội', 'Đà Nẵng', 'Sài Gòn']
@@ -26,11 +26,15 @@ const FilterSidebar = ({
 }: {
     onFilter: (filtered: any[]) => void
 }) => {
+    const [filteredCount, setFilteredCount] = useState<number>(0)
     const [selectedPrices, setSelectedPrices] = useState<string[]>([])
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [selectedLocations, setSelectedLocations] = useState<string[]>([])
     const { productsData } = useProducts()
     const [categories, setCategories] = useState<CategoryType[]>([])
+
+    // Check if any filters are active
+    const hasActiveFilters = selectedPrices.length > 0 || selectedCategories.length > 0 || selectedLocations.length > 0
 
     useEffect(() => {
         const getCategoryData = async () => {
@@ -45,17 +49,15 @@ const FilterSidebar = ({
         getCategoryData()
     }, [])
 
+    // Initialize filtered count when productsData changes
     useEffect(() => {
-        const noFilterSelected =
-            selectedPrices.length === 0 &&
-            selectedCategories.length === 0 &&
-            selectedLocations.length === 0
+        setFilteredCount(productsData.length)
+    }, [productsData])
 
-        if (noFilterSelected) {
-            onFilter(productsData)
-        } else {
-            applyFilters()
-        }
+    useEffect(() => {
+        // Always apply filters, even when no filters are selected
+        // This ensures consistent behavior and handles edge cases
+        applyFilters()
     }, [productsData, selectedPrices, selectedCategories, selectedLocations])
 
     const handleFilterChange = (type: string, value: string) => {
@@ -81,32 +83,46 @@ const FilterSidebar = ({
         }
     }
 
+    const clearAllFilters = () => {
+        setSelectedPrices([])
+        setSelectedCategories([])
+        setSelectedLocations([])
+    }
+
     const applyFilters = () => {
         const filteredProducts = productsData.filter((product: any) => {
+            // Filter by price - product must match at least one selected price range
             const matchesPrice =
                 selectedPrices.length === 0 ||
-                selectedPrices.some((price) => {
-                    const [min, max] = price
-                        .split('-')
-                        .map((p) =>
-                            parseInt(p.trim().replace(' triệu', '000000')),
-                        )
-                    return max
-                        ? product.price >= min && product.price <= max
-                        : product.price >= min
+                selectedPrices.some((priceRange) => {
+                    if (priceRange === '500.000 trở lên') {
+                        return product.price >= 500000
+                    }
+                    
+                    const [minStr, maxStr] = priceRange.split('-').map(s => s.trim())
+                    
+                    // Convert "100.000" to 100000
+                    const min = parseInt(minStr.replace(/\./g, ''))
+                    const max = parseInt(maxStr.replace(/\./g, ''))
+                    
+                    return product.price >= min && product.price <= max
                 })
 
+            // Filter by category - product must match at least one selected category
             const matchesCategory =
                 selectedCategories.length === 0 ||
                 selectedCategories.includes(product.category._id)
 
+            // Filter by location - product must match at least one selected location
             const matchesLocation =
                 selectedLocations.length === 0 ||
                 selectedLocations.includes(product.location)
 
+            // Product must match ALL active filter types (price AND category AND location)
             return matchesPrice && matchesCategory && matchesLocation
         })
 
+        setFilteredCount(filteredProducts.length)
         onFilter(filteredProducts)
     }
     const [showMessage, setShowMessage] = useState(false)
@@ -190,6 +206,7 @@ const FilterSidebar = ({
                             <Checkbox
                                 key={price}
                                 className="!mb-4 block w-full"
+                                checked={selectedPrices.includes(price)}
                                 onChange={() =>
                                     handleFilterChange('price', price)
                                 }
@@ -207,6 +224,7 @@ const FilterSidebar = ({
                             <Checkbox
                                 key={product._id}
                                 className="!mb-4 block w-full"
+                                checked={selectedCategories.includes(product._id)}
                                 onChange={() =>
                                     handleFilterChange('category', product._id)
                                 }
@@ -224,6 +242,7 @@ const FilterSidebar = ({
                             <Checkbox
                                 key={location}
                                 className="!mb-4 block w-full"
+                                checked={selectedLocations.includes(location)}
                                 onChange={() =>
                                     handleFilterChange('location', location)
                                 }

@@ -187,7 +187,7 @@ export function ProfileOptionsNavigation({
             label: 'Đăng ký làm người cho thuê',
             icon: UserPlus,
             active: pathname === `/personal/${userId}/rental-registry`,
-            hidden: user?.isVerified && user?.registeredLessor,
+            hidden: user?.roles?.includes('owner'),
         },
         {
             href: `/personal/${userId}/orders`,

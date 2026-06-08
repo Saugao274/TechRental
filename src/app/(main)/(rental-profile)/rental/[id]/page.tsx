@@ -12,6 +12,7 @@ import {
     Badge,
     Image,
     Rate,
+    Spin,
 } from 'antd'
 import {
     SearchOutlined,
@@ -35,15 +36,14 @@ const { TabPane } = Tabs
 export default function ProductManagement() {
     const [search, setSearch] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
-    const [products, setProducts] = useState<ProductDetail[]>([])
     const [productUnits, setProductUnits] = useState<any[]>([])
-
-    const [orders, setOrders] = useState<any[]>([])
     const [shop, setShop] = useState<any>(null)
     const [activeTab, setActiveTab] = useState('available')
+    const [loading, setLoading] = useState(true)
     const pageSize = 5
     const router = useRouter()
     const { id } = useParams() as { id: string }
+
     useEffect(() => {
         if (id) localStorage.setItem('shopId', id)
     }, [id])
@@ -57,12 +57,12 @@ export default function ProductManagement() {
                 console.error('Lỗi lấy shop từ rental:', err)
             }
         }
+
         const fetchProducts = async () => {
+            setLoading(true) // Start loading
             try {
                 const res = await getRequest(productEndpoint.GET_BY_IDSHOP(id))
                 const productsData = res?.metadata || []
-
-                setProducts(productsData)
                 const productIds = productsData.map(
                     (product: ProductDetail) => product._id,
                 )
@@ -90,7 +90,6 @@ export default function ProductManagement() {
                             o.productId === product._id &&
                             o.productStatus === 'rented',
                     ).length
-
                     const availableCount = product.stock - rentedCount
 
                     let status = ''
@@ -98,7 +97,7 @@ export default function ProductManagement() {
                         status = `Đã cho thuê`
                         unitList.push({
                             ...product,
-                            unitId: `${availableCount} / ${product.stock}`,
+                            unitId: `${rentedCount} / ${product.stock}`,
                             status,
                         })
                     }
@@ -111,10 +110,11 @@ export default function ProductManagement() {
                         })
                     }
                 }
-                setOrders(ordersData)
                 setProductUnits(unitList)
             } catch (err) {
                 console.error('Lỗi lấy sản phẩm hoặc đơn hàng:', err)
+            } finally {
+                setLoading(false) // End loading
             }
         }
 
@@ -187,8 +187,8 @@ export default function ProductManagement() {
                         status === 'Còn sản phẩm'
                             ? 'green'
                             : status === 'Chờ admin duyệt'
-                              ? 'orange'
-                              : 'red'
+                                ? 'orange'
+                                : 'red'
                     }
                     text={status}
                 />
@@ -224,7 +224,7 @@ export default function ProductManagement() {
             <Table
                 columns={columns}
                 dataSource={filteredTabProducts}
-                rowKey="unitId"
+                rowKey={(record) => `${record.unitId}-${record._id}`}
                 pagination={{
                     current: currentPage,
                     pageSize: pageSize,
@@ -236,61 +236,63 @@ export default function ProductManagement() {
     }
 
     return (
-        <div>
-            <div style={{ marginBottom: '16px' }}>
-                <Title level={4} style={{ color: '#0052cc' }}>
-                    Quản lý sản phẩm
-                </Title>
-                <Paragraph style={{ color: '#0052cc', opacity: 0.7 }}>
-                    Dễ dàng quản lý sản phẩm của bạn, bao gồm sản phẩm đang cho
-                    thuê, đang chờ duyệt và đã bán.
-                </Paragraph>
-            </div>
-            <Card>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '16px',
-                    }}
-                >
-                    <Input
-                        prefix={<SearchOutlined />}
-                        placeholder="Tìm kiếm sản phẩm"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        style={{ width: '300px' }}
-                    />
-                    <Space>
-                        <Avatar src={shop?.avatar || '/placeholder.svg'} />
-                        <span>{shop?.name || 'Tên cửa hàng'}</span>
-                        <Button
-                            type="primary"
-                            icon={<PlusOutlined />}
-                            onClick={() => router.push(`${id}/new`)}
-                        >
-                            Thêm sản phẩm mới
-                        </Button>
-                        <Button
-                            icon={<MessageOutlined />}
-                            onClick={() => router.push('/chat?shopMode=1')}
-                        >
-                            Chat với khách
-                        </Button>
-                    </Space>
+        <Spin spinning={loading}>
+            <div>
+                <div style={{ marginBottom: '16px' }}>
+                    <Title level={4} style={{ color: '#0052cc' }}>
+                        Quản lý sản phẩm
+                    </Title>
+                    <Paragraph style={{ color: '#0052cc', opacity: 0.7 }}>
+                        Dễ dàng quản lý sản phẩm của bạn, bao gồm sản phẩm đang
+                        cho thuê, đang chờ duyệt và đã bán.
+                    </Paragraph>
                 </div>
-                <Tabs
-                    activeKey={activeTab}
-                    onChange={(key) => setActiveTab(key)}
-                    style={{ marginBottom: '16px' }}
-                >
-                    <TabPane tab="Sản phẩm có sẵn" key="available" />
-                    <TabPane tab="Sản phẩm đang chờ duyệt" key="pending" />
-                    <TabPane tab="Sản phẩm đã cho thuê" key="rented" />
-                </Tabs>
-                {renderTabContent()}
-            </Card>
-        </div>
+                <Card>
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '16px',
+                        }}
+                    >
+                        <Input
+                            prefix={<SearchOutlined />}
+                            placeholder="Tìm kiếm sản phẩm"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            style={{ width: '300px' }}
+                        />
+                        <Space>
+                            <Avatar src={shop?.avatar || '/placeholder.svg'} />
+                            <span>{shop?.name || 'Tên cửa hàng'}</span>
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={() => router.push(`${id}/new`)}
+                            >
+                                Thêm sản phẩm mới
+                            </Button>
+                            <Button
+                                icon={<MessageOutlined />}
+                                onClick={() => router.push('/chat?shopMode=1')}
+                            >
+                                Chat với khách
+                            </Button>
+                        </Space>
+                    </div>
+                    <Tabs
+                        activeKey={activeTab}
+                        onChange={(key) => setActiveTab(key)}
+                        style={{ marginBottom: '16px' }}
+                    >
+                        <TabPane tab="Sản phẩm có sẵn" key="available" />
+                        {/* <TabPane tab="Sản phẩm đang chờ duyệt" key="pending" /> */}
+                        <TabPane tab="Sản phẩm đã cho thuê" key="rented" />
+                    </Tabs>
+                    {renderTabContent()}
+                </Card>
+            </div>
+        </Spin>
     )
 }

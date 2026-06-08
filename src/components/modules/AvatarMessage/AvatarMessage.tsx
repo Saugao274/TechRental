@@ -9,13 +9,25 @@ export const AvatarMessage = ({ item }: { item: any }) => {
     const isOwner = !!searchParams.get('owner')
 
     const handleClick = () => {
-        router.push(`/chat/${item._id}`)
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get('shopMode') === '1') {
+            router.push(`/chat/${item._id}?shopMode=1`);
+        } else {
+            router.push(`/chat/${item._id}`);
+        }
     }
 
     return (
         <div
             className="flex cursor-pointer items-center gap-2 rounded p-2 hover:bg-gray-100"
-            onClick={handleClick}
+            onClick={() => {
+                const searchParams = new URLSearchParams(window.location.search);
+                if (searchParams.get('shopMode') === '1') {
+                    router.push(`/chat/${item._id}?shopMode=1`);
+                } else {
+                    router.push(`/chat/${item._id}`);
+                }
+            }}
         >
             <Avatar
                 size={50}

@@ -13,6 +13,7 @@ import {
     Upload,
     message,
     Image,
+    Spin,
 } from 'antd'
 import {
     CameraOutlined,
@@ -21,12 +22,80 @@ import {
     UploadOutlined,
     DeleteOutlined,
 } from '@ant-design/icons'
+import { useParams, useRouter } from 'next/navigation'
+import { getRequest, postRequest, putRequest } from '@/request'
+import { orderEndpoint } from '@/settings/endpoints'
 
 const { Title, Text } = Typography
 const { TextArea } = Input
 
-export default function ConfirmProducts() {
+interface Parameter {
+    key: string;
+    label: string;
+    value: string;
+}
+
+interface ProductDetail {
+    _id: string;
+    title: string;
+    brand: string;
+    category: string;
+    price: number;
+    priceWeek: number;
+    priceMonth: number;
+    images: string[];
+    details: string;
+    shortDetails: string;
+    parameter: Parameter[];
+    status: string;
+    location: string;
+    stock: number;
+}
+
+interface Product {
+    _id: string;
+    productId: ProductDetail;
+    unitId: string;
+    productStatus: string;
+    renterId: string;
+}
+
+interface IdentityVerification {
+    status: string;
+}
+
+interface Customer {
+    _id: string;
+    name: string;
+    email: string;
+    roles: string[];
+    walletBalance: number;
+    isActive: boolean;
+    identityVerification: IdentityVerification;
+    createdAt: string;
+    updatedAt: string;
+}
+
+interface OrderData {
+    _id: string;
+    customerId: Customer;
+    products: Product[];
+    totalPrice: number;
+    status: string;
+    duration: number;
+    deliveryDate: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export default function ConfirmProductsPersonal() {
+    const router = useRouter()
+    const params = useParams()
+    const { orderId } = params
     const [selectedOrder, setSelectedOrder] = useState('')
+    const [orderData, setOrderData] = useState<OrderData | null>(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
     const [capturedImages, setCapturedImages] = useState<string[]>([])
     const [recordedVideos, setRecordedVideos] = useState<string[]>([])
     const [isCapturing, setIsCapturing] = useState(false)
@@ -281,25 +350,75 @@ export default function ConfirmProducts() {
         }
     }, [isRecording])
 
-    const handleImageUpload = (file: File) => {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-            if (e.target?.result) {
-                setCapturedImages((prev) => [
-                    ...prev,
-                    e?.target?.result as string,
-                ])
-                message.success('Đã tải ảnh lên thành công')
-            }
+    const uploadToCloudinary = async (file: File, resourceType: 'image' | 'video', index: number) => {
+        if (!orderData) {
+            throw new Error('Không có thông tin đơn hàng')
         }
-        reader.readAsDataURL(file)
+
+        const timestamp = new Date().getTime()
+        const customerName = orderData.customerId.name.replace(/\s+/g, '_')
+        const orderId = orderData._id
+        const fileExtension = file.name.split('.').pop()
+        const newFileName = `${resourceType}_${orderId}_${customerName}_${timestamp}_${index}.${fileExtension}`
+
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('upload_preset', 'techrental')
+        formData.append('cloud_name', 'dijb7tbho')
+        formData.append('public_id', `techrental/${resourceType}s/${newFileName.split('.')[0]}`)
+
+        try {
+            const res = await fetch(
+                `https://api.cloudinary.com/v1_1/dijb7tbho/${resourceType}/upload`,
+                {
+                    method: 'POST',
+                    body: formData,
+                },
+            )
+
+            const data = await res.json()
+            return data.secure_url
+        } catch (error: any) {
+            throw new Error(error.message || 'Error uploading to Cloudinary')
+        }
+    }
+
+    const handleImageUpload = async (file: File) => {
+        try {
+            const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+            if (!isJpgOrPng) {
+                message.error('Chỉ có thể tải lên file JPG/PNG!')
+                return false
+            }
+            const isLt2M = file.size / 1024 / 1024 < 2
+            if (!isLt2M) {
+                message.error('Ảnh phải nhỏ hơn 2MB!')
+                return false
+            }
+
+            const imageUrl = await uploadToCloudinary(file, 'image', capturedImages.length + 1)
+            setCapturedImages((prev) => [...prev, imageUrl])
+            message.success('Đã tải ảnh lên thành công')
+        } catch (error: any) {
+            message.error(error.message || 'Lỗi không xác định khi tải ảnh lên')
+        }
         return false
     }
 
-    const handleVideoUpload = (file: File) => {
-        const videoUrl = URL.createObjectURL(file)
-        setRecordedVideos((prev) => [...prev, videoUrl])
-        message.success('Đã tải video lên thành công')
+    const handleVideoUpload = async (file: File) => {
+        try {
+            const isLt100M = file.size / 1024 / 1024 < 100
+            if (!isLt100M) {
+                message.error('Video phải nhỏ hơn 100MB!')
+                return false
+            }
+
+            const videoUrl = await uploadToCloudinary(file, 'video', recordedVideos.length + 1)
+            setRecordedVideos((prev) => [...prev, videoUrl])
+            message.success('Đã tải video lên thành công')
+        } catch (error: any) {
+            message.error(error.message || 'Lỗi không xác định khi tải video lên')
+        }
         return false
     }
 
@@ -313,9 +432,34 @@ export default function ConfirmProducts() {
         message.info('Đã xóa video')
     }
 
-    const handleSubmit = () => {
-        if (!selectedOrder) {
-            message.error('Vui lòng chọn đơn hàng')
+    const handleChangeToBeforeDeadLine = async (
+        orderId: string,
+        customerId: string,
+    ): Promise<void> => {
+        try {
+            const res = await getRequest(
+                orderEndpoint.GET_ORDER_EVIDENCE_BY_ORDERID(orderId),
+            )
+            if (res?.data?.length === 2) {
+                await putRequest(
+                    orderEndpoint.UPDATE_STATUS.replace(':id', orderId),
+                    {
+                        data: {
+                            status: 'before_deadline',
+                            toId: customerId,
+                        },
+                    },
+                )
+            }
+        } catch (error) {
+            console.error(error)
+        } finally {
+        }
+    }
+
+    const handleSubmit = async () => {
+        if (!orderId) {
+            message.error('Không tìm thấy mã đơn hàng')
             return
         }
         if (capturedImages.length === 0) {
@@ -326,7 +470,70 @@ export default function ConfirmProducts() {
             message.error('Vui lòng xác nhận đã kiểm tra đầy đủ')
             return
         }
-        message.success('Báo cáo đã được gửi thành công!')
+
+        try {
+            setLoading(true)
+
+            // Upload all captured images to Cloudinary
+            const imageUrls = await Promise.all(
+                capturedImages
+                    .filter(url => !url.startsWith('http')) // Only upload new images
+                    .map(async (imageDataUrl, index) => {
+                        const response = await fetch(imageDataUrl)
+                        const blob = await response.blob()
+                        const file = new File([blob], 'image.jpg', { type: 'image/jpeg' })
+                        return uploadToCloudinary(file, 'image', index + 1)
+                    })
+            )
+
+            // Upload all recorded videos to Cloudinary
+            const videoUrls = await Promise.all(
+                recordedVideos
+                    .filter(url => !url.startsWith('http')) // Only upload new videos
+                    .map(async (videoUrl, index) => {
+                        const response = await fetch(videoUrl)
+                        const blob = await response.blob()
+                        const file = new File([blob], 'video.webm', { type: 'video/webm' })
+                        return uploadToCloudinary(file, 'video', index + 1)
+                    })
+            )
+
+            // Combine existing URLs with newly uploaded ones
+            const allImageUrls = [
+                ...capturedImages.filter(url => url.startsWith('http')),
+                ...imageUrls
+            ]
+            const allVideoUrls = [
+                ...recordedVideos.filter(url => url.startsWith('http')),
+                ...videoUrls
+            ]
+
+            // Submit evidence to backend
+            const evidenceData = {
+                orderId,
+                evidenceType: 'delivery',
+                images: allImageUrls,
+                videos: allVideoUrls,
+                description: notes || 'Kiểm tra thiết bị trước khi giao hàng',
+                submittedBy: 'owner',
+                status: 'approved'
+            }
+
+            await postRequest(orderEndpoint.ORDER_EVIDENCE, {
+                data: evidenceData
+            })
+
+            message.success('Đã gửi minh chứng thành công!')
+            if (orderData?.customerId?._id) {
+                handleChangeToBeforeDeadLine(orderId as string, orderData.customerId._id)
+            }
+            router.back();
+        } catch (error: any) {
+            console.error('Error submitting evidence:', error)
+            message.error('Lỗi khi gửi: ' + (error.message || 'Vui lòng thử lại'))
+        } finally {
+            setLoading(false)
+        }
     }
 
     const orderOptions = [
@@ -355,6 +562,27 @@ export default function ConfirmProducts() {
     ]
 
     useEffect(() => {
+        const fetchOrderData = async () => {
+            if (!orderId) return;
+
+            setLoading(true);
+            setError(null);
+
+            try {
+                const response = await getRequest(orderEndpoint.GET_ORDER_BY_ID(orderId as string))
+                setOrderData(response.data);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'An error occurred');
+                message.error('Failed to load order data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrderData();
+    }, [orderId]);
+
+    useEffect(() => {
         return () => {
             stopAllStreams()
         }
@@ -377,8 +605,8 @@ export default function ConfirmProducts() {
                             Ghi nhận tình trạng trước khi giao hàng
                         </Title>
                         <Text type="secondary">
-                            Xác minh tình trạng thiết bị trước khi bàn giao cho
-                            khách thuê.
+                            Xác minh tình trạng thiết bị để làm minh chứng nếu
+                            có khiếu nại về sau.
                         </Text>
                     </div>
 
@@ -386,14 +614,136 @@ export default function ConfirmProducts() {
                         <Text strong className="mb-2 block">
                             Thông tin đơn hàng
                         </Text>
-                        <Select
-                            placeholder="Chọn đơn hàng"
-                            className="!h-[80px] w-full !pb-2"
-                            size="large"
-                            value={selectedOrder}
-                            onChange={setSelectedOrder}
-                            options={orderOptions}
-                        />
+                        <Card className="bg-gray-50">
+                            {loading ? (
+                                <div className="flex justify-center py-8">
+                                    <Spin size="large" />
+                                </div>
+                            ) : error ? (
+                                <div className="text-center text-red-500 py-4">
+                                    {error}
+                                </div>
+                            ) : orderData ? (
+                                <>
+                                    <div className="flex items-start justify-between mb-6">
+                                        <div className="flex-grow">
+                                            <div className="text-lg font-medium text-blue-900">
+                                                Đơn hàng #{orderData._id}
+                                            </div>
+                                            <div className="mt-2 flex flex-col gap-1 text-sm text-gray-600">
+                                                <div>
+                                                    <Text type="secondary">Khách hàng: </Text>
+                                                    {orderData.customerId.name}
+                                                </div>
+                                                <div>
+                                                    <Text type="secondary">Email: </Text>
+                                                    {orderData.customerId.email}
+                                                </div>
+                                                <div>
+                                                    <Text type="secondary">Trạng thái xác thực: </Text>
+                                                    <Text className={orderData.customerId.identityVerification.status === 'verified' ? 'text-green-600' : 'text-yellow-600'}>
+                                                        {orderData.customerId.identityVerification.status === 'verified' ? 'Đã xác thực' : 'Chưa xác thực'}
+                                                    </Text>
+                                                </div>
+                                                <div>
+                                                    <Text type="secondary">Ngày giao hàng: </Text>
+                                                    {new Date(orderData.deliveryDate).toLocaleDateString('vi-VN')}
+                                                </div>
+                                                <div>
+                                                    <Text type="secondary">Thời hạn thuê: </Text>
+                                                    {orderData.duration} ngày
+                                                </div>
+                                                <div>
+                                                    <Text type="secondary">Trạng thái: </Text>
+                                                    <Text className="text-green-600">
+                                                        {orderData.status === 'in_delivery' ? 'Đang giao hàng' : orderData.status}
+                                                    </Text>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex-shrink-0 ml-4">
+                                            <div className="text-right">
+                                                <div className="text-sm text-gray-500">Tổng tiền thuê</div>
+                                                <div className="text-xl font-medium text-blue-600">
+                                                    {new Intl.NumberFormat('vi-VN', {
+                                                        style: 'currency',
+                                                        currency: 'VND'
+                                                    }).format(orderData.totalPrice)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {orderData.products.length > 0 ? (
+                                        <div className="space-y-4">
+                                            <div className="font-medium">Danh sách sản phẩm:</div>
+                                            {orderData.products.map((product) => (
+                                                <div key={product._id} className="border-t pt-4">
+                                                    <div className="flex gap-4">
+                                                        <div className="w-24 h-24 flex-shrink-0">
+                                                            <img
+                                                                src={product.productId.images[0]}
+                                                                alt={product.productId.title}
+                                                                className="w-full h-full object-cover rounded-lg"
+                                                            />
+                                                        </div>
+                                                        <div className="flex-grow">
+                                                            <div className="text-base font-medium">
+                                                                {product.productId.title}
+                                                            </div>
+                                                            <div className="text-sm text-gray-500 mt-1">
+                                                                {product.productId.shortDetails}
+                                                            </div>
+                                                            <div className="mt-2 space-y-1">
+                                                                <div className="text-sm">
+                                                                    <Text type="secondary">Thương hiệu: </Text>
+                                                                    {product.productId.brand}
+                                                                </div>
+                                                                <div className="text-sm">
+                                                                    <Text type="secondary">Mã sản phẩm: </Text>
+                                                                    {product.productId.parameter.find(p => p.key === 'productCode')?.value || 'N/A'}
+                                                                </div>
+                                                                <div className="text-sm">
+                                                                    <Text type="secondary">Tình trạng: </Text>
+                                                                    {product.productId.parameter.find(p => p.key === 'status')?.value || 'N/A'}
+                                                                </div>
+                                                                <div className="text-sm">
+                                                                    <Text type="secondary">Kho: </Text>
+                                                                    {product.productId.location}
+                                                                </div>
+                                                            </div>
+                                                            <div className="mt-2 flex justify-between items-center">
+                                                                <div className="text-sm">
+                                                                    <Text type="secondary">Trạng thái: </Text>
+                                                                    <Text className={product.productStatus === 'rented' ? 'text-orange-600' : 'text-green-600'}>
+                                                                        {product.productStatus === 'rented' ? 'Đang cho thuê' : product.productStatus}
+                                                                    </Text>
+                                                                </div>
+                                                                <div className="text-base font-medium text-blue-600">
+                                                                    {new Intl.NumberFormat('vi-VN', {
+                                                                        style: 'currency',
+                                                                        currency: 'VND'
+                                                                    }).format(product.productId.price)}
+                                                                    <span className="text-xs text-gray-500">/ngày</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center text-gray-500 border-t pt-4">
+                                            Chưa có sản phẩm nào trong đơn hàng
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="text-center text-gray-500 py-4">
+                                    Không tìm thấy thông tin đơn hàng
+                                </div>
+                            )}
+                        </Card>
                     </div>
 
                     <div>
@@ -623,7 +973,7 @@ export default function ConfirmProducts() {
                         onClick={handleSubmit}
                         className="h-12 w-full border-blue-900 bg-blue-900 hover:bg-blue-800"
                     >
-                        Gửi báo cáo
+                        Lưu tình trạng
                     </Button>
                 </Space>
             </Card>

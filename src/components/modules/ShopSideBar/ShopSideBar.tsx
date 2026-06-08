@@ -21,9 +21,16 @@ export default function ShopSideBar() {
                     <div
                         key={room._id}
                         className="flex cursor-pointer items-center gap-3 rounded p-2 hover:bg-gray-100"
-                        onClick={() => router.push(`/chat/${room._id}`)}
+                        onClick={() => {
+                            const searchParams = new URLSearchParams(window.location.search);
+                            if (searchParams.get('shopMode') === '1') {
+                                router.push(`/chat/${room._id}?shopMode=1`);
+                            } else {
+                                router.push(`/chat/${room._id}`);
+                            }
+                        }}
                     >
-                        <Avatar src={room.userId?.avatar} size={40} />
+                        <Avatar src={room.userId?.avatar || '/icons/avatar-default.png'} size={40} />
                         <div>
                             <p className="font-medium">{room.userId?.name}</p>
                             <Text type="secondary" className="text-xs">

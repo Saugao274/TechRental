@@ -11,6 +11,7 @@ import { AuthProvider } from '@/context/AuthContext'
 import { CartProvider } from '@/context/CartContext'
 import { ChatProvider } from '@/context/ChatContext'
 import { ChatSocketProvider } from '@/context/ChatProvider'
+import { ProductProvider } from '@/context/ProductContext'
 export default function AppProvider({
     children,
 }: {
@@ -42,13 +43,15 @@ export default function AppProvider({
             >
                 <AntApp>
                     <ReduxProvider store={store}>
-                        <AuthProvider>
-                            <ChatProvider>
-                                <ChatSocketProvider>
-                                    <CartProvider>{children}</CartProvider>
-                                </ChatSocketProvider>
-                            </ChatProvider>
-                        </AuthProvider>
+                        <ProductProvider>
+                            <AuthProvider>
+                                <ChatProvider>
+                                    <ChatSocketProvider>
+                                        <CartProvider>{children}</CartProvider>
+                                    </ChatSocketProvider>
+                                </ChatProvider>
+                            </AuthProvider>
+                        </ProductProvider>
                     </ReduxProvider>
                 </AntApp>
             </ConfigProvider>

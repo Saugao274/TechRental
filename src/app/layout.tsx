@@ -7,7 +7,7 @@ import { AuthProvider } from '@/context/AuthContext'
 
 export const metadata: Metadata = {
     title: 'TechRental',
-    icons: '/icons/logo.png',
+    icons: '/icons/logo_short.png',
 }
 
 const beVietnamPro = Be_Vietnam_Pro({

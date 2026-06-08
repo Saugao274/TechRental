@@ -182,13 +182,6 @@ export function RentalProfileOptionsNavigation({
             active: pathname === '/rental/feedback',
         },
         {
-            href: `/rental/${shopId}/policy`,
-            label: 'Chính Sách Cho Thuê',
-            icon: FileCog,
-
-            active: pathname === '/rental/policy',
-        },
-        {
             href: `/rental/${shopId}/package`,
             label: 'Chọn gói dịch vụ',
             icon: PackageCheck,

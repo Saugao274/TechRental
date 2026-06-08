@@ -11,6 +11,9 @@ const userEndpoint = {
     VERIFY_USER: (token: string) => `${prefixBase}/auth/verify/${token}`,
     GET_MY_USER: `${prefixBase}/users/me`,
     REGISTER_LESSOR: `${prefixBase}/users/become-owner`,
+    COUNT: `${prefixBase}/users/count`,
+    WITH_PRODUCTS: `${prefixBase}/users/with-products`,
+    ALL: `${prefixBase}/users`,
 }
 const productEndpoint = {
     GET_ALL: `${prefixBase}/product`,
@@ -25,6 +28,8 @@ const storeEndpoint = {
     GET_BY_ID: (id: string) => `${prefixBase}/shopDetail/${id}`,
     CREATE: `${prefixBase}/shopDetail`,
     GET_MY_SHOP: `${prefixBase}/shopDetail/me`,
+    UPDATE_PACKAGE: `${prefixBase}/shopDetail/packages`,
+    UPDATE_CONFIRM: `${prefixBase}/shopDetail/skipConfirm`,
 }
 const categoryEndpoint = {
     GET_ALL: `${prefixBase}/category`,
@@ -42,6 +47,17 @@ const orderEndpoint = {
     GET_ORDER_BY_UNIT_ID: (unitId: string) =>
         `${prefixBase}/order-products/unit/${unitId}`,
     GET_ORDER_BY_PRODUCT_ID: `${prefixBase}/order-products/byProductIds`,
+    CREATE_ORDER: `${prefixBase}/orders/create-payment-url`,
+    RETURN_ORDER: `${prefixBase}/orders/vnpay-return`,
+    POST_ORDER: `${prefixBase}/orders`,
+    CHECK_ORDER: `${prefixBase}/orders/check`,
+    GET_ORDER_BY_USER_ID: `${prefixBase}/orders/user/:userId`,
+    UPDATE_STATUS: `${prefixBase}/orders/:id/status`,
+    GET_ORDER_BY_RENTER_ID: `${prefixBase}/orders/renter/:renterId`,
+    GET_ORDER_BY_ID: (id: string) => `${prefixBase}/orders/${id}`,
+    ORDER_EVIDENCE: `${prefixBase}/order-evidence`,
+    GET_ORDER_EVIDENCE_BY_ORDERID: (id: string) => `${prefixBase}/order-evidence/order/${id}`,
+    COMPLETED: `${prefixBase}/orders/completed`,
 }
 
 export const chatEndpoint = {
