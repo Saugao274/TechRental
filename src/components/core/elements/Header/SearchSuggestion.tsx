@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Input } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useProducts } from '@/context/ProductContext'
+import { Search } from 'lucide-react'
 
 export default function SearchSuggestion() {
     const [searchTerm, setSearchTerm] = useState('')
@@ -34,17 +35,36 @@ export default function SearchSuggestion() {
             document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
+    const handleSearch = () => {
+        if (searchTerm.trim()) {
+            router.push(`/products?search=${encodeURIComponent(searchTerm)}`)
+            setShowDropdown(false)
+        }
+    }
+
     return (
         <div style={{ position: 'relative', width: 300 }} ref={inputRef}>
-            <Input
-                placeholder="Tìm kiếm sản phẩm..."
-                value={searchTerm}
-                onChange={(e) => {
-                    setSearchTerm(e.target.value)
-                    setShowDropdown(true)
-                }}
-                onFocus={() => setShowDropdown(true)}
-            />
+            <div className="flex h-[44px] w-full flex-row items-center justify-between rounded-full border border-gray-300 bg-white pl-4 pr-1 transition-all focus-within:border-primary focus-within:shadow-sm">
+                <Search size={18} className="mr-2 text-gray-400" />
+                <input
+                    type="text"
+                    className="w-full bg-transparent text-[14px] text-gray-700 outline-none placeholder:text-gray-400"
+                    placeholder="Nhập nội dung cần tìm..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                        setSearchTerm(e.target.value)
+                        setShowDropdown(true)
+                    }}
+                    onFocus={() => setShowDropdown(true)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                <button
+                    onClick={handleSearch}
+                    className="flex h-[36px] min-w-[36px] items-center justify-center rounded-full bg-[#1f3bb3] text-white transition-colors hover:bg-blue-800"
+                >
+                    <Search size={18} />
+                </button>
+            </div>
             {showDropdown && searchTerm && (
                 <div
 

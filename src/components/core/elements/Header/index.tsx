@@ -13,6 +13,7 @@ import {
     Search,
     ShoppingCart,
     X,
+    ChevronDown,
 } from 'lucide-react'
 import Image from 'next/image'
 import { Button, Dropdown, type MenuProps, Space, Spin, message } from 'antd'
@@ -431,7 +432,7 @@ export default function Header() {
                 ease: 'easeInOut',
             }}
         >
-            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between rounded-[16px] bg-blue-50 bg-opacity-95 !px-3 !py-3 shadow-lg">
+            <div className="mx-auto flex max-w-[1080px] flex-row items-center justify-between gap-6 rounded-[16px] bg-blue-50 bg-opacity-95 !px-3 !py-3 shadow-lg">
                 <div className="flex items-center">
                     {/* Mobile menu button */}
                     <button
@@ -491,7 +492,7 @@ export default function Header() {
                     <div className="flex flex-row gap-[10px]">
                         <div>
                             <Link href={'/'}>
-                                <p className="cursor-pointer text-[16px] text-primary">
+                                <p className="cursor-pointer whitespace-nowrap text-[16px] text-primary">
                                     Trang chủ
                                 </p>
                             </Link>
@@ -504,12 +505,12 @@ export default function Header() {
                                     setMobileMenuOpen(false)
                                 }}
                             >
-                                <Space className="flex items-center text-[16px] text-primary">
-                                    <p>Sản phẩm</p>
-                                    {/* <ChevronDown
+                                <Space className="flex items-center text-[16px] text-primary whitespace-nowrap">
+                                    <p className="whitespace-nowrap">Hạng mục</p>
+                                    <ChevronDown
                                             size={18}
-                                            className="mt-1"
-                                        /> */}
+                                            className="mt-[2px]"
+                                        />
                                 </Space>
                             </a>
                         </div>
